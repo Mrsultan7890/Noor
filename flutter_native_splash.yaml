@@ -1,0 +1,20 @@
+flutter_native_splash:
+  color: "#2E7D32"
+  image: assets/images/splash_icon.png
+  
+  android: true
+  ios: true
+  web: true
+  
+  android_12:
+    image: assets/images/splash_icon.png
+    color: "#2E7D32"
+    icon_background_color: "#2E7D32"
+  
+  android_gravity: center
+  ios_content_mode: center
+  
+  fullscreen: true
+  
+  info_plist_files:
+    - 'ios/Runner/Info.plist'

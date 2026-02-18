@@ -1,0 +1,7 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Crescent Moon -->
+  <path d="M 150 50 A 70 70 0 1 1 150 250 A 55 55 0 1 0 150 50 Z" fill="#FFD700"/>
+  
+  <!-- Star -->
+  <path d="M 210 150 L 222 178 L 250 182 L 230 202 L 234 230 L 210 218 L 186 230 L 190 202 L 170 182 L 198 178 Z" fill="#FFD700"/>
+</svg>

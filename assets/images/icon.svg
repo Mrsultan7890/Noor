@@ -1,0 +1,13 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#2E7D32" rx="80"/>
+  
+  <!-- Crescent Moon -->
+  <path d="M 256 100 A 100 100 0 1 1 256 412 A 80 80 0 1 0 256 100 Z" fill="#FFD700"/>
+  
+  <!-- Star -->
+  <path d="M 350 256 L 365 290 L 400 295 L 375 320 L 380 355 L 350 340 L 320 355 L 325 320 L 300 295 L 335 290 Z" fill="#FFD700"/>
+  
+  <!-- Text "نور" in Arabic -->
+  <text x="256" y="450" font-family="Arial" font-size="60" fill="white" text-anchor="middle" font-weight="bold">نور</text>
+</svg>
