@@ -32,7 +32,6 @@ dependencies:
   # Location & Qibla
   geolocator: ^10.1.0
   permission_handler: ^11.2.0
-  flutter_qiblah: ^2.2.1
   
   # Charts
   fl_chart: ^0.66.2
