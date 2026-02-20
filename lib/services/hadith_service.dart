@@ -3,21 +3,16 @@ import 'package:http/http.dart' as http;
 import '../models/hadith_model.dart';
 
 class HadithService {
-  static const String baseUrl = 'https://hadithapi.com/api';
+  static const String baseUrl = 'https://random-hadith-generator.vercel.app';
 
   Future<List<Hadith>> getHadiths(String book, int page) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/$book/chapters/1/hadiths?page=$page'),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final List hadiths = data['hadiths']['data'];
-        return hadiths.map((h) => Hadith.fromJson(h)).toList();
-      } else {
-        throw Exception('Failed to load hadiths');
+      final List<Hadith> hadiths = [];
+      for (int i = 0; i < 10; i++) {
+        final hadith = await getRandomHadith();
+        hadiths.add(hadith);
       }
+      return hadiths;
     } catch (e) {
       throw Exception('Error: $e');
     }
@@ -25,10 +20,19 @@ class HadithService {
 
   Future<Hadith> getRandomHadith() async {
     try {
-      final books = ['bukhari', 'muslim', 'abudawud'];
-      final randomBook = books[DateTime.now().millisecond % books.length];
-      final hadiths = await getHadiths(randomBook, 1);
-      return hadiths.first;
+      final response = await http.get(Uri.parse('$baseUrl/bukhari/'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return Hadith(
+          book: 'Sahih Bukhari',
+          hadithNumber: data['data']['hadithNumber']?.toString() ?? '1',
+          arabicText: data['data']['hadithArabic'] ?? '',
+          englishText: data['data']['hadithEnglish'] ?? '',
+          narrator: data['data']['hadithNarrator'] ?? '',
+        );
+      } else {
+        throw Exception('Failed to load hadith');
+      }
     } catch (e) {
       throw Exception('Error: $e');
     }
