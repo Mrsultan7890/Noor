@@ -11,6 +11,7 @@ import '../../screens/audio/audio_quran_screen.dart';
 import '../../screens/hadith/hadith_screen.dart';
 import '../../screens/dua/dua_screen.dart';
 import '../../screens/names/names_screen.dart';
+import '../../screens/games/kids_zone_screen.dart';
 import '../../widgets/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -213,6 +214,32 @@ class HomeScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const AudioQuranScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Kids Zone
+            Text(
+              '🎮 Kids Zone',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            FeatureCard(
+              title: 'Islamic Games - اسلامی گیمز',
+              subtitle: '219+ Levels for Kids',
+              icon: Icons.games,
+              color: Colors.deepPurple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const KidsZoneScreen(),
                   ),
                 );
               },

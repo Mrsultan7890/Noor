@@ -28,6 +28,7 @@ dependencies:
   
   # Audio
   just_audio: ^0.9.36
+  audioplayers: ^5.2.1
   
   # Location & Qibla
   geolocator: ^10.1.0
@@ -62,6 +63,7 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/sounds/
   
   # fonts:
   #   - family: Amiri
