@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../services/update_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../screens/quran/quran_list_screen.dart';
 import '../../screens/quran/mushaf_quran_screen.dart';
 import '../../screens/tasbih/tasbih_screen.dart';
@@ -15,8 +17,71 @@ import '../../screens/games/kids_zone_screen.dart';
 import '../../screens/settings/settings_screen.dart';
 import '../../widgets/feature_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdates();
+  }
+
+  Future<void> _checkForUpdates() async {
+    await Future.delayed(const Duration(seconds: 2));
+    final updateInfo = await UpdateService.checkForUpdate();
+    if (updateInfo != null && updateInfo['hasUpdate'] == true && mounted) {
+      _showUpdateDialog(updateInfo);
+    }
+  }
+
+  void _showUpdateDialog(Map<String, dynamic> info) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.system_update, color: Colors.green),
+            SizedBox(width: 8),
+            Text('Update Available'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('New version ${info['latestVersion']} is available!'),
+            Text('Current: ${info['currentVersion']}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            const SizedBox(height: 16),
+            const Text('What\'s New:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text(info['changelog'] ?? 'Bug fixes and improvements'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Later'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final url = Uri.parse(info['downloadUrl']);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('Download'),
+          ),
+        ],
+      ),
+    );
+  }
   
   bool _isRamadanActive() {
     final now = DateTime.now();
