@@ -13,6 +13,7 @@ import '../../screens/hadith/hadith_screen.dart';
 import '../../screens/dua/dua_screen.dart';
 import '../../screens/names/names_screen.dart';
 import '../../screens/games/kids_zone_screen.dart';
+import '../../screens/settings/settings_screen.dart';
 import '../../widgets/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -36,6 +37,17 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(
               themeProvider.themeMode == ThemeMode.light

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MushafQuranScreen extends StatefulWidget {
   const MushafQuranScreen({super.key});
@@ -18,7 +19,22 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
   @override
   void initState() {
     super.initState();
-    _loadPage(_currentPage);
+    _loadLastRead();
+  }
+
+  Future<void> _loadLastRead() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastPage = prefs.getInt('mushaf_last_page') ?? 1;
+    setState(() => _currentPage = lastPage);
+    _loadPage(lastPage);
+    if (lastPage > 1) {
+      _pageController.jumpToPage(lastPage - 1);
+    }
+  }
+
+  Future<void> _saveLastRead(int page) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('mushaf_last_page', page);
   }
 
   Future<void> _loadPage(int page) async {
@@ -35,6 +51,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
           _currentPage = page;
           _isLoading = false;
         });
+        _saveLastRead(page);
       }
     } catch (e) {
       setState(() => _isLoading = false);

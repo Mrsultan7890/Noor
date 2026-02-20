@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/quran_provider.dart';
 import '../../models/quran_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   final Surah surah;
@@ -13,12 +14,33 @@ class QuranReaderScreen extends StatefulWidget {
 }
 
 class _QuranReaderScreenState extends State<QuranReaderScreen> {
+  final ScrollController _scrollController = ScrollController();
+  
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<QuranProvider>(context, listen: false)
-            .loadVerses(widget.surah.number));
+    Future.microtask(() async {
+      await Provider.of<QuranProvider>(context, listen: false)
+          .loadVerses(widget.surah.number);
+      _loadScrollPosition();
+    });
+    _scrollController.addListener(_saveScrollPosition);
+  }
+
+  Future<void> _loadScrollPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final position = prefs.getDouble('quran_scroll_${widget.surah.number}') ?? 0.0;
+    if (position > 0 && _scrollController.hasClients) {
+      _scrollController.jumpTo(position);
+    }
+  }
+
+  void _saveScrollPosition() {
+    if (_scrollController.hasClients) {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setDouble('quran_scroll_${widget.surah.number}', _scrollController.offset);
+      });
+    }
   }
 
   @override
@@ -38,6 +60,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
           }
           
           return ListView.builder(
+            controller: _scrollController,
             itemCount: provider.verses.length,
             padding: const EdgeInsets.all(16),
             itemBuilder: (context, index) {
@@ -100,5 +123,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

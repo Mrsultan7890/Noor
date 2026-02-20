@@ -7,6 +7,7 @@ import 'providers/quran_provider.dart';
 import 'providers/tasbih_provider.dart';
 import 'providers/schedule_provider.dart';
 import 'services/notification_service.dart';
+import 'services/daily_reminder_service.dart';
 import 'models/schedule_model.dart';
 
 void main() async {
@@ -16,6 +17,8 @@ void main() async {
   Hive.registerAdapter(ScheduleAdapter());
   
   await NotificationService().init();
+  await DailyReminderService.init();
+  await DailyReminderService.scheduleDailyReminder();
   
   runApp(const NoorApp());
 }
