@@ -10,53 +10,83 @@ class KidsZoneScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kids Zone - بچوں کا زون'),
-        backgroundColor: Colors.purple,
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.purple.shade100, Colors.blue.shade100],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.purple.shade400, Colors.pink.shade300, Colors.orange.shade300],
           ),
         ),
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(16),
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          children: [
-            _GameCard(
-              title: 'Memory Match',
-              subtitle: '50 Levels',
-              icon: Icons.grid_on,
-              color: Colors.pink,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemoryGameLevels())),
-            ),
-            _GameCard(
-              title: 'Prayer Quiz',
-              subtitle: '50 Levels',
-              icon: Icons.quiz,
-              color: Colors.orange,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerQuizLevels())),
-            ),
-            _GameCard(
-              title: '99 Names',
-              subtitle: '99 Levels',
-              icon: Icons.star,
-              color: Colors.amber,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NamesPuzzleLevels())),
-            ),
-            _GameCard(
-              title: 'Wudu Steps',
-              subtitle: '20 Levels',
-              icon: Icons.water_drop,
-              color: Colors.blue,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WuduGameLevels())),
-            ),
-          ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const Expanded(
+                      child: Text(
+                        '🎮 Kids Zone',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(blurRadius: 10, color: Colors.black26, offset: Offset(2, 2)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(20),
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 20,
+                  children: [
+                    _GameCard(
+                      title: 'Memory\nMatch',
+                      icon: Icons.grid_on,
+                      gradient: [Colors.blue.shade400, Colors.cyan.shade300],
+                      levels: '50 Levels',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemoryGameLevels())),
+                    ),
+                    _GameCard(
+                      title: 'Prayer\nQuiz',
+                      icon: Icons.quiz,
+                      gradient: [Colors.orange.shade400, Colors.red.shade300],
+                      levels: '50 Levels',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerQuizLevels())),
+                    ),
+                    _GameCard(
+                      title: '99 Names\nPuzzle',
+                      icon: Icons.extension,
+                      gradient: [Colors.amber.shade400, Colors.yellow.shade300],
+                      levels: '99 Levels',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NamesPuzzleLevels())),
+                    ),
+                    _GameCard(
+                      title: 'Wudu\nSteps',
+                      icon: Icons.water_drop,
+                      gradient: [Colors.teal.shade400, Colors.green.shade300],
+                      levels: '20 Levels',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WuduGameLevels())),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -65,57 +95,77 @@ class KidsZoneScreen extends StatelessWidget {
 
 class _GameCard extends StatelessWidget {
   final String title;
-  final String subtitle;
   final IconData icon;
-  final Color color;
+  final List<Color> gradient;
+  final String levels;
   final VoidCallback onTap;
 
   const _GameCard({
     required this.title,
-    required this.subtitle,
     required this.icon,
-    required this.color,
+    required this.gradient,
+    required this.levels,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [color, color.withOpacity(0.7)],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(color: gradient[0].withOpacity(0.5), blurRadius: 15, offset: const Offset(0, 8)),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -20,
+              right: -20,
+              child: Icon(icon, size: 120, color: Colors.white.withOpacity(0.2)),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 64, color: Colors.white),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, size: 40, color: Colors.white),
+                  ),
+                  const Spacer(),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      levels,
+                      style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: const TextStyle(fontSize: 14, color: Colors.white70),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'screens/splash_screen.dart';
 import 'providers/theme_provider.dart';
 import 'providers/quran_provider.dart';
@@ -12,6 +13,8 @@ import 'models/schedule_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  tz.initializeTimeZones();
   
   await Hive.initFlutter();
   Hive.registerAdapter(ScheduleAdapter());
