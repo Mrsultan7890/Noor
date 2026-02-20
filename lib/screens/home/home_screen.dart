@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../screens/quran/quran_list_screen.dart';
+import '../../screens/quran/mushaf_quran_screen.dart';
 import '../../screens/tasbih/tasbih_screen.dart';
 import '../../screens/schedule/schedule_list_screen.dart';
 import '../../screens/ramadan/ramadan_home_screen.dart';
@@ -79,7 +80,7 @@ class HomeScreen extends StatelessWidget {
             if (_isRamadanActive()) ...[
               Row(
                 children: [
-                  Icon(Icons.nightlight_round, color: Colors.purple),
+                  const Icon(Icons.nightlight_round, color: Colors.purple),
                   const SizedBox(width: 8),
                   Text(
                     'Ramadan Special',
@@ -126,6 +127,23 @@ class HomeScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const QuranListScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 12),
+            
+            FeatureCard(
+              title: 'Mushaf - مصحف',
+              subtitle: 'Page by page Arabic Quran',
+              icon: Icons.auto_stories,
+              color: Colors.brown,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MushafQuranScreen(),
                   ),
                 );
               },

@@ -183,7 +183,7 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
                       });
                     },
                   ),
-                  if (_isRecurring) ..[
+                  if (_isRecurring) ...[
                     const Divider(height: 1),
                     Padding(
                       padding: const EdgeInsets.all(16),
