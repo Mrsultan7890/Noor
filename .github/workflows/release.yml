@@ -40,13 +40,34 @@ jobs:
           build/app/outputs/flutter-apk/app-release.apk
           build/app/outputs/bundle/release/app-release.aab
         body: |
-          ## Noor App Release
+          ## Noor App - نور
           
-          ### What's New
-          - Check CHANGELOG.md for details
+          ### Download
+          - **APK**: Direct installation on Android devices
+          - **AAB**: For Google Play Store submission
           
-          ### Downloads
-          - APK: For direct installation
-          - AAB: For Google Play Store
+          ### Installation
+          1. Download APK file
+          2. Enable "Unknown Sources" in Settings
+          3. Install and enjoy!
+          
+          ### Features
+          - Quran with Urdu translation
+          - Mushaf (604 pages)
+          - Tasbih Counter
+          - Schedule Builder with alarms
+          - Prayer Times
+          - Qibla Direction
+          - Hadith Collection
+          - Dua Collection
+          - 99 Names of Allah
+          - Kids Zone (219+ levels)
+          - Ramadan Features
+          - Daily Reminders
+          
+          ### Website
+          Visit: https://noor-app.netlify.app
+          
+          بسم اللہ الرحمن الرحیم
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
