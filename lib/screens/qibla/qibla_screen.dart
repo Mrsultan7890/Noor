@@ -68,12 +68,6 @@ class _QiblaScreenState extends State<QiblaScreen> {
     return (bearing + 360) % 360;
   }
 
-  double _getDistanceToKaaba(double lat, double lon) {
-    const kaabaLat = 21.4225;
-    const kaabaLon = 39.8262;
-    return Geolocator.distanceBetween(lat, lon, kaabaLat, kaabaLon) / 1000;
-  }
-
   String _getDirectionText(double? angle) {
     if (angle == null) return '';
     if (angle >= 337.5 || angle < 22.5) return 'North ⬆️';

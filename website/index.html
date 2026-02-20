@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Noor - Your Complete Islamic Companion App. Quran, Hadith, Prayer Times, Qibla Direction, and more.">
+    <title>Noor - نور | Islamic Companion App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: rgba(255, 255, 255, 0.95); padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #2E7D32, #1B5E20); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .logo-text h1 { font-size: 28px; color: #2E7D32; margin-bottom: 5px; }
+        .logo-text p { font-size: 14px; color: #666; }
+        .download-btn { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; transition: transform 0.3s; display: inline-block; }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3); }
+        .hero { padding: 80px 0; text-align: center; color: white; }
+        .hero h2 { font-size: 48px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.9; }
+        .version-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; margin-bottom: 30px; backdrop-filter: blur(10px); }
+        .features { background: white; padding: 80px 0; }
+        .section-title { text-align: center; font-size: 36px; margin-bottom: 50px; color: #2E7D32; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .feature-card { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 30px; border-radius: 15px; text-align: center; transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .feature-icon { font-size: 48px; margin-bottom: 15px; }
+        .feature-card h3 { font-size: 20px; margin-bottom: 10px; color: #2E7D32; }
+        .installation { background: #f8f9fa; padding: 80px 0; }
+        .steps { max-width: 800px; margin: 0 auto; }
+        .step { display: flex; gap: 20px; margin-bottom: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .step-number { width: 40px; height: 40px; background: #2E7D32; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+        footer { background: #1a1a1a; color: white; padding: 40px 0; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .footer-links a { color: white; text-decoration: none; }
+        @media (max-width: 768px) { .hero h2 { font-size: 32px; } .features-grid { grid-template-columns: 1fr; } .header-content { flex-direction: column; gap: 20px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🕌</div>
+                    <div class="logo-text">
+                        <h1>Noor - نور</h1>
+                        <p>Islamic Companion</p>
+                    </div>
+                </div>
+                <a href="https://github.com/Mrsultan7890/Noor/releases/latest/download/noor.apk" class="download-btn">📥 Download APK</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="version-badge">Version 1.0.0 • Latest</div>
+            <h2>Your Complete Islamic Companion</h2>
+            <p>Everything you need for your Islamic journey</p>
+            <a href="https://github.com/Mrsultan7890/Noor/releases/latest/download/noor.apk" class="download-btn" style="font-size: 18px; padding: 15px 40px;">Download Now (FREE)</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">✨ Features</h2>
+            <div class="features-grid">
+                <div class="feature-card"><div class="feature-icon">📖</div><h3>Quran Translation</h3><p>Complete Quran with Urdu</p></div>
+                <div class="feature-card"><div class="feature-icon">📄</div><h3>Mushaf (604 Pages)</h3><p>Page by page Arabic</p></div>
+                <div class="feature-card"><div class="feature-icon">📿</div><h3>Tasbih Counter</h3><p>Digital Dhikr counter</p></div>
+                <div class="feature-card"><div class="feature-icon">📅</div><h3>Schedule Builder</h3><p>Custom Islamic routine</p></div>
+                <div class="feature-card"><div class="feature-icon">🕌</div><h3>Prayer Times</h3><p>Location-based times</p></div>
+                <div class="feature-card"><div class="feature-icon">🧭</div><h3>Qibla Direction</h3><p>Find Kaaba direction</p></div>
+                <div class="feature-card"><div class="feature-icon">📚</div><h3>Hadith Collection</h3><p>Bukhari, Muslim, Abu Dawud</p></div>
+                <div class="feature-card"><div class="feature-icon">🤲</div><h3>Dua Collection</h3><p>Daily supplications</p></div>
+                <div class="feature-card"><div class="feature-icon">⭐</div><h3>99 Names of Allah</h3><p>With meanings</p></div>
+                <div class="feature-card"><div class="feature-icon">🎮</div><h3>Kids Zone</h3><p>219+ game levels</p></div>
+                <div class="feature-card"><div class="feature-icon">🌙</div><h3>Ramadan Timer</h3><p>Sehri/Iftar countdown</p></div>
+                <div class="feature-card"><div class="feature-icon">🔔</div><h3>Daily Reminders</h3><p>Hadith/Dua notifications</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="installation">
+        <div class="container">
+            <h2 class="section-title">📲 Installation</h2>
+            <div class="steps">
+                <div class="step"><div class="step-number">1</div><div><h3>Download APK</h3><p>Click download button above</p></div></div>
+                <div class="step"><div class="step-number">2</div><div><h3>Enable Unknown Sources</h3><p>Settings → Security → Enable</p></div></div>
+                <div class="step"><div class="step-number">3</div><div><h3>Install</h3><p>Open APK and tap Install</p></div></div>
+                <div class="step"><div class="step-number">4</div><div><h3>Enjoy</h3><p>Launch Noor app!</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/Mrsultan7890/Noor">GitHub</a>
+                <a href="https://github.com/Mrsultan7890/Noor/releases">Releases</a>
+                <a href="https://github.com/Mrsultan7890/Noor/issues">Support</a>
+            </div>
+            <p>&copy; 2024 Noor App. All rights reserved.</p>
+            <p style="margin-top: 10px;">بسم اللہ الرحمن الرحیم</p>
+        </div>
+    </footer>
+</body>
+</html>
