@@ -12,7 +12,6 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
   Timer? _timer;
   Duration _timeUntilSehri = Duration.zero;
   Duration _timeUntilIftar = Duration.zero;
-  bool _isSehriTime = true;
   
   // Example times - should be fetched from API
   final TimeOfDay _sehriTime = const TimeOfDay(hour: 5, minute: 30);
@@ -57,7 +56,6 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
     setState(() {
       _timeUntilSehri = sehri.difference(now);
       _timeUntilIftar = iftar.difference(now);
-      _isSehriTime = _timeUntilSehri < _timeUntilIftar;
     });
   }
   

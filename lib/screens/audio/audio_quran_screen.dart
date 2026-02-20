@@ -19,12 +19,15 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   }
 
   Future<void> _playAudio(int surahNumber) async {
+    if (!mounted) return;
     try {
       await _player.setUrl('https://cdn.islamic.network/quran/audio/128/ar.alafasy/$surahNumber.mp3');
       _player.play();
       setState(() => _isPlaying = true);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 

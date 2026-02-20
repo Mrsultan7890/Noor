@@ -25,6 +25,9 @@ class QiblaScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               final qiblahDirection = snapshot.data;
+      if (qiblahDirection == null) {
+        return const Center(child: Text('No data'));
+      }
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

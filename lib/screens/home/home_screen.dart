@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
-import '../screens/quran/quran_list_screen.dart';
-import '../screens/tasbih/tasbih_screen.dart';
-import '../screens/schedule/schedule_list_screen.dart';
-import '../screens/ramadan/ramadan_home_screen.dart';
-import '../screens/prayer/prayer_times_screen.dart';
-import '../screens/qibla/qibla_screen.dart';
-import '../screens/audio/audio_quran_screen.dart';
-import '../widgets/feature_card.dart';
+import '../../providers/theme_provider.dart';
+import '../../screens/quran/quran_list_screen.dart';
+import '../../screens/tasbih/tasbih_screen.dart';
+import '../../screens/schedule/schedule_list_screen.dart';
+import '../../screens/ramadan/ramadan_home_screen.dart';
+import '../../screens/prayer/prayer_times_screen.dart';
+import '../../screens/qibla/qibla_screen.dart';
+import '../../screens/audio/audio_quran_screen.dart';
+import '../../widgets/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

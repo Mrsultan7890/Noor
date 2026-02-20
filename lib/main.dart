@@ -12,11 +12,9 @@ import 'models/schedule_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Hive
   await Hive.initFlutter();
   Hive.registerAdapter(ScheduleAdapter());
   
-  // Initialize Notifications
   await NotificationService().init();
   
   runApp(const NoorApp());
