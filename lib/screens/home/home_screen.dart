@@ -5,6 +5,9 @@ import '../screens/quran/quran_list_screen.dart';
 import '../screens/tasbih/tasbih_screen.dart';
 import '../screens/schedule/schedule_list_screen.dart';
 import '../screens/ramadan/ramadan_home_screen.dart';
+import '../screens/prayer/prayer_times_screen.dart';
+import '../screens/qibla/qibla_screen.dart';
+import '../screens/audio/audio_quran_screen.dart';
 import '../widgets/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -147,6 +150,66 @@ class HomeScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ScheduleListScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Coming Soon
+            Text(
+              'More Features',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            FeatureCard(
+              title: 'Prayer Times - نماز کے اوقات',
+              subtitle: 'Daily prayer times based on location',
+              icon: Icons.access_time,
+              color: Colors.blue,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrayerTimesScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 12),
+            
+            FeatureCard(
+              title: 'Qibla Direction - قبلہ',
+              subtitle: 'Find direction to Kaaba',
+              icon: Icons.explore,
+              color: Colors.indigo,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QiblaScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 12),
+            
+            FeatureCard(
+              title: 'Audio Quran - آڈیو قرآن',
+              subtitle: 'Listen to Quran recitation',
+              icon: Icons.headphones,
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AudioQuranScreen(),
                   ),
                 );
               },
