@@ -25,6 +25,12 @@ class Schedule extends HiveObject {
   @HiveField(6)
   List<int> recurringDays; // 1-7 for Mon-Sun
   
+  @HiveField(7)
+  bool hasAlarm;
+  
+  @HiveField(8)
+  int completionCount;
+  
   Schedule({
     required this.title,
     required this.description,
@@ -33,5 +39,7 @@ class Schedule extends HiveObject {
     required this.type,
     this.isRecurring = false,
     this.recurringDays = const [],
+    this.hasAlarm = true,
+    this.completionCount = 0,
   });
 }

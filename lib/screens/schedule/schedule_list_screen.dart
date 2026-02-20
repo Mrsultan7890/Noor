@@ -12,6 +12,12 @@ class ScheduleListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Schedule - میرا شیڈول'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () => _showStats(context),
+          ),
+        ],
       ),
       body: Consumer<ScheduleProvider>(
         builder: (context, provider, child) {
@@ -60,31 +66,66 @@ class ScheduleListScreen extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  title: Text(
-                    schedule.title,
-                    style: TextStyle(
-                      decoration: schedule.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
-                    ),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          schedule.title,
+                          style: TextStyle(
+                            decoration: schedule.isCompleted
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
+                        ),
+                      ),
+                      if (schedule.hasAlarm)
+                        const Icon(Icons.alarm, size: 16, color: Colors.orange),
+                      if (schedule.isRecurring)
+                        const Icon(Icons.repeat, size: 16, color: Colors.blue),
+                    ],
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(schedule.description),
                       const SizedBox(height: 4),
-                      Text(
-                        timeFormat.format(schedule.time),
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            timeFormat.format(schedule.time),
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (schedule.completionCount > 0) ...[
+                            const SizedBox(width: 8),
+                            Text(
+                              '🔥 ${schedule.completionCount}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScheduleBuilderScreen(
+                                schedule: schedule,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       Checkbox(
                         value: schedule.isCompleted,
                         onChanged: (value) {
@@ -148,5 +189,45 @@ class ScheduleListScreen extends StatelessWidget {
       default:
         return Icons.event;
     }
+  }
+  
+  void _showStats(BuildContext context) {
+    final provider = Provider.of<ScheduleProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Statistics'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _statRow('Total Schedules', provider.totalSchedules.toString(), Icons.event_note),
+            const Divider(),
+            _statRow('Completed Today', provider.completedToday.toString(), Icons.check_circle),
+            const Divider(),
+            _statRow('Total Completions', provider.totalCompletions.toString(), Icons.emoji_events),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _statRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.green),
+          const SizedBox(width: 12),
+          Expanded(child: Text(label)),
+          Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
   }
 }

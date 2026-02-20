@@ -23,14 +23,16 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
       isCompleted: fields[3] as bool,
       type: fields[4] as String,
       isRecurring: fields[5] as bool,
-      recurringDays: (fields[6] as List).cast<int>(),
+      recurringDays: (fields[6] as List?)?.cast<int>() ?? [],
+      hasAlarm: fields[7] as bool? ?? true,
+      completionCount: fields[8] as int? ?? 0,
     );
   }
 
   @override
   void write(BinaryWriter writer, Schedule obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
       ..writeByte(5)
       ..write(obj.isRecurring)
       ..writeByte(6)
-      ..write(obj.recurringDays);
+      ..write(obj.recurringDays)
+      ..writeByte(7)
+      ..write(obj.hasAlarm)
+      ..writeByte(8)
+      ..write(obj.completionCount);
   }
 
   @override

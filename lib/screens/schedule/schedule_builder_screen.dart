@@ -5,7 +5,9 @@ import '../../models/schedule_model.dart';
 import '../../services/notification_service.dart';
 
 class ScheduleBuilderScreen extends StatefulWidget {
-  const ScheduleBuilderScreen({super.key});
+  final Schedule? schedule;
+  final int? index;
+  const ScheduleBuilderScreen({super.key, this.schedule, this.index});
 
   @override
   State<ScheduleBuilderScreen> createState() => _ScheduleBuilderScreenState();
@@ -19,6 +21,8 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
   String _selectedType = 'quran';
   TimeOfDay _selectedTime = TimeOfDay.now();
   bool _isRecurring = false;
+  bool _hasAlarm = true;
+  List<int> _selectedDays = [];
   
   final Map<String, String> _activityTypes = {
     'quran': 'Quran Reading',
@@ -28,11 +32,35 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
     'custom': 'Custom',
   };
 
+  final Map<int, String> _weekDays = {
+    1: 'Mon',
+    2: 'Tue',
+    3: 'Wed',
+    4: 'Thu',
+    5: 'Fri',
+    6: 'Sat',
+    7: 'Sun',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.schedule != null) {
+      _titleController.text = widget.schedule!.title;
+      _descriptionController.text = widget.schedule!.description;
+      _selectedType = widget.schedule!.type;
+      _selectedTime = TimeOfDay.fromDateTime(widget.schedule!.time);
+      _isRecurring = widget.schedule!.isRecurring;
+      _hasAlarm = widget.schedule!.hasAlarm;
+      _selectedDays = List.from(widget.schedule!.recurringDays);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Schedule'),
+        title: Text(widget.schedule == null ? 'Create Schedule' : 'Edit Schedule'),
       ),
       body: Form(
         key: _formKey,
@@ -142,14 +170,66 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
             
             // Recurring
             Card(
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text('Recurring'),
+                    subtitle: const Text('Repeat this schedule'),
+                    value: _isRecurring,
+                    onChanged: (value) {
+                      setState(() {
+                        _isRecurring = value;
+                        if (!value) _selectedDays.clear();
+                      });
+                    },
+                  ),
+                  if (_isRecurring) ..[
+                    const Divider(height: 1),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Select Days:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: _weekDays.entries.map((e) {
+                              final isSelected = _selectedDays.contains(e.key);
+                              return FilterChip(
+                                label: Text(e.value),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedDays.add(e.key);
+                                    } else {
+                                      _selectedDays.remove(e.key);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Alarm
+            Card(
               child: SwitchListTile(
-                title: const Text('Recurring Daily'),
-                subtitle: const Text('Repeat this schedule every day'),
-                value: _isRecurring,
+                title: const Text('Alarm'),
+                subtitle: const Text('Play alarm sound at scheduled time'),
+                value: _hasAlarm,
+                secondary: const Icon(Icons.alarm),
                 onChanged: (value) {
-                  setState(() {
-                    _isRecurring = value;
-                  });
+                  setState(() => _hasAlarm = value);
                 },
               ),
             ),
@@ -160,7 +240,7 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
             ElevatedButton.icon(
               onPressed: _saveSchedule,
               icon: const Icon(Icons.save),
-              label: const Text('Save Schedule'),
+              label: Text(widget.schedule == null ? 'Save Schedule' : 'Update Schedule'),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
               ),
@@ -173,6 +253,13 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
   
   void _saveSchedule() async {
     if (_formKey.currentState!.validate()) {
+      if (_isRecurring && _selectedDays.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select at least one day for recurring schedule')),
+        );
+        return;
+      }
+      
       final now = DateTime.now();
       final scheduleTime = DateTime(
         now.year,
@@ -188,23 +275,32 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
         time: scheduleTime,
         type: _selectedType,
         isRecurring: _isRecurring,
+        recurringDays: _selectedDays,
+        hasAlarm: _hasAlarm,
+        completionCount: widget.schedule?.completionCount ?? 0,
       );
       
-      // Save to provider
-      await Provider.of<ScheduleProvider>(context, listen: false)
-          .addSchedule(schedule);
+      final provider = Provider.of<ScheduleProvider>(context, listen: false);
+      
+      if (widget.schedule == null) {
+        await provider.addSchedule(schedule);
+      } else {
+        await provider.updateSchedule(widget.index!, schedule);
+      }
       
       // Schedule notification
-      await NotificationService().scheduleNotification(
-        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        title: schedule.title,
-        body: schedule.description,
-        scheduledTime: scheduleTime,
-      );
+      if (_hasAlarm) {
+        await NotificationService().scheduleNotification(
+          id: widget.index ?? DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          title: schedule.title,
+          body: schedule.description,
+          scheduledTime: scheduleTime,
+        );
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Schedule created successfully!')),
+          SnackBar(content: Text(widget.schedule == null ? 'Schedule created!' : 'Schedule updated!')),
         );
         Navigator.pop(context);
       }

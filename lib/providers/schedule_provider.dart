@@ -33,8 +33,22 @@ class ScheduleProvider extends ChangeNotifier {
   
   Future<void> toggleComplete(int index) async {
     _schedules[index].isCompleted = !_schedules[index].isCompleted;
+    if (_schedules[index].isCompleted) {
+      _schedules[index].completionCount++;
+    }
     final box = await Hive.openBox<Schedule>('schedules');
     await box.putAt(index, _schedules[index]);
     notifyListeners();
   }
+  
+  Future<void> updateSchedule(int index, Schedule schedule) async {
+    final box = await Hive.openBox<Schedule>('schedules');
+    await box.putAt(index, schedule);
+    _schedules[index] = schedule;
+    notifyListeners();
+  }
+  
+  int get totalSchedules => _schedules.length;
+  int get completedToday => _schedules.where((s) => s.isCompleted).length;
+  int get totalCompletions => _schedules.fold(0, (sum, s) => sum + s.completionCount);
 }
