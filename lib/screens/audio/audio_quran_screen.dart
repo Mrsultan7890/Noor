@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AudioQuranScreen extends StatefulWidget {
   const AudioQuranScreen({super.key});
@@ -12,6 +13,16 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   final AudioPlayer _player = AudioPlayer();
   int? _currentSurah;
   bool _isLoading = false;
+  String _selectedReciter = 'ar.alafasy';
+
+  final Map<String, String> _reciters = {
+    'ar.alafasy': 'Mishary Rashid Alafasy',
+    'ar.abdulbasitmurattal': 'Abdul Basit (Murattal)',
+    'ar.abdurrahmaansudais': 'Abdur-Rahman As-Sudais',
+    'ar.saadalghamadi': 'Saad Al-Ghamdi',
+    'ar.minshawi': 'Mohamed Siddiq Al-Minshawi',
+    'ar.husary': 'Mahmoud Khalil Al-Hussary',
+  };
 
   final List<String> _surahNames = [
     'Al-Fatihah', 'Al-Baqarah', 'Aal-E-Imran', 'An-Nisa', 'Al-Maidah',
@@ -40,6 +51,23 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadReciter();
+  }
+
+  Future<void> _loadReciter() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() => _selectedReciter = prefs.getString('reciter') ?? 'ar.alafasy');
+  }
+
+  Future<void> _saveReciter(String reciter) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('reciter', reciter);
+    setState(() => _selectedReciter = reciter);
+  }
+
+  @override
   void dispose() {
     _player.dispose();
     super.dispose();
@@ -54,7 +82,7 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
     });
 
     try {
-      await _player.setUrl('https://cdn.islamic.network/quran/audio/128/ar.alafasy/$surahNumber.mp3');
+      await _player.setUrl('https://cdn.islamic.network/quran/audio/128/$_selectedReciter/$surahNumber.mp3');
       await _player.play();
       setState(() => _isLoading = false);
     } catch (e) {
@@ -74,10 +102,42 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
     return '$minutes:$seconds';
   }
 
+  void _showReciterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Reciter'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _reciters.entries.map((e) => RadioListTile<String>(
+            title: Text(e.value),
+            value: e.key,
+            groupValue: _selectedReciter,
+            onChanged: (val) {
+              if (val != null) {
+                _saveReciter(val);
+                Navigator.pop(context);
+              }
+            },
+          )).toList(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Audio Quran - آڈیو قرآن')),
+      appBar: AppBar(
+        title: const Text('Audio Quran - آڈیو قرآن'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'Select Reciter',
+            onPressed: _showReciterDialog,
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
