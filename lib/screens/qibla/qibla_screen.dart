@@ -39,7 +39,6 @@ class _QiblaScreenState extends State<QiblaScreen> {
       );
       
       final qibla = _getQiblaDirection(position.latitude, position.longitude);
-      final distance = _getDistanceToKaaba(position.latitude, position.longitude);
 
       setState(() {
         _qiblaDirection = qibla;
@@ -168,10 +167,10 @@ class _QiblaScreenState extends State<QiblaScreen> {
                                 ),
                               ),
                               // Direction markers
-                              Positioned(top: 10, child: Text('N', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red))),
-                              Positioned(bottom: 10, child: Text('S', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                              Positioned(left: 10, child: Text('W', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                              Positioned(right: 10, child: Text('E', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                              const Positioned(top: 10, child: Text('N', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red))),
+                              const Positioned(bottom: 10, child: Text('S', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                              const Positioned(left: 10, child: Text('W', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                              const Positioned(right: 10, child: Text('E', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                               // Qibla arrow
                               Transform.rotate(
                                 angle: (_qiblaDirection ?? 0) * pi / 180,
