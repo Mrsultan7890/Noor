@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import '../../services/sound_service.dart';
 
 class PrayerQuizPlay extends StatefulWidget {
   final int level;
@@ -23,12 +23,16 @@ class _PrayerQuizPlayState extends State<PrayerQuizPlay> {
 
   void _answer(String ans) {
     if (ans == _questions[_currentQ]['a']) {
+      SoundService.playCorrect();
       _score++;
+    } else {
+      SoundService.playWrong();
     }
     
     if (_currentQ < _questions.length - 1) {
       setState(() => _currentQ++);
     } else {
+      SoundService.playLevelComplete();
       _showResult();
     }
   }

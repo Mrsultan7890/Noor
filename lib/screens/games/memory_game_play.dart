@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:math';
+import '../../services/sound_service.dart';
 
 class MemoryGamePlay extends StatefulWidget {
   final int level;
@@ -53,6 +53,7 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
   void _onCardTap(int index) {
     if (_isChecking || _flipped[index] || _matched[index]) return;
 
+    SoundService.playCardFlip();
     setState(() {
       _flipped[index] = true;
     });
@@ -64,6 +65,7 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
       _moves++;
 
       if (_cards[_firstIndex!] == _cards[index]) {
+        SoundService.playCorrect();
         setState(() {
           _matched[_firstIndex!] = true;
           _matched[index] = true;
@@ -73,9 +75,11 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
         _isChecking = false;
 
         if (_matches == _getPairsCount()) {
+          SoundService.playLevelComplete();
           _showWinDialog();
         }
       } else {
+        SoundService.playWrong();
         Timer(const Duration(milliseconds: 800), () {
           setState(() {
             _flipped[_firstIndex!] = false;
