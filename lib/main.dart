@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'screens/home/home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'providers/theme_provider.dart';
 import 'providers/quran_provider.dart';
 import 'providers/tasbih_provider.dart';
@@ -40,7 +40,7 @@ class NoorApp extends StatelessWidget {
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: const HomeScreen(),
+            home: const SplashScreen(),
           );
         },
       ),
