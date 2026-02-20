@@ -19,7 +19,7 @@ class _HadithScreenState extends State<HadithScreen> {
   final Map<String, String> _books = {
     'bukhari': 'Sahih Bukhari',
     'muslim': 'Sahih Muslim',
-    'abudawud': 'Abu Dawood',
+    'abu-dawud': 'Abu Dawood',
   };
 
   @override

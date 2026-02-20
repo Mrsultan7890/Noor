@@ -77,11 +77,17 @@ class HomeScreen extends StatelessWidget {
             
             // Ramadan Section (Conditional)
             if (_isRamadanActive()) ...[
-              Text(
-                '🌙 Ramadan Special',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Icon(Icons.nightlight_round, color: Colors.purple),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Ramadan Special',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               FeatureCard(
@@ -223,7 +229,7 @@ class HomeScreen extends StatelessWidget {
             
             // Kids Zone
             Text(
-              '🎮 Kids Zone',
+              'Kids Zone',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -247,65 +253,58 @@ class HomeScreen extends StatelessWidget {
             
             const SizedBox(height: 24),
             
-            // Coming Soon
+            // Islamic Knowledge
             Text(
-              'Coming Soon',
+              'Islamic Knowledge',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             
-            Opacity(
-              opacity: 0.5,
-              child: Column(
-                children: [
-                  FeatureCard(
-                    title: 'Hadith - حدیث',
-                    subtitle: 'Authentic Hadith collection',
-                    icon: Icons.book,
-                    color: Colors.brown,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HadithScreen(),
-                        ),
-                      );
-                    },
+            FeatureCard(
+              title: 'Hadith - حدیث',
+              subtitle: 'Authentic Hadith collection',
+              icon: Icons.book,
+              color: Colors.brown,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HadithScreen(),
                   ),
-                  const SizedBox(height: 12),
-                  FeatureCard(
-                    title: 'Dua - دعا',
-                    subtitle: 'Daily duas and supplications',
-                    icon: Icons.favorite,
-                    color: Colors.pink,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DuaScreen(),
-                        ),
-                      );
-                    },
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            FeatureCard(
+              title: 'Dua - دعا',
+              subtitle: 'Daily duas and supplications',
+              icon: Icons.favorite,
+              color: Colors.pink,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DuaScreen(),
                   ),
-                  const SizedBox(height: 12),
-                  FeatureCard(
-                    title: '99 Names - اسماء الحسنیٰ',
-                    subtitle: 'Beautiful names of Allah',
-                    icon: Icons.star,
-                    color: Colors.amber,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NamesScreen(),
-                        ),
-                      );
-                    },
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            FeatureCard(
+              title: '99 Names - اسماء الحسنیٰ',
+              subtitle: 'Beautiful names of Allah',
+              icon: Icons.star,
+              color: Colors.amber,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NamesScreen(),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),
