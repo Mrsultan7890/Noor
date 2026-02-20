@@ -10,7 +10,34 @@ class AudioQuranScreen extends StatefulWidget {
 
 class _AudioQuranScreenState extends State<AudioQuranScreen> {
   final AudioPlayer _player = AudioPlayer();
-  bool _isPlaying = false;
+  int? _currentSurah;
+  bool _isLoading = false;
+
+  final List<String> _surahNames = [
+    'Al-Fatihah', 'Al-Baqarah', 'Aal-E-Imran', 'An-Nisa', 'Al-Maidah',
+    'Al-Anam', 'Al-Araf', 'Al-Anfal', 'At-Tawbah', 'Yunus',
+    'Hud', 'Yusuf', 'Ar-Rad', 'Ibrahim', 'Al-Hijr',
+    'An-Nahl', 'Al-Isra', 'Al-Kahf', 'Maryam', 'Ta-Ha',
+    'Al-Anbiya', 'Al-Hajj', 'Al-Muminun', 'An-Nur', 'Al-Furqan',
+    'Ash-Shuara', 'An-Naml', 'Al-Qasas', 'Al-Ankabut', 'Ar-Rum',
+    'Luqman', 'As-Sajdah', 'Al-Ahzab', 'Saba', 'Fatir',
+    'Ya-Sin', 'As-Saffat', 'Sad', 'Az-Zumar', 'Ghafir',
+    'Fussilat', 'Ash-Shura', 'Az-Zukhruf', 'Ad-Dukhan', 'Al-Jathiyah',
+    'Al-Ahqaf', 'Muhammad', 'Al-Fath', 'Al-Hujurat', 'Qaf',
+    'Adh-Dhariyat', 'At-Tur', 'An-Najm', 'Al-Qamar', 'Ar-Rahman',
+    'Al-Waqiah', 'Al-Hadid', 'Al-Mujadila', 'Al-Hashr', 'Al-Mumtahanah',
+    'As-Saff', 'Al-Jumuah', 'Al-Munafiqun', 'At-Taghabun', 'At-Talaq',
+    'At-Tahrim', 'Al-Mulk', 'Al-Qalam', 'Al-Haqqah', 'Al-Maarij',
+    'Nuh', 'Al-Jinn', 'Al-Muzzammil', 'Al-Muddaththir', 'Al-Qiyamah',
+    'Al-Insan', 'Al-Mursalat', 'An-Naba', 'An-Naziat', 'Abasa',
+    'At-Takwir', 'Al-Infitar', 'Al-Mutaffifin', 'Al-Inshiqaq', 'Al-Buruj',
+    'At-Tariq', 'Al-Ala', 'Al-Ghashiyah', 'Al-Fajr', 'Al-Balad',
+    'Ash-Shams', 'Al-Lail', 'Ad-Duha', 'Ash-Sharh', 'At-Tin',
+    'Al-Alaq', 'Al-Qadr', 'Al-Bayyinah', 'Az-Zalzalah', 'Al-Adiyat',
+    'Al-Qariah', 'At-Takathur', 'Al-Asr', 'Al-Humazah', 'Al-Fil',
+    'Quraish', 'Al-Maun', 'Al-Kawthar', 'Al-Kafirun', 'An-Nasr',
+    'Al-Masad', 'Al-Ikhlas', 'Al-Falaq', 'An-Nas'
+  ];
 
   @override
   void dispose() {
@@ -20,15 +47,31 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
 
   Future<void> _playAudio(int surahNumber) async {
     if (!mounted) return;
+    
+    setState(() {
+      _isLoading = true;
+      _currentSurah = surahNumber;
+    });
+
     try {
       await _player.setUrl('https://cdn.islamic.network/quran/audio/128/ar.alafasy/$surahNumber.mp3');
-      _player.play();
-      setState(() => _isPlaying = true);
+      await _player.play();
+      setState(() => _isLoading = false);
     } catch (e) {
+      setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading audio: $e')),
+        );
       }
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 
   @override
@@ -42,53 +85,114 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
               itemCount: 114,
               padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
+                final surahNumber = index + 1;
+                final isPlaying = _currentSurah == surahNumber;
+                
                 return Card(
+                  color: isPlaying ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
                   child: ListTile(
-                    leading: CircleAvatar(child: Text('${index + 1}')),
-                    title: Text('Surah ${index + 1}'),
-                    trailing: IconButton(
-                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-                      onPressed: () => _playAudio(index + 1),
+                    leading: CircleAvatar(
+                      backgroundColor: isPlaying ? Theme.of(context).primaryColor : null,
+                      child: Text('$surahNumber', style: TextStyle(color: isPlaying ? Colors.white : null)),
                     ),
+                    title: Text(_surahNames[index], style: TextStyle(fontWeight: isPlaying ? FontWeight.bold : null)),
+                    subtitle: Text('Surah $surahNumber'),
+                    trailing: _isLoading && isPlaying
+                        ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                        : IconButton(
+                            icon: Icon(isPlaying ? Icons.pause_circle : Icons.play_circle),
+                            color: Theme.of(context).primaryColor,
+                            iconSize: 32,
+                            onPressed: () {
+                              if (isPlaying) {
+                                _player.pause();
+                              } else {
+                                _playAudio(surahNumber);
+                              }
+                            },
+                          ),
                   ),
                 );
               },
             ),
           ),
-          StreamBuilder<Duration>(
-            stream: _player.positionStream,
-            builder: (context, snapshot) {
-              final position = snapshot.data ?? Duration.zero;
-              final duration = _player.duration ?? Duration.zero;
-              return Column(
+          if (_currentSurah != null)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: const Offset(0, -2))],
+              ),
+              child: Column(
                 children: [
-                  Slider(
-                    value: position.inSeconds.toDouble(),
-                    max: duration.inSeconds.toDouble(),
-                    onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
+                  Text(
+                    _surahNames[_currentSurah! - 1],
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  StreamBuilder<Duration>(
+                    stream: _player.positionStream,
+                    builder: (context, snapshot) {
+                      final position = snapshot.data ?? Duration.zero;
+                      final duration = _player.duration ?? Duration.zero;
+                      return Column(
+                        children: [
+                          Slider(
+                            value: position.inSeconds.toDouble(),
+                            max: duration.inSeconds > 0 ? duration.inSeconds.toDouble() : 1.0,
+                            onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(_formatDuration(position)),
+                                Text(_formatDuration(duration)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(icon: const Icon(Icons.skip_previous), onPressed: () {}),
                       IconButton(
-                        icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 48),
-                        onPressed: () {
-                          if (_isPlaying) {
-                            _player.pause();
-                          } else {
-                            _player.play();
-                          }
-                          setState(() => _isPlaying = !_isPlaying);
+                        icon: const Icon(Icons.skip_previous),
+                        iconSize: 36,
+                        onPressed: _currentSurah! > 1 ? () => _playAudio(_currentSurah! - 1) : null,
+                      ),
+                      StreamBuilder<PlayerState>(
+                        stream: _player.playerStateStream,
+                        builder: (context, snapshot) {
+                          final playerState = snapshot.data;
+                          final playing = playerState?.playing ?? false;
+                          return IconButton(
+                            icon: Icon(playing ? Icons.pause_circle_filled : Icons.play_circle_filled),
+                            iconSize: 64,
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () {
+                              if (playing) {
+                                _player.pause();
+                              } else {
+                                _player.play();
+                              }
+                            },
+                          );
                         },
                       ),
-                      IconButton(icon: const Icon(Icons.skip_next), onPressed: () {}),
+                      IconButton(
+                        icon: const Icon(Icons.skip_next),
+                        iconSize: 36,
+                        onPressed: _currentSurah! < 114 ? () => _playAudio(_currentSurah! + 1) : null,
+                      ),
                     ],
                   ),
                 ],
-              );
-            },
-          ),
+              ),
+            ),
         ],
       ),
     );
