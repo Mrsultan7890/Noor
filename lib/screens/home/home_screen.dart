@@ -8,6 +8,9 @@ import '../../screens/ramadan/ramadan_home_screen.dart';
 import '../../screens/prayer/prayer_times_screen.dart';
 import '../../screens/qibla/qibla_screen.dart';
 import '../../screens/audio/audio_quran_screen.dart';
+import '../../screens/hadith/hadith_screen.dart';
+import '../../screens/dua/dua_screen.dart';
+import '../../screens/names/names_screen.dart';
 import '../../widgets/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -235,7 +238,14 @@ class HomeScreen extends StatelessWidget {
                     subtitle: 'Authentic Hadith collection',
                     icon: Icons.book,
                     color: Colors.brown,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HadithScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 12),
                   FeatureCard(
@@ -243,7 +253,29 @@ class HomeScreen extends StatelessWidget {
                     subtitle: 'Daily duas and supplications',
                     icon: Icons.favorite,
                     color: Colors.pink,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DuaScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  FeatureCard(
+                    title: '99 Names - اسماء الحسنیٰ',
+                    subtitle: 'Beautiful names of Allah',
+                    icon: Icons.star,
+                    color: Colors.amber,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NamesScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
