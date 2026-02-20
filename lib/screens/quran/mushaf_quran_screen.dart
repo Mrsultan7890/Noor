@@ -12,24 +12,25 @@ class MushafQuranScreen extends StatefulWidget {
 
 class _MushafQuranScreenState extends State<MushafQuranScreen> {
   int _currentPage = 1;
-  List<String> _lines = [];
+  final Map<int, List<String>> _cachedPages = {};
   bool _isLoading = false;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _loadLastRead();
   }
 
   Future<void> _loadLastRead() async {
     final prefs = await SharedPreferences.getInstance();
     final lastPage = prefs.getInt('mushaf_last_page') ?? 1;
-    setState(() => _currentPage = lastPage);
-    _loadPage(lastPage);
+    await _loadPage(lastPage);
     if (lastPage > 1) {
-      _pageController.jumpToPage(lastPage - 1);
+      _pageController = PageController(initialPage: lastPage - 1);
     }
+    setState(() => _currentPage = lastPage);
   }
 
   Future<void> _saveLastRead(int page) async {
@@ -38,6 +39,12 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
   }
 
   Future<void> _loadPage(int page) async {
+    if (_cachedPages.containsKey(page)) {
+      setState(() => _currentPage = page);
+      _saveLastRead(page);
+      return;
+    }
+    
     setState(() => _isLoading = true);
     try {
       final response = await http.get(
@@ -46,8 +53,9 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final ayahs = data['data']['ayahs'] as List;
+        final lines = ayahs.map((a) => a['text'].toString()).toList();
         setState(() {
-          _lines = ayahs.map((a) => a['text'].toString()).toList();
+          _cachedPages[page] = lines;
           _currentPage = page;
           _isLoading = false;
         });
@@ -90,9 +98,13 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                 },
                 itemCount: 604,
                 itemBuilder: (context, index) {
-                  if (index + 1 != _currentPage) {
-                    return const SizedBox();
+                  final page = index + 1;
+                  final lines = _cachedPages[page] ?? [];
+                  
+                  if (lines.isEmpty && page == _currentPage) {
+                    return const Center(child: CircularProgressIndicator());
                   }
+                  
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
@@ -111,7 +123,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                             ],
                           ),
                           child: Column(
-                            children: _lines.map((line) {
+                            children: lines.map((line) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: Text(
@@ -130,7 +142,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Page $_currentPage',
+                          'Page $page',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.brown.shade700,

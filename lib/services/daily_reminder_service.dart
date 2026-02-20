@@ -43,7 +43,7 @@ class DailyReminderService {
     );
   }
 
-  static TZDateTime _nextInstanceOfTime(int hour, int minute) {
+  static tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduledDate.isBefore(now)) {

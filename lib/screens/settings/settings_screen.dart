@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/daily_reminder_service.dart';
+import '../../services/daily_reminder_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -53,14 +53,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _reminderTime.hour,
                         _reminderTime.minute,
                       );
-                      if (mounted) {
+                      if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Daily reminder enabled!')),
                         );
                       }
                     } else {
                       await DailyReminderService.disableReminder();
-                      if (mounted) {
+                      if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Daily reminder disabled')),
                         );
@@ -86,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           time.hour,
                           time.minute,
                         );
-                        if (mounted) {
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Reminder time set to ${time.format(context)}')),
                           );

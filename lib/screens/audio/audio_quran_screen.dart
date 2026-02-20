@@ -76,6 +76,8 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   Future<void> _playAudio(int surahNumber) async {
     if (!mounted) return;
     
+    await _player.stop();
+    
     setState(() {
       _isLoading = true;
       _currentSurah = surahNumber;
