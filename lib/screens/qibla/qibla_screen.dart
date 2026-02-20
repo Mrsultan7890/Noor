@@ -52,9 +52,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
     const kaabaLat = 21.4225;
     const kaabaLon = 39.8262;
 
-    const dLon = (kaabaLon - lon) * pi / 180;
-    const lat1 = lat * pi / 180;
-    const lat2 = kaabaLat * pi / 180;
+    final dLon = (kaabaLon - lon) * pi / 180;
+    final lat1 = lat * pi / 180;
+    final lat2 = kaabaLat * pi / 180;
 
     final y = sin(dLon) * cos(lat2);
     final x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
