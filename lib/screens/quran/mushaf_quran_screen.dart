@@ -13,24 +13,20 @@ class MushafQuranScreen extends StatefulWidget {
 class _MushafQuranScreenState extends State<MushafQuranScreen> {
   int _currentPage = 1;
   final Map<int, List<String>> _cachedPages = {};
-  bool _isLoading = false;
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     _loadLastRead();
   }
 
   Future<void> _loadLastRead() async {
     final prefs = await SharedPreferences.getInstance();
     final lastPage = prefs.getInt('mushaf_last_page') ?? 1;
-    await _loadPage(lastPage);
-    if (lastPage > 1) {
-      _pageController = PageController(initialPage: lastPage - 1);
-    }
+    _pageController = PageController(initialPage: lastPage - 1);
     setState(() => _currentPage = lastPage);
+    _loadPage(lastPage);
   }
 
   Future<void> _saveLastRead(int page) async {
@@ -38,14 +34,11 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
     await prefs.setInt('mushaf_last_page', page);
   }
 
-  Future<void> _loadPage(int page) async {
+  Future<List<String>> _loadPage(int page) async {
     if (_cachedPages.containsKey(page)) {
-      setState(() => _currentPage = page);
-      _saveLastRead(page);
-      return;
+      return _cachedPages[page]!;
     }
-    
-    setState(() => _isLoading = true);
+
     try {
       final response = await http.get(
         Uri.parse('https://api.alquran.cloud/v1/page/$page/quran-uthmani'),
@@ -54,16 +47,13 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
         final data = json.decode(response.body);
         final ayahs = data['data']['ayahs'] as List;
         final lines = ayahs.map((a) => a['text'].toString()).toList();
-        setState(() {
-          _cachedPages[page] = lines;
-          _currentPage = page;
-          _isLoading = false;
-        });
-        _saveLastRead(page);
+        _cachedPages[page] = lines;
+        return lines;
       }
     } catch (e) {
-      setState(() => _isLoading = false);
+      // Return empty on error
     }
+    return [];
   }
 
   @override
@@ -78,130 +68,117 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.brown.shade50, Colors.amber.shade50],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  final page = index + 1;
-                  if (page >= 1 && page <= 604) {
-                    _loadPage(page);
-                  }
-                },
-                itemCount: 604,
-                itemBuilder: (context, index) {
-                  final page = index + 1;
-                  final lines = _cachedPages[page] ?? [];
-                  
-                  if (lines.isEmpty && page == _currentPage) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: lines.map((line) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Text(
-                                  line,
-                                  textAlign: TextAlign.center,
-                                  textDirection: TextDirection.rtl,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    height: 2,
-                                    fontFamily: 'Amiri',
-                                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.brown.shade50, Colors.amber.shade50],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: PageView.builder(
+          controller: _pageController,
+          onPageChanged: (index) {
+            final page = index + 1;
+            setState(() => _currentPage = page);
+            _saveLastRead(page);
+            _loadPage(page);
+          },
+          itemCount: 604,
+          itemBuilder: (context, index) {
+            final page = index + 1;
+            return FutureBuilder<List<String>>(
+              future: _loadPage(page),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final lines = snapshot.data!;
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: lines.map((line) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                line,
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.rtl,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  height: 2,
+                                  fontFamily: 'Amiri',
                                 ),
-                              );
-                            }).toList(),
-                          ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Page $page',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.brown.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Page $page',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.brown.shade700,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
               icon: const Icon(Icons.first_page),
-              onPressed: _currentPage > 1
-                  ? () {
-                      _pageController.jumpToPage(0);
-                    }
-                  : null,
+              onPressed: _currentPage > 1 ? () => _pageController.jumpToPage(0) : null,
             ),
             IconButton(
               icon: const Icon(Icons.chevron_left),
               iconSize: 32,
               onPressed: _currentPage > 1
-                  ? () {
-                      _pageController.previousPage(
+                  ? () => _pageController.previousPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
-                      );
-                    }
+                      )
                   : null,
             ),
-            Text(
-              '$_currentPage / 604',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('$_currentPage / 604', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             IconButton(
               icon: const Icon(Icons.chevron_right),
               iconSize: 32,
               onPressed: _currentPage < 604
-                  ? () {
-                      _pageController.nextPage(
+                  ? () => _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
-                      );
-                    }
+                      )
                   : null,
             ),
             IconButton(
               icon: const Icon(Icons.last_page),
-              onPressed: _currentPage < 604
-                  ? () {
-                      _pageController.jumpToPage(603);
-                    }
-                  : null,
+              onPressed: _currentPage < 604 ? () => _pageController.jumpToPage(603) : null,
             ),
           ],
         ),
@@ -224,10 +201,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               final page = int.tryParse(controller.text);

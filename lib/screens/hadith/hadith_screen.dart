@@ -14,10 +14,12 @@ class _HadithScreenState extends State<HadithScreen> {
   List<Hadith> _hadiths = [];
   bool _isLoading = false;
   String? _error;
-  String _selectedBook = 'bukhari';
+  String _selectedBook = 'abudawud';
 
   final Map<String, String> _books = {
+    'abudawud': 'Sunan Abu Dawud',
     'bukhari': 'Sahih Bukhari',
+    'muslim': 'Sahih Muslim',
   };
 
   @override

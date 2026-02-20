@@ -8,7 +8,6 @@ import '../../screens/schedule/schedule_list_screen.dart';
 import '../../screens/ramadan/ramadan_home_screen.dart';
 import '../../screens/prayer/prayer_times_screen.dart';
 import '../../screens/qibla/qibla_screen.dart';
-import '../../screens/audio/audio_quran_screen.dart';
 import '../../screens/hadith/hadith_screen.dart';
 import '../../screens/dua/dua_screen.dart';
 import '../../screens/names/names_screen.dart';
@@ -239,23 +238,6 @@ class HomeScreen extends StatelessWidget {
             ),
             
             const SizedBox(height: 12),
-            
-            FeatureCard(
-              title: 'Audio Quran - آڈیو قرآن',
-              subtitle: 'Listen to Quran recitation',
-              icon: Icons.headphones,
-              color: Colors.purple,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AudioQuranScreen(),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 24),
             
             // Kids Zone
             Text(
