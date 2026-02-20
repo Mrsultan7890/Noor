@@ -33,7 +33,7 @@ class QiblaScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Transform.rotate(
-                      angle: (qiblahDirection!.qiblah * (pi / 180) * -1),
+                      angle: (qiblahDirection.qiblah * (pi / 180) * -1),
                       child: Icon(Icons.navigation, size: 200, color: Theme.of(context).primaryColor),
                     ),
                     const SizedBox(height: 32),
