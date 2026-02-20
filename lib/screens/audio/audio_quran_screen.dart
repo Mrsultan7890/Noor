@@ -54,6 +54,7 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   void initState() {
     super.initState();
     _loadReciter();
+    _player.setLoopMode(LoopMode.off);
   }
 
   Future<void> _loadReciter() async {
@@ -76,22 +77,24 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   Future<void> _playAudio(int surahNumber) async {
     if (!mounted) return;
     
-    await _player.stop();
-    
-    setState(() {
-      _isLoading = true;
-      _currentSurah = surahNumber;
-    });
-
     try {
-      await _player.setUrl('https://cdn.islamic.network/quran/audio/128/$_selectedReciter/$surahNumber.mp3');
+      await _player.stop();
+      
+      setState(() {
+        _isLoading = true;
+        _currentSurah = surahNumber;
+      });
+
+      final url = 'https://cdn.islamic.network/quran/audio/128/$_selectedReciter/$surahNumber.mp3';
+      await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
       await _player.play();
+      
       setState(() => _isLoading = false);
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading audio: $e')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     }
