@@ -28,16 +28,22 @@ git clone https://github.com/yourusername/noor.git
 cd noor
 
 # Run setup script (Linux/Mac)
+chmod +x setup.sh
 ./setup.sh
 
 # Or manually:
 flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
-flutter pub run flutter_launcher_icons
-flutter pub run flutter_native_splash:create
 
 # Run the app
 flutter run
+```
+
+### Optional: Add Arabic Fonts
+```bash
+# Download Amiri fonts from:
+# https://github.com/alif-type/amiri/releases
+# Place in assets/fonts/ directory
+# Then uncomment fonts section in pubspec.yaml
 ```
 
 ### Build Release

@@ -77,7 +77,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                         style: const TextStyle(
                           fontSize: 24,
                           height: 2,
-                          fontFamily: 'Amiri',
                         ),
                       ),
                       

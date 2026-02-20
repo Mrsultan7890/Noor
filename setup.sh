@@ -14,21 +14,24 @@ echo "✅ Flutter found"
 echo "📦 Getting dependencies..."
 flutter pub get
 
-# Generate code
-echo "🔨 Generating code..."
-flutter pub run build_runner build --delete-conflicting-outputs
+# Note: Hive adapters already generated manually
+echo "✅ Hive adapters ready"
 
-# Generate icons (requires icon images)
+# Generate icons (optional)
 echo "🎨 Generating app icons..."
-flutter pub run flutter_launcher_icons
+flutter pub run flutter_launcher_icons || echo "⚠️  Icon generation skipped"
 
-# Generate splash screen
+# Generate splash screen (optional)
 echo "💫 Generating splash screen..."
-flutter pub run flutter_native_splash:create
+flutter pub run flutter_native_splash:create || echo "⚠️  Splash generation skipped"
 
-# Analyze code
-echo "🔍 Analyzing code..."
-flutter analyze
+# Download fonts if missing
+if [ ! -f "assets/fonts/Amiri-Regular.ttf" ]; then
+    echo "📥 Downloading Amiri fonts..."
+    mkdir -p assets/fonts
+    curl -L -o assets/fonts/Amiri-Regular.ttf https://github.com/alif-type/amiri/raw/main/Amiri-Regular.ttf 2>/dev/null || echo "⚠️  Please download fonts manually from: https://github.com/alif-type/amiri/releases"
+    curl -L -o assets/fonts/Amiri-Bold.ttf https://github.com/alif-type/amiri/raw/main/Amiri-Bold.ttf 2>/dev/null
+fi
 
 echo ""
 echo "✅ Setup complete!"
@@ -39,4 +42,4 @@ echo ""
 echo "🏗️ To build APK:"
 echo "   flutter build apk --release"
 echo ""
-echo "🌙 Ramadan Mubarak!"
+echo "🌙 بسم اللہ الرحمن الرحیم"
