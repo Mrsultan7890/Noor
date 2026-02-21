@@ -95,42 +95,46 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                 }
 
                 final lines = snapshot.data!;
-                return SingleChildScrollView(
+                return Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: lines.map((line) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                line,
-                                textAlign: TextAlign.center,
-                                textDirection: TextDirection.rtl,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  height: 2,
-                                  fontFamily: 'Amiri',
-                                ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 8,
+                                spreadRadius: 2,
                               ),
-                            );
-                          }).toList(),
+                            ],
+                          ),
+                          child: ListView.builder(
+                            itemCount: lines.length,
+                            itemBuilder: (context, i) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  lines[i],
+                                  textAlign: TextAlign.center,
+                                  textDirection: TextDirection.rtl,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    height: 2.5,
+                                    fontFamily: 'Amiri',
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       Text(
                         'Page $page',
                         style: TextStyle(
