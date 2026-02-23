@@ -335,7 +335,7 @@ class _StepCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       arabic,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         color: Colors.green,
                       ),
