@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Query
 from typing import Optional, List
 from models.schemas import LeaderboardEntry
-from utils.pocketbase_client import pb_client
+from utils.mock_storage import mock_storage as pb_client
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
 

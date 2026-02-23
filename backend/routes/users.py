@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from models.schemas import UserProfile, UserUpdate, ActivityLog
 from routes.auth import get_current_user
-from utils.pocketbase_client import pb_client
+from utils.mock_storage import mock_storage as pb_client
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
