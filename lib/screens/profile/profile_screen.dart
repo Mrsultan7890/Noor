@@ -160,19 +160,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       value: '${user.quranProgress.toStringAsFixed(1)}%',
                       color: Colors.green,
                     ),
-                    _StatsCard(
+                    const _StatsCard(
                       icon: Icons.self_improvement,
                       title: 'Prayers Logged',
-                      value: user.prayersLogged.toString(),
+                      value: '0',
                       color: Colors.blue,
                     ),
-                    _StatsCard(
+                    const _StatsCard(
                       icon: Icons.school,
                       title: 'Lessons Done',
-                      value: user.lessonsCompleted.toString(),
+                      value: '0',
                       color: Colors.purple,
                     ),
-                    _StatsCard(
+                    const _StatsCard(
                       icon: Icons.emoji_events,
                       title: 'Rank',
                       value: 'Loading...',
