@@ -106,25 +106,25 @@ class ShahadaScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             
-            _InfoCard(
+            const _InfoCard(
               icon: Icons.check_circle,
               title: 'Belief in One God',
               description: 'There is only one God (Allah) worthy of worship. He has no partners, no children, and nothing is like Him.',
             ),
             
-            _InfoCard(
+            const _InfoCard(
               icon: Icons.person,
               title: 'Prophet Muhammad ﷺ',
               description: 'Muhammad is the final messenger of Allah, sent to guide humanity with the Quran.',
             ),
             
-            _InfoCard(
+            const _InfoCard(
               icon: Icons.star,
               title: 'Becoming a Muslim',
               description: 'By saying the Shahada with sincere belief in your heart, you become a Muslim.',
             ),
             
-            _InfoCard(
+            const _InfoCard(
               icon: Icons.favorite_border,
               title: 'The Foundation',
               description: 'This is the foundation of Islam. All other practices are built upon this declaration.',

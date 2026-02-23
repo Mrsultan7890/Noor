@@ -82,84 +82,84 @@ class WuduGuideScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             
-            _StepCard(
+            const _StepCard(
               number: 1,
               title: 'Make Intention (Niyyah)',
               description: 'Intend in your heart to perform wudu for purification',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 2,
               title: 'Say Bismillah',
               description: 'Begin by saying "In the name of Allah"',
               arabic: 'بِسْمِ اللَّهِ',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 3,
               title: 'Wash Both Hands',
               description: 'Wash both hands up to the wrists 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 4,
               title: 'Rinse Mouth',
               description: 'Rinse your mouth thoroughly 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 5,
               title: 'Rinse Nose',
               description: 'Sniff water into nostrils and blow out 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 6,
               title: 'Wash Face',
               description: 'Wash entire face from forehead to chin, ear to ear, 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 7,
               title: 'Wash Right Arm',
               description: 'Wash right arm from fingertips to elbow 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 8,
               title: 'Wash Left Arm',
               description: 'Wash left arm from fingertips to elbow 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 9,
               title: 'Wipe Head',
               description: 'Wipe head with wet hands from front to back once',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 10,
               title: 'Wipe Ears',
               description: 'Wipe inside and back of both ears once',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 11,
               title: 'Wash Right Foot',
               description: 'Wash right foot up to ankle 3 times',
               arabic: '',
             ),
             
-            _StepCard(
+            const _StepCard(
               number: 12,
               title: 'Wash Left Foot',
               description: 'Wash left foot up to ankle 3 times',
@@ -332,7 +332,7 @@ class _StepCard extends StatelessWidget {
                     ),
                   ),
                   if (arabic.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       arabic,
                       style: const TextStyle(

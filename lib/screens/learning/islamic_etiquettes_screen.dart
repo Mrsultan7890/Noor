@@ -37,7 +37,7 @@ class IslamicEtiquettesScreen extends StatelessWidget {
           
           const SizedBox(height: 24),
           
-          _EtiquetteCard(
+          const _EtiquetteCard(
             title: 'Eating Etiquette',
             icon: Icons.restaurant,
             color: Colors.orange,
@@ -52,7 +52,7 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             ],
           ),
           
-          _EtiquetteCard(
+          const _EtiquetteCard(
             title: 'Greeting (Salam)',
             icon: Icons.waving_hand,
             color: Colors.green,
@@ -67,7 +67,7 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             ],
           ),
           
-          _EtiquetteCard(
+          const _EtiquetteCard(
             title: 'Mosque Etiquette',
             icon: Icons.mosque,
             color: Colors.teal,
@@ -83,7 +83,7 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             ],
           ),
           
-          _EtiquetteCard(
+          const _EtiquetteCard(
             title: 'Bathroom Etiquette',
             icon: Icons.wc,
             color: Colors.blue,
@@ -98,7 +98,7 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             ],
           ),
           
-          _EtiquetteCard(
+          const _EtiquetteCard(
             title: 'Sleeping Etiquette',
             icon: Icons.bedtime,
             color: Colors.purple,

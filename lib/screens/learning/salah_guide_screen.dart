@@ -54,35 +54,35 @@ class SalahGuideScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             
-            _PrayerTimeCard(
+            const _PrayerTimeCard(
               name: 'Fajr',
               time: 'Before sunrise',
               rakats: '2 Rakats',
               icon: Icons.wb_twilight,
               color: Colors.indigo,
             ),
-            _PrayerTimeCard(
+            const _PrayerTimeCard(
               name: 'Dhuhr',
               time: 'After midday',
               rakats: '4 Rakats',
               icon: Icons.wb_sunny,
               color: Colors.orange,
             ),
-            _PrayerTimeCard(
+            const _PrayerTimeCard(
               name: 'Asr',
               time: 'Afternoon',
               rakats: '4 Rakats',
               icon: Icons.wb_cloudy,
               color: Colors.amber,
             ),
-            _PrayerTimeCard(
+            const _PrayerTimeCard(
               name: 'Maghrib',
               time: 'After sunset',
               rakats: '3 Rakats',
               icon: Icons.nights_stay,
               color: Colors.deepOrange,
             ),
-            _PrayerTimeCard(
+            const _PrayerTimeCard(
               name: 'Isha',
               time: 'Night',
               rakats: '4 Rakats',
@@ -98,67 +98,67 @@ class SalahGuideScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             
-            _StepCard(
+            const _StepCard(
               number: 1,
               title: 'Make Wudu',
               description: 'Perform ablution to purify yourself',
             ),
-            _StepCard(
+            const _StepCard(
               number: 2,
               title: 'Face Qibla',
               description: 'Stand facing the direction of Kaaba in Makkah',
             ),
-            _StepCard(
+            const _StepCard(
               number: 3,
               title: 'Make Intention (Niyyah)',
               description: 'Intend in your heart which prayer you are performing',
             ),
-            _StepCard(
+            const _StepCard(
               number: 4,
               title: 'Takbir (Allahu Akbar)',
               description: 'Raise hands to ears and say "Allahu Akbar"',
             ),
-            _StepCard(
+            const _StepCard(
               number: 5,
               title: 'Recite Al-Fatihah',
               description: 'Recite the opening chapter of the Quran',
             ),
-            _StepCard(
+            const _StepCard(
               number: 6,
               title: 'Recite Another Surah',
               description: 'Recite any short surah or verses from Quran',
             ),
-            _StepCard(
+            const _StepCard(
               number: 7,
               title: 'Ruku (Bowing)',
               description: 'Say "Allahu Akbar" and bow, say "Subhana Rabbiyal Adheem" 3 times',
             ),
-            _StepCard(
+            const _StepCard(
               number: 8,
               title: 'Stand Up',
               description: 'Say "Sami Allahu liman hamidah" while standing up',
             ),
-            _StepCard(
+            const _StepCard(
               number: 9,
               title: 'First Sujood (Prostration)',
               description: 'Say "Allahu Akbar" and prostrate, say "Subhana Rabbiyal A\'la" 3 times',
             ),
-            _StepCard(
+            const _StepCard(
               number: 10,
               title: 'Sit Between Sujood',
               description: 'Sit briefly and say "Allahu Akbar"',
             ),
-            _StepCard(
+            const _StepCard(
               number: 11,
               title: 'Second Sujood',
               description: 'Prostrate again and say "Subhana Rabbiyal A\'la" 3 times',
             ),
-            _StepCard(
+            const _StepCard(
               number: 12,
               title: 'Tashahhud (After 2nd Rakat)',
               description: 'Sit and recite Tashahhud and Durood',
             ),
-            _StepCard(
+            const _StepCard(
               number: 13,
               title: 'Tasleem (Ending)',
               description: 'Turn head right and left saying "Assalamu Alaikum wa Rahmatullah"',

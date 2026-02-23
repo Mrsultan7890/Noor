@@ -16,9 +16,9 @@ class SixPillarsImanScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
+            const Card(
               color: Colors.purple,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(24),
                 child: Column(
                   children: [
@@ -44,7 +44,7 @@ class SixPillarsImanScreen extends StatelessWidget {
             
             const SizedBox(height: 24),
             
-            _PillarCard(
+            const _PillarCard(
               number: 1,
               title: 'Belief in Allah',
               icon: Icons.star,
@@ -58,7 +58,7 @@ class SixPillarsImanScreen extends StatelessWidget {
               ],
             ),
             
-            _PillarCard(
+            const _PillarCard(
               number: 2,
               title: 'Belief in Angels',
               icon: Icons.cloud,
@@ -72,7 +72,7 @@ class SixPillarsImanScreen extends StatelessWidget {
               ],
             ),
             
-            _PillarCard(
+            const _PillarCard(
               number: 3,
               title: 'Belief in Books',
               icon: Icons.menu_book,
@@ -86,7 +86,7 @@ class SixPillarsImanScreen extends StatelessWidget {
               ],
             ),
             
-            _PillarCard(
+            const _PillarCard(
               number: 4,
               title: 'Belief in Prophets',
               icon: Icons.people,
@@ -101,7 +101,7 @@ class SixPillarsImanScreen extends StatelessWidget {
               ],
             ),
             
-            _PillarCard(
+            const _PillarCard(
               number: 5,
               title: 'Belief in Day of Judgment',
               icon: Icons.gavel,
@@ -116,7 +116,7 @@ class SixPillarsImanScreen extends StatelessWidget {
               ],
             ),
             
-            _PillarCard(
+            const _PillarCard(
               number: 6,
               title: 'Belief in Divine Decree (Qadr)',
               icon: Icons.timeline,
