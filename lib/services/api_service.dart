@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   // Backend on laptop, app on phone (same WiFi)
-  static const String baseUrl = 'http://192.168.91.129:8000'; // Laptop IP
+  static const String baseUrl = 'http://192.168.0.217:8000'; // Laptop IP (Bridge Mode)
   // static const String baseUrl = 'http://127.0.0.1:8000'; // Same device
   // static const String baseUrl = 'https://your-render-url.onrender.com'; // Production
   
