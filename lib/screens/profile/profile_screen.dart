@@ -27,14 +27,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await Provider.of<UserProvider>(context, listen: false).logout();
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
-                );
-              }
+            onPressed: () {
+              final provider = Provider.of<UserProvider>(context, listen: false);
+              provider.logout().then((_) {
+                if (mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
+                  );
+                }
+              });
             },
           ),
         ],
