@@ -5,6 +5,9 @@ import '../../services/update_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../screens/quran/quran_list_screen.dart';
 import '../../screens/quran/mushaf_quran_screen.dart';
+import '../../screens/quran/enhanced_quran_reader_screen.dart';
+import '../../screens/learning/arabic_alphabet_screen.dart';
+import '../../models/quran_model.dart';
 import '../../screens/tasbih/tasbih_screen.dart';
 import '../../screens/schedule/schedule_list_screen.dart';
 import '../../screens/ramadan/ramadan_home_screen.dart';
@@ -92,35 +95,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Noor - نور',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              themeProvider.themeMode == ThemeMode.light
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-            ),
-            onPressed: () => themeProvider.toggleTheme(),
-          ),
-        ],
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -129,21 +110,35 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Welcome Card
             Card(
+              color: Theme.of(context).primaryColor,
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'السلام علیکم',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Icon(Icons.wb_sunny, color: Colors.white, size: 32),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'السلام علیکم',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Welcome to Noor - Your Islamic Companion',
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -152,41 +147,94 @@ class _HomeScreenState extends State<HomeScreen> {
             
             const SizedBox(height: 24),
             
-            // Ramadan Section (Conditional)
-            if (_isRamadanActive()) ...[
-              Row(
-                children: [
-                  const Icon(Icons.nightlight_round, color: Colors.purple),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Ramadan Special',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              FeatureCard(
-                title: 'Ramadan Features',
-                subtitle: 'Sehri/Iftar Timer, Roza Counter & More',
-                icon: Icons.nightlight_round,
-                color: Colors.purple,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RamadanHomeScreen(),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-            
-            // Core Features
+            // Quick Access
             Text(
-              'Core Features',
+              'Quick Access',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            Row(
+              children: [
+                Expanded(
+                  child: _QuickAccessCard(
+                    title: 'Quran',
+                    icon: Icons.menu_book,
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QuranListScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _QuickAccessCard(
+                    title: 'Mushaf',
+                    icon: Icons.auto_stories,
+                    color: Colors.brown,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MushafQuranScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            
+            SizedBox(height: 12),
+            
+            Row(
+              children: [
+                Expanded(
+                  child: _QuickAccessCard(
+                    title: 'Tasbih',
+                    icon: Icons.circle_outlined,
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TasbihScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _QuickAccessCard(
+                    title: 'Qibla',
+                    icon: Icons.explore,
+                    color: Colors.indigo,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QiblaScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Featured
+            Text(
+              'Featured',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -194,15 +242,23 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             
             FeatureCard(
-              title: 'Quran - قرآن',
-              subtitle: 'Read with Urdu translation',
-              icon: Icons.menu_book,
-              color: Colors.green,
+              title: 'Learn Quran with Audio',
+              subtitle: 'Transliteration, Word-by-Word & Recitation',
+              icon: Icons.headphones,
+              color: Colors.deepOrange,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const QuranListScreen(),
+                    builder: (context) => EnhancedQuranReaderScreen(
+                      surah: Surah(
+                        number: 1,
+                        name: 'سُورَةُ ٱلْفَاتِحَةِ',
+                        englishName: 'Al-Fatihah',
+                        numberOfAyahs: 7,
+                        revelationType: 'Meccan',
+                      ),
+                    ),
                   ),
                 );
               },
@@ -211,15 +267,15 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             
             FeatureCard(
-              title: 'Mushaf - مصحف',
-              subtitle: 'Page by page Arabic Quran',
-              icon: Icons.auto_stories,
-              color: Colors.brown,
+              title: 'Learn Arabic Alphabet',
+              subtitle: 'Letters, Harakat & Interactive Quiz',
+              icon: Icons.school,
+              color: Colors.purple,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MushafQuranScreen(),
+                    builder: (context) => const ArabicAlphabetScreen(),
                   ),
                 );
               },
@@ -228,25 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             
             FeatureCard(
-              title: 'Tasbih - تسبیح',
-              subtitle: 'Digital counter for Dhikr',
-              icon: Icons.circle_outlined,
-              color: Colors.teal,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TasbihScreen(),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 12),
-            
-            FeatureCard(
-              title: 'My Schedule - میرا شیڈول',
-              subtitle: 'Custom Islamic routine builder',
+              title: 'My Schedule',
+              subtitle: 'Build your Islamic routine',
               icon: Icons.schedule,
               color: Colors.orange,
               onTap: () {
@@ -259,20 +298,11 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             
-            const SizedBox(height: 24),
-            
-            // Coming Soon
-            Text(
-              'More Features',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             const SizedBox(height: 12),
             
             FeatureCard(
-              title: 'Prayer Times - نماز کے اوقات',
-              subtitle: 'Daily prayer times based on location',
+              title: 'Prayer Times',
+              subtitle: 'Daily Salah timings',
               icon: Icons.access_time,
               color: Colors.blue,
               onTap: () {
@@ -284,106 +314,57 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            
-            const SizedBox(height: 12),
-            
-            FeatureCard(
-              title: 'Qibla Direction - قبلہ',
-              subtitle: 'Find direction to Kaaba',
-              icon: Icons.explore,
-              color: Colors.indigo,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const QiblaScreen(),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 12),
-            
-            // Kids Zone
-            Text(
-              'Kids Zone',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            
-            FeatureCard(
-              title: 'Islamic Games - اسلامی گیمز',
-              subtitle: '219+ Levels for Kids',
-              icon: Icons.games,
-              color: Colors.deepPurple,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const KidsZoneScreen(),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 24),
-            
-            // Islamic Knowledge
-            Text(
-              'Islamic Knowledge',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            
-            FeatureCard(
-              title: 'Hadith - حدیث',
-              subtitle: 'Authentic Hadith collection',
-              icon: Icons.book,
-              color: Colors.brown,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HadithScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            FeatureCard(
-              title: 'Dua - دعا',
-              subtitle: 'Daily duas and supplications',
-              icon: Icons.favorite,
-              color: Colors.pink,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DuaScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            FeatureCard(
-              title: '99 Names - اسماء الحسنیٰ',
-              subtitle: 'Beautiful names of Allah',
-              icon: Icons.star,
-              color: Colors.amber,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NamesScreen(),
-                  ),
-                );
-              },
-            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickAccessCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickAccessCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: color, size: 32),
+              ),
+              SizedBox(height: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/quran_provider.dart';
 import 'quran_reader_screen.dart';
+import 'enhanced_quran_reader_screen.dart';
 
 class QuranListScreen extends StatefulWidget {
   const QuranListScreen({super.key});
@@ -83,7 +84,25 @@ class _QuranListScreenState extends State<QuranListScreen> {
                   subtitle: Text(
                     '${surah.englishName} - ${surah.numberOfAyahs} Ayahs',
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.headphones, size: 20),
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EnhancedQuranReaderScreen(surah: surah),
+                            ),
+                          );
+                        },
+                        tooltip: 'Learn Mode',
+                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 16),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

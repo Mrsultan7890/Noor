@@ -52,18 +52,20 @@ jobs:
           3. Install and enjoy!
           
           ### Features
-          - Quran with Urdu translation
-          - Mushaf (604 pages)
-          - Tasbih Counter
-          - Schedule Builder with alarms
-          - Prayer Times
-          - Qibla Direction
-          - Hadith Collection
-          - Dua Collection
-          - 99 Names of Allah
-          - Kids Zone (219+ levels)
-          - Ramadan Features
-          - Daily Reminders
+          - **Quran Learning**: Audio recitation, Transliteration, Word-by-Word translation
+          - **Arabic Alphabet**: Learn 28 letters with Harakat and Interactive Quiz
+          - **Quran Reader**: Complete Quran with Urdu translation
+          - **Mushaf**: Page-by-page Arabic Quran (604 pages)
+          - **Tasbih Counter**: Digital Dhikr counter
+          - **Schedule Builder**: Custom Islamic routines with alarms
+          - **Prayer Times**: Location-based Salah timings
+          - **Qibla Direction**: Compass to find Kaaba
+          - **Hadith Collection**: Bukhari, Muslim, Abu Dawud
+          - **Dua Collection**: Daily supplications
+          - **99 Names of Allah**: Asma ul Husna
+          - **Kids Zone**: 219+ Islamic game levels
+          - **Ramadan Features**: Sehri/Iftar timer
+          - **Bottom Navigation**: Organized app structure
           
           ### Website
           Visit: https://noor-app.netlify.app
