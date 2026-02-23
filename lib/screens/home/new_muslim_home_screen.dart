@@ -5,6 +5,9 @@ import '../learning/arabic_alphabet_screen.dart';
 import '../learning/shahada_screen.dart';
 import '../learning/salah_guide_screen.dart';
 import '../learning/wudu_guide_screen.dart';
+import '../learning/six_pillars_iman_screen.dart';
+import '../learning/daily_adhkar_screen.dart';
+import '../learning/islamic_etiquettes_screen.dart';
 import '../../models/quran_model.dart';
 
 class NewMuslimHomeScreen extends StatelessWidget {
@@ -105,7 +108,71 @@ class NewMuslimHomeScreen extends StatelessWidget {
           const SizedBox(height: 24),
           
           const Text(
-            'Step 2: Learn Arabic Basics',
+            'Step 2: Learn Islamic Beliefs',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          _LearningCard(
+            title: 'Six Pillars of Iman',
+            subtitle: 'What Muslims believe',
+            icon: Icons.auto_awesome,
+            color: Colors.purple,
+            progress: 0.0,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SixPillarsImanScreen()),
+              );
+            },
+          ),
+          
+          const SizedBox(height: 24),
+          
+          const Text(
+            'Step 3: Daily Practices',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          _LearningCard(
+            title: 'Daily Adhkar & Duas',
+            subtitle: 'Morning, evening, and daily supplications',
+            icon: Icons.wb_sunny,
+            color: Colors.amber,
+            progress: 0.0,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DailyAdhkarScreen()),
+              );
+            },
+          ),
+          
+          _LearningCard(
+            title: 'Islamic Etiquettes',
+            subtitle: 'Good manners in daily life',
+            icon: Icons.favorite_border,
+            color: Colors.indigo,
+            progress: 0.0,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const IslamicEtiquettesScreen()),
+              );
+            },
+          ),
+          
+          const SizedBox(height: 24),
+          
+          const Text(
+            'Step 4: Learn Arabic Basics',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -141,7 +208,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
           const SizedBox(height: 24),
           
           const Text(
-            'Step 3: Start Reading Quran',
+            'Step 5: Start Reading Quran',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
