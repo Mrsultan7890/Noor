@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/user_provider.dart';
 import '../tasbih/tasbih_screen.dart';
 import '../schedule/schedule_list_screen.dart';
 import '../prayer/prayer_times_screen.dart';
@@ -11,6 +12,9 @@ import '../names/names_screen.dart';
 import '../games/kids_zone_screen.dart';
 import '../ramadan/ramadan_home_screen.dart';
 import '../settings/settings_screen.dart';
+import '../profile/profile_screen.dart';
+import '../leaderboard/leaderboard_screen.dart';
+import '../auth/login_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -44,6 +48,61 @@ class MoreScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Profile Section
+          Consumer<UserProvider>(
+            builder: (context, userProvider, child) {
+              if (userProvider.isAuthenticated) {
+                return Column(
+                  children: [
+                    const _SectionHeader(title: 'Account', icon: Icons.person),
+                    _FeatureTile(
+                      title: 'My Profile',
+                      subtitle: 'View stats and progress',
+                      icon: Icons.account_circle,
+                      color: Colors.blue,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                      ),
+                    ),
+                    _FeatureTile(
+                      title: 'Leaderboard',
+                      subtitle: 'Global & country rankings',
+                      icon: Icons.leaderboard,
+                      color: Colors.amber,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LeaderboardScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    Card(
+                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      child: ListTile(
+                        leading: const Icon(Icons.login, color: Color(0xFF2E7D32)),
+                        title: const Text('Login to sync your progress'),
+                        subtitle: const Text('Track stats & compete on leaderboard'),
+                        trailing: ElevatedButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          ),
+                          child: const Text('Login'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                );
+              }
+            },
+          ),
+          
           if (_isRamadanActive()) ...[
             const _SectionHeader(title: 'Ramadan Special', icon: Icons.nightlight_round),
             _FeatureTile(
@@ -161,6 +220,28 @@ class MoreScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const SettingsScreen()),
             ),
+          ),
+          
+          Consumer<UserProvider>(
+            builder: (context, userProvider, child) {
+              if (userProvider.isAuthenticated) {
+                return _FeatureTile(
+                  title: 'Logout',
+                  subtitle: 'Sign out from your account',
+                  icon: Icons.logout,
+                  color: Colors.red,
+                  onTap: () async {
+                    await userProvider.logout();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Logged out successfully')),
+                      );
+                    }
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           
           const SizedBox(height: 24),

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: noor-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: POCKETBASE_URL
+        sync: false
+      - key: POCKETBASE_ADMIN_EMAIL
+        sync: false
+      - key: POCKETBASE_ADMIN_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 10080
+      - key: DEBUG
+        value: False
