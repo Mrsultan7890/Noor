@@ -14,9 +14,9 @@ class IslamicEtiquettesScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Card(
+          const Card(
             color: Colors.indigo,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(24),
               child: Column(
                 children: [

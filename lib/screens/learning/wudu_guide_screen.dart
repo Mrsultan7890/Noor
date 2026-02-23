@@ -16,9 +16,9 @@ class WuduGuideScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
+            const Card(
               color: Colors.cyan,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(24),
                 child: Column(
                   children: [
@@ -297,7 +297,7 @@ class _StepCard extends StatelessWidget {
             Container(
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.cyan,
                 shape: BoxShape.circle,
               ),
@@ -332,8 +332,8 @@ class _StepCard extends StatelessWidget {
                     ),
                   ),
                   if (arabic.isNotEmpty) ...[
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       arabic,
                       style: const TextStyle(
                         fontSize: 20,

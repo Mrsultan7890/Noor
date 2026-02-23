@@ -16,9 +16,9 @@ class SalahGuideScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
+            const Card(
               color: Colors.blue,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(24),
                 child: Column(
                   children: [
