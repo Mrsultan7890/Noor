@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/home/new_muslim_home_screen.dart';
 import '../screens/quran/quran_list_screen.dart';
 import '../screens/learning/learning_hub_screen.dart';
 import '../screens/more/more_screen.dart';
@@ -13,9 +15,23 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
+  String _userLevel = 'Beginner';
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
+  @override
+  void initState() {
+    super.initState();
+    _loadUserLevel();
+  }
+
+  Future<void> _loadUserLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userLevel = prefs.getString('user_level') ?? 'Beginner';
+    });
+  }
+
+  List<Widget> get _screens => [
+    _userLevel == 'New Muslim' ? const NewMuslimHomeScreen() : const HomeScreen(),
     const QuranListScreen(),
     const LearningHubScreen(),
     const MoreScreen(),
