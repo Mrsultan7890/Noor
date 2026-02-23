@@ -333,9 +333,9 @@ class _StepCard extends StatelessWidget {
                   ),
                   if (arabic.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       arabic,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         color: Colors.green,
                       ),
