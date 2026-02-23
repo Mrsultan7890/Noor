@@ -16,7 +16,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> with SingleTicker
   List<LeaderboardEntry> _globalLeaderboard = [];
   List<LeaderboardEntry> _countryLeaderboard = [];
   bool _isLoading = true;
-  String _selectedCountry = 'Pakistan';
+  final String _selectedCountry = 'Pakistan';
 
   @override
   void initState() {
