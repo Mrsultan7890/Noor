@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/quran_model.dart';
-import 'quran/enhanced_quran_reader_screen.dart';
-import '../learning/arabic_alphabet_screen.dart';
+import '../../models/quran_model.dart';
+import '../quran/enhanced_quran_reader_screen.dart';
+import 'arabic_alphabet_screen.dart';
 
 class LearningHubScreen extends StatelessWidget {
   const LearningHubScreen({super.key});
@@ -16,11 +16,10 @@ class LearningHubScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Header Card
           Card(
             color: Theme.of(context).primaryColor,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            child: const Padding(
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -53,16 +52,15 @@ class LearningHubScreen extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Quran Learning Section
           Text(
             'Quran Learning',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Learn with Audio',
@@ -78,6 +76,7 @@ class LearningHubScreen extends StatelessWidget {
                       number: 1,
                       name: 'سُورَةُ ٱلْفَاتِحَةِ',
                       englishName: 'Al-Fatihah',
+                      englishNameTranslation: 'The Opening',
                       numberOfAyahs: 7,
                       revelationType: 'Meccan',
                     ),
@@ -87,7 +86,7 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Transliteration',
@@ -103,6 +102,7 @@ class LearningHubScreen extends StatelessWidget {
                       number: 1,
                       name: 'سُورَةُ ٱلْفَاتِحَةِ',
                       englishName: 'Al-Fatihah',
+                      englishNameTranslation: 'The Opening',
                       numberOfAyahs: 7,
                       revelationType: 'Meccan',
                     ),
@@ -112,7 +112,7 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Word by Word',
@@ -128,6 +128,7 @@ class LearningHubScreen extends StatelessWidget {
                       number: 1,
                       name: 'سُورَةُ ٱلْفَاتِحَةِ',
                       englishName: 'Al-Fatihah',
+                      englishNameTranslation: 'The Opening',
                       numberOfAyahs: 7,
                       revelationType: 'Meccan',
                     ),
@@ -137,16 +138,15 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Arabic Learning Section
           Text(
             'Arabic Language',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Arabic Alphabet',
@@ -163,7 +163,7 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Harakat (Zabar, Zer, Pesh)',
@@ -180,7 +180,7 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           _LearningCard(
             title: 'Interactive Quiz',
@@ -197,9 +197,8 @@ class LearningHubScreen extends StatelessWidget {
             },
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Progress Card
           Card(
             color: Colors.amber.shade50,
             child: Padding(
@@ -207,7 +206,7 @@ class LearningHubScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(Icons.emoji_events, color: Colors.amber.shade700, size: 40),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +219,7 @@ class LearningHubScreen extends StatelessWidget {
                             color: Colors.amber.shade900,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Practice daily to improve your skills',
                           style: TextStyle(
@@ -276,19 +275,19 @@ class _LearningCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: 28),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       subtitle,
                       style: TextStyle(
@@ -299,7 +298,7 @@ class _LearningCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             ],
           ),
         ),

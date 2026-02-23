@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../services/update_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../screens/quran/quran_list_screen.dart';
@@ -10,14 +8,8 @@ import '../../screens/learning/arabic_alphabet_screen.dart';
 import '../../models/quran_model.dart';
 import '../../screens/tasbih/tasbih_screen.dart';
 import '../../screens/schedule/schedule_list_screen.dart';
-import '../../screens/ramadan/ramadan_home_screen.dart';
 import '../../screens/prayer/prayer_times_screen.dart';
 import '../../screens/qibla/qibla_screen.dart';
-import '../../screens/hadith/hadith_screen.dart';
-import '../../screens/dua/dua_screen.dart';
-import '../../screens/names/names_screen.dart';
-import '../../screens/games/kids_zone_screen.dart';
-import '../../screens/settings/settings_screen.dart';
 import '../../widgets/feature_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -84,13 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
-  
-  bool _isRamadanActive() {
-    final now = DateTime.now();
-    final ramadanStart = DateTime(2025, 2, 28);
-    final eidDate = DateTime(2025, 3, 30);
-    return now.isAfter(ramadanStart) && now.isBefore(eidDate);
   }
 
   @override
@@ -255,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         number: 1,
                         name: 'سُورَةُ ٱلْفَاتِحَةِ',
                         englishName: 'Al-Fatihah',
+                        englishNameTranslation: 'The Opening',
                         numberOfAyahs: 7,
                         revelationType: 'Meccan',
                       ),

@@ -91,7 +91,9 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
       verseNumber,
     );
     
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
     
     if (verseData != null && mounted) {
       showDialog(
