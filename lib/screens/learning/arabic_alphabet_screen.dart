@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/arabic_alphabet_model.dart';
+import '../../providers/user_provider.dart';
 import 'dart:math';
 
 class ArabicAlphabetScreen extends StatefulWidget {
@@ -295,6 +297,30 @@ class _QuizTabState extends State<_QuizTab> {
   }
 
   void _resetQuiz() {
+    // Award points if score is good
+    if (_totalQuestions >= 10 && _score >= 7) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      if (userProvider.isAuthenticated) {
+        userProvider.logActivity(
+          activityType: 'lesson_completed',
+          points: 20,
+          metadata: {
+            'lesson': 'Arabic Alphabet Quiz',
+            'score': _score,
+            'total': _totalQuestions,
+            'accuracy': ((_score / _totalQuestions) * 100).toStringAsFixed(0),
+          },
+        );
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Quiz completed! +20 points'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }
+    
     setState(() {
       _score = 0;
       _totalQuestions = 0;

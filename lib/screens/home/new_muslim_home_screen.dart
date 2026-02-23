@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../quran/enhanced_quran_reader_screen.dart';
+import '../quran/quran_reader_screen.dart';
 import '../learning/arabic_alphabet_screen.dart';
+import '../learning/shahada_screen.dart';
+import '../learning/salah_guide_screen.dart';
+import '../learning/wudu_guide_screen.dart';
 import '../../models/quran_model.dart';
 
 class NewMuslimHomeScreen extends StatelessWidget {
@@ -62,7 +66,12 @@ class NewMuslimHomeScreen extends StatelessWidget {
             icon: Icons.favorite,
             color: Colors.red,
             progress: 0.0,
-            onTap: () => _showShahadaDialog(context),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ShahadaScreen()),
+              );
+            },
           ),
           
           _LearningCard(
@@ -71,7 +80,12 @@ class NewMuslimHomeScreen extends StatelessWidget {
             icon: Icons.self_improvement,
             color: Colors.blue,
             progress: 0.0,
-            onTap: () => _showSalahGuide(context),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SalahGuideScreen()),
+              );
+            },
           ),
           
           _LearningCard(
@@ -80,7 +94,12 @@ class NewMuslimHomeScreen extends StatelessWidget {
             icon: Icons.water_drop,
             color: Colors.cyan,
             progress: 0.0,
-            onTap: () => _showWuduGuide(context),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WuduGuideScreen()),
+              );
+            },
           ),
           
           const SizedBox(height: 24),
@@ -206,162 +225,6 @@ class NewMuslimHomeScreen extends StatelessWidget {
     );
   }
 
-  static void _showShahadaDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Shahada - Declaration of Faith'),
-        content: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ ٱللَّٰهِ',
-                style: TextStyle(fontSize: 20, height: 2),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Transliteration:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Ash-hadu an la ilaha illa Allah, wa ash-hadu anna Muhammadan rasul Allah',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Meaning:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'I bear witness that there is no god but Allah, and I bear witness that Muhammad is the Messenger of Allah.',
-              ),
-              SizedBox(height: 16),
-              Text(
-                'This is the first pillar of Islam. By saying this with sincere belief, you become a Muslim.',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static void _showSalahGuide(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('How to Pray (Salah)'),
-        content: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Basic Steps:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              SizedBox(height: 12),
-              Text('1. Make Wudu (ablution)'),
-              SizedBox(height: 8),
-              Text('2. Face the Qibla (direction of Kaaba)'),
-              SizedBox(height: 8),
-              Text('3. Make intention (Niyyah)'),
-              SizedBox(height: 8),
-              Text('4. Say "Allahu Akbar" and raise hands'),
-              SizedBox(height: 8),
-              Text('5. Recite Surah Al-Fatihah'),
-              SizedBox(height: 8),
-              Text('6. Bow (Ruku)'),
-              SizedBox(height: 8),
-              Text('7. Stand up straight'),
-              SizedBox(height: 8),
-              Text('8. Prostrate (Sujood) - twice'),
-              SizedBox(height: 8),
-              Text('9. Sit and recite Tashahhud'),
-              SizedBox(height: 8),
-              Text('10. Give Salam (peace) to both sides'),
-              SizedBox(height: 16),
-              Text(
-                'Muslims pray 5 times daily: Fajr, Dhuhr, Asr, Maghrib, Isha',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static void _showWuduGuide(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('How to Perform Wudu'),
-        content: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Steps:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              SizedBox(height: 12),
-              Text('1. Make intention (Niyyah)'),
-              SizedBox(height: 8),
-              Text('2. Say "Bismillah"'),
-              SizedBox(height: 8),
-              Text('3. Wash both hands up to wrists (3 times)'),
-              SizedBox(height: 8),
-              Text('4. Rinse mouth (3 times)'),
-              SizedBox(height: 8),
-              Text('5. Rinse nose (3 times)'),
-              SizedBox(height: 8),
-              Text('6. Wash face (3 times)'),
-              SizedBox(height: 8),
-              Text('7. Wash arms up to elbows (3 times each)'),
-              SizedBox(height: 8),
-              Text('8. Wipe head with wet hands (once)'),
-              SizedBox(height: 8),
-              Text('9. Wipe inside and back of ears (once)'),
-              SizedBox(height: 8),
-              Text('10. Wash feet up to ankles (3 times each)'),
-              SizedBox(height: 16),
-              Text(
-                'Wudu is required before prayer and reading Quran',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
   static void _showBasicDuas(BuildContext context) {
     showDialog(
       context: context,
@@ -418,11 +281,11 @@ class NewMuslimHomeScreen extends StatelessWidget {
 
   static void _showShortSurahs(BuildContext context) {
     final surahs = [
-      {'number': 112, 'name': 'Al-Ikhlas', 'ayahs': 4},
-      {'number': 113, 'name': 'Al-Falaq', 'ayahs': 5},
-      {'number': 114, 'name': 'An-Nas', 'ayahs': 6},
-      {'number': 108, 'name': 'Al-Kawthar', 'ayahs': 3},
-      {'number': 109, 'name': 'Al-Kafirun', 'ayahs': 6},
+      Surah(number: 112, name: 'سُورَةُ الْإِخْلَاصِ', englishName: 'Al-Ikhlas', englishNameTranslation: 'The Sincerity', numberOfAyahs: 4, revelationType: 'Meccan'),
+      Surah(number: 113, name: 'سُورَةُ الْفَلَقِ', englishName: 'Al-Falaq', englishNameTranslation: 'The Daybreak', numberOfAyahs: 5, revelationType: 'Meccan'),
+      Surah(number: 114, name: 'سُورَةُ النَّاسِ', englishName: 'An-Nas', englishNameTranslation: 'Mankind', numberOfAyahs: 6, revelationType: 'Meccan'),
+      Surah(number: 108, name: 'سُورَةُ الْكَوْثَرِ', englishName: 'Al-Kawthar', englishNameTranslation: 'The Abundance', numberOfAyahs: 3, revelationType: 'Meccan'),
+      Surah(number: 109, name: 'سُورَةُ الْكَافِرُونَ', englishName: 'Al-Kafirun', englishNameTranslation: 'The Disbelievers', numberOfAyahs: 6, revelationType: 'Meccan'),
     ];
 
     showDialog(
@@ -440,16 +303,21 @@ class NewMuslimHomeScreen extends StatelessWidget {
                 leading: CircleAvatar(
                   backgroundColor: Theme.of(context).primaryColor,
                   child: Text(
-                    '${surah['number']}',
+                    '${surah.number}',
                     style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
-                title: Text(surah['name'] as String),
-                subtitle: Text('${surah['ayahs']} verses'),
+                title: Text(surah.englishName),
+                subtitle: Text('${surah.numberOfAyahs} verses'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to surah reader
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuranReaderScreen(surah: surah),
+                    ),
+                  );
                 },
               );
             },

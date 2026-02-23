@@ -1,7 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/user_provider.dart';
 
-class DuaScreen extends StatelessWidget {
+class DuaScreen extends StatefulWidget {
   const DuaScreen({super.key});
+
+  @override
+  State<DuaScreen> createState() => _DuaScreenState();
+}
+
+class _DuaScreenState extends State<DuaScreen> {
+
+  Set<String> _memorizedDuas = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMemorizedDuas();
+  }
+
+  Future<void> _loadMemorizedDuas() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _memorizedDuas = (prefs.getStringList('memorized_duas') ?? []).toSet();
+    });
+  }
+
+  Future<void> _toggleMemorized(String duaTitle) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    
+    if (_memorizedDuas.contains(duaTitle)) {
+      _memorizedDuas.remove(duaTitle);
+    } else {
+      _memorizedDuas.add(duaTitle);
+      
+      // Award points for memorizing
+      if (userProvider.isAuthenticated) {
+        await userProvider.logActivity(
+          activityType: 'dua_memorized',
+          points: 15,
+          metadata: {'dua_title': duaTitle},
+        );
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Dua memorized! +15 points'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    }
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('memorized_duas', _memorizedDuas.toList());
+    setState(() {});
+  }
 
   final List<Map<String, String>> duas = const [
     {
@@ -91,9 +147,28 @@ class DuaScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          dua['title']!,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dua['title']!,
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                _memorizedDuas.contains(dua['title'])
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: _memorizedDuas.contains(dua['title'])
+                                    ? Colors.green
+                                    : Colors.grey,
+                              ),
+                              onPressed: () => _toggleMemorized(dua['title']!),
+                              tooltip: 'Mark as memorized',
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Text(

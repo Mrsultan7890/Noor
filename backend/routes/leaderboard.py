@@ -20,11 +20,11 @@ async def get_global_leaderboard(
         return [
             LeaderboardEntry(
                 rank=entry["rank"],
-                user_id=entry["id"],
+                user_id=entry["user_id"],
                 username=entry["username"],
                 country=entry["country"],
                 points=entry["points"],
-                avatar=entry.get("avatar")
+                avatar=entry.get("avatar", "")
             )
             for entry in leaderboard
         ]
@@ -50,11 +50,11 @@ async def get_country_leaderboard(
         return [
             LeaderboardEntry(
                 rank=entry["rank"],
-                user_id=entry["id"],
+                user_id=entry["user_id"],
                 username=entry["username"],
                 country=entry["country"],
                 points=entry["points"],
-                avatar=entry.get("avatar")
+                avatar=entry.get("avatar", "")
             )
             for entry in leaderboard
         ]
