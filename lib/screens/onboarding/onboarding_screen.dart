@@ -16,12 +16,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String _selectedLevel = 'Beginner'; // New
 
   final List<Map<String, String>> _languages = [
-    {'code': 'en', 'name': 'English', 'native': 'English'},
-    {'code': 'ur', 'name': 'Urdu', 'native': 'اردو'},
-    {'code': 'ar', 'name': 'Arabic', 'native': 'العربية'},
-    {'code': 'id', 'name': 'Indonesian', 'native': 'Bahasa Indonesia'},
-    {'code': 'tr', 'name': 'Turkish', 'native': 'Türkçe'},
-    {'code': 'fr', 'name': 'French', 'native': 'Français'},
+    {'code': 'en', 'name': 'English', 'native': 'English', 'quran': 'en.sahih'},
+    {'code': 'ur', 'name': 'Urdu', 'native': 'اردو', 'quran': 'ur.jalandhry'},
+    {'code': 'ar', 'name': 'Arabic', 'native': 'العربية', 'quran': 'ar.muyassar'},
+    {'code': 'id', 'name': 'Indonesian', 'native': 'Bahasa Indonesia', 'quran': 'id.indonesian'},
+    {'code': 'tr', 'name': 'Turkish', 'native': 'Türkçe', 'quran': 'tr.diyanet'},
+    {'code': 'fr', 'name': 'French', 'native': 'Français', 'quran': 'fr.hamidullah'},
   ];
 
   final List<String> _countries = [
@@ -32,9 +32,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
+    
+    // Find selected language's Quran edition
+    final selectedLang = _languages.firstWhere(
+      (lang) => lang['name'] == _selectedLanguage,
+      orElse: () => _languages[0],
+    );
+    
     await prefs.setString('selected_language', _selectedLanguage);
+    await prefs.setString('quran_edition', selectedLang['quran']!);
     await prefs.setString('selected_country', _selectedCountry);
-    await prefs.setString('user_level', _selectedLevel); // New
+    await prefs.setString('user_level', _selectedLevel);
     
     if (mounted) {
       Navigator.pushReplacement(

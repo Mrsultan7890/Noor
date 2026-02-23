@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/quran_model.dart';
 
 class QuranService {
@@ -23,29 +24,33 @@ class QuranService {
   
   Future<List<Verse>> getVerses(int surahNumber) async {
     try {
+      // Get user's selected language edition
+      final prefs = await SharedPreferences.getInstance();
+      final edition = prefs.getString('quran_edition') ?? 'ur.jalandhry';
+      
       // Get Arabic text
       final arabicResponse = await http.get(
         Uri.parse('$baseUrl/surah/$surahNumber')
       );
       
-      // Get Urdu translation (Maududi)
-      final urduResponse = await http.get(
-        Uri.parse('$baseUrl/surah/$surahNumber/ur.maududi')
+      // Get translation in user's language
+      final translationResponse = await http.get(
+        Uri.parse('$baseUrl/surah/$surahNumber/$edition')
       );
       
-      if (arabicResponse.statusCode == 200 && urduResponse.statusCode == 200) {
+      if (arabicResponse.statusCode == 200 && translationResponse.statusCode == 200) {
         final arabicData = json.decode(arabicResponse.body);
-        final urduData = json.decode(urduResponse.body);
+        final translationData = json.decode(translationResponse.body);
         
         final List arabicAyahs = arabicData['data']['ayahs'];
-        final List urduAyahs = urduData['data']['ayahs'];
+        final List translationAyahs = translationData['data']['ayahs'];
         
         List<Verse> verses = [];
         for (int i = 0; i < arabicAyahs.length; i++) {
           verses.add(Verse(
             number: arabicAyahs[i]['numberInSurah'],
             text: arabicAyahs[i]['text'],
-            translation: urduAyahs[i]['text'],
+            translation: translationAyahs[i]['text'],
             surahNumber: surahNumber,
           ));
         }
