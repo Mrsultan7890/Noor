@@ -44,9 +44,8 @@ class MoreScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Ramadan Section (Conditional)
           if (_isRamadanActive()) ...[
-            _SectionHeader(title: 'Ramadan Special', icon: Icons.nightlight_round),
+            const _SectionHeader(title: 'Ramadan Special', icon: Icons.nightlight_round),
             _FeatureTile(
               title: 'Ramadan Features',
               subtitle: 'Sehri/Iftar Timer & Roza Counter',
@@ -57,11 +56,10 @@ class MoreScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const RamadanHomeScreen()),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
           ],
           
-          // Daily Tools
-          _SectionHeader(title: 'Daily Tools', icon: Icons.today),
+          const _SectionHeader(title: 'Daily Tools', icon: Icons.today),
           _FeatureTile(
             title: 'Tasbih Counter',
             subtitle: 'Digital Dhikr counter',
@@ -103,10 +101,9 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Islamic Knowledge
-          _SectionHeader(title: 'Islamic Knowledge', icon: Icons.book),
+          const _SectionHeader(title: 'Islamic Knowledge', icon: Icons.book),
           _FeatureTile(
             title: 'Hadith',
             subtitle: 'Authentic Hadith collection',
@@ -138,10 +135,9 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Kids Zone
-          _SectionHeader(title: 'Kids Zone', icon: Icons.child_care),
+          const _SectionHeader(title: 'Kids Zone', icon: Icons.child_care),
           _FeatureTile(
             title: 'Islamic Games',
             subtitle: '219+ Levels for Kids',
@@ -153,10 +149,9 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // Settings
-          _SectionHeader(title: 'Settings', icon: Icons.settings),
+          const _SectionHeader(title: 'Settings', icon: Icons.settings),
           _FeatureTile(
             title: 'App Settings',
             subtitle: 'Preferences & configurations',
@@ -168,9 +163,8 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
-          // App Info
           Center(
             child: Column(
               children: [
@@ -182,7 +176,7 @@ class MoreScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Islamic Companion App',
                   style: TextStyle(
@@ -190,7 +184,7 @@ class MoreScreen extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Version 1.0.0',
                   style: TextStyle(
@@ -220,7 +214,7 @@ class _SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, size: 20, color: Theme.of(context).primaryColor),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             title,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -264,10 +258,10 @@ class _FeatureTile extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(subtitle),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
       ),
     );
