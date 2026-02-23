@@ -130,10 +130,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           value: user.points.toString(),
                           color: Colors.amber,
                         ),
-                        _StatItem(
+                        const _StatItem(
                           icon: Icons.local_fire_department,
                           label: 'Streak',
-                          value: '${user.streakDays} days',
+                          value: '0 days',
                           color: Colors.orange,
                         ),
                       ],

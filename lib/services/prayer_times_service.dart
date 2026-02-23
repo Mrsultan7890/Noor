@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 import '../models/prayer_times_model.dart';
 
 class PrayerTimesService {
@@ -19,7 +20,7 @@ class PrayerTimesService {
         return PrayerTimes.fromJson(json.decode(response.body));
       }
     } catch (e) {
-      print('Error fetching prayer times: $e');
+      if (kDebugMode) print('Error fetching prayer times: $e');
     }
     return null;
   }
@@ -39,7 +40,7 @@ class PrayerTimesService {
 
       return await Geolocator.getCurrentPosition();
     } catch (e) {
-      print('Error getting location: $e');
+      if (kDebugMode) print('Error getting location: $e');
       return null;
     }
   }

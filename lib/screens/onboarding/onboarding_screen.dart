@@ -339,7 +339,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
-}
 
   Widget _buildLevelStep() {
     final levels = [
