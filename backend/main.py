@@ -96,7 +96,7 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(
         "main:app",
-        host="127.0.0.1",  # Localhost only for same device
+        host="0.0.0.0",  # All network interfaces for WiFi access
         port=port,
         reload=os.getenv("DEBUG", "False") == "True"
     )

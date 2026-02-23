@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Localhost for same device testing (Termux)
-  static const String baseUrl = 'http://127.0.0.1:8000'; // Localhost
-  // static const String baseUrl = 'http://192.168.91.129:8000'; // Local WiFi
+  // Backend on laptop, app on phone (same WiFi)
+  static const String baseUrl = 'http://192.168.91.129:8000'; // Laptop IP
+  // static const String baseUrl = 'http://127.0.0.1:8000'; // Same device
   // static const String baseUrl = 'https://your-render-url.onrender.com'; // Production
   
   String? _token;
