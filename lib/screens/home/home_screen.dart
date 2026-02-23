@@ -93,11 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome Card
             Card(
               color: Theme.of(context).primaryColor,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -117,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       'Welcome to Noor - Your Islamic Companion',
                       style: TextStyle(
@@ -132,7 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
             
             const SizedBox(height: 24),
             
-            // Quick Access
             Text(
               'Quick Access',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -158,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _QuickAccessCard(
                     title: 'Mushaf',
@@ -177,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             
             Row(
               children: [
@@ -196,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _QuickAccessCard(
                     title: 'Qibla',
@@ -217,7 +215,6 @@ class _HomeScreenState extends State<HomeScreen> {
             
             const SizedBox(height: 24),
             
-            // Featured
             Text(
               'Featured',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -340,10 +337,10 @@ class _QuickAccessCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: color, size: 32),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
