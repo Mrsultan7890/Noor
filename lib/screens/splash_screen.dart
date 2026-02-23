@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../navigation/main_navigation_screen.dart';
+import 'onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,8 +22,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
     _controller.forward();
     
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainNavigationScreen()));
+    Timer(const Duration(seconds: 3), () async {
+      final prefs = await SharedPreferences.getInstance();
+      final onboardingComplete = prefs.getBool('onboarding_complete') ?? false;
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => onboardingComplete 
+                ? const MainNavigationScreen()
+                : const OnboardingScreen(),
+          ),
+        );
+      }
     });
   }
 
