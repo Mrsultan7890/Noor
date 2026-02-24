@@ -54,7 +54,7 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
     ),
   ];
 
-  final Map<String, bool> _completedTasks = {};
+  Map<String, bool> _completedTasks = {};
   String _todayDate = '';
 
   @override
