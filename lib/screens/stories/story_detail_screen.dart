@@ -75,8 +75,8 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.green),
                 ),
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.check_circle, color: Colors.green),
                     SizedBox(width: 8),
                     Text(
@@ -124,8 +124,8 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Icon(Icons.lightbulb, color: Colors.amber),
                       SizedBox(width: 8),
                       Text(
