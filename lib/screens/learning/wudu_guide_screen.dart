@@ -51,7 +51,9 @@ class WuduGuideScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.blue[900]
+                    : Colors.blue[50],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Column(
@@ -171,7 +173,9 @@ class WuduGuideScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.green[900]
+                    : Colors.green[50],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Column(
@@ -211,7 +215,9 @@ class WuduGuideScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.amber[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.amber[900]
+                    : Colors.amber[50],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.amber),
               ),
@@ -328,7 +334,9 @@ class _StepCard extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[700],
                     ),
                   ),
                   if (arabic.isNotEmpty) ...[

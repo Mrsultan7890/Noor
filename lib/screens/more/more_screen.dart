@@ -14,6 +14,7 @@ import '../ramadan/ramadan_home_screen.dart';
 import '../settings/settings_screen.dart';
 import '../profile/profile_screen.dart';
 import '../leaderboard/leaderboard_screen.dart';
+import '../tasks/daily_tasks_screen.dart';
 import '../auth/login_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -119,6 +120,16 @@ class MoreScreen extends StatelessWidget {
           ],
           
           const _SectionHeader(title: 'Daily Tools', icon: Icons.today),
+          _FeatureTile(
+            title: 'Daily Tasks',
+            subtitle: 'Track your daily Islamic activities',
+            icon: Icons.checklist,
+            color: Colors.green,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DailyTasksScreen()),
+            ),
+          ),
           _FeatureTile(
             title: 'Tasbih Counter',
             subtitle: 'Digital Dhikr counter',

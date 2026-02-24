@@ -113,6 +113,86 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             ],
           ),
           
+          const _EtiquetteCard(
+            title: 'Dressing Etiquette',
+            icon: Icons.checkroom,
+            color: Colors.pink,
+            rules: [
+              'Wear clean clothes',
+              'Cover awrah (private parts)',
+              'Men: Cover navel to knees minimum',
+              'Women: Cover entire body except face and hands',
+              'Avoid tight/transparent clothing',
+              'Start dressing from right side',
+              'Wear modest colors',
+              'Remove shoes when entering mosque/home',
+            ],
+          ),
+          
+          const _EtiquetteCard(
+            title: 'Speaking Etiquette',
+            icon: Icons.record_voice_over,
+            color: Colors.deepOrange,
+            rules: [
+              'Speak truth always',
+              'Don\'t backbite (Gheebah)',
+              'Don\'t gossip or spread rumors',
+              'Lower your voice',
+              'Don\'t use bad language',
+              'Think before speaking',
+              'Don\'t interrupt others',
+              'Speak kindly to everyone',
+            ],
+          ),
+          
+          const _EtiquetteCard(
+            title: 'Parents & Elders Etiquette',
+            icon: Icons.family_restroom,
+            color: Colors.brown,
+            rules: [
+              'Respect parents always',
+              'Never say "Uff" to them',
+              'Speak softly to elders',
+              'Stand when elder enters',
+              'Seek parents\' permission',
+              'Make dua for parents',
+              'Visit them regularly',
+              'Help them in old age',
+            ],
+          ),
+          
+          const _EtiquetteCard(
+            title: 'Neighbors Etiquette',
+            icon: Icons.home_work,
+            color: Colors.cyan,
+            rules: [
+              'Be kind to neighbors',
+              'Share food with them',
+              'Don\'t harm neighbors',
+              'Help in times of need',
+              'Keep noise low',
+              'Greet neighbors',
+              'Respect their privacy',
+              'Check on them regularly',
+            ],
+          ),
+          
+          const _EtiquetteCard(
+            title: 'Learning/Knowledge Etiquette',
+            icon: Icons.school,
+            color: Colors.amber,
+            rules: [
+              'Seek knowledge with intention',
+              'Respect teachers',
+              'Sit properly in class',
+              'Ask questions politely',
+              'Practice what you learn',
+              'Share knowledge with others',
+              'Be humble about knowledge',
+              'Make dua for understanding',
+            ],
+          ),
+          
           const SizedBox(height: 24),
           
           ElevatedButton.icon(

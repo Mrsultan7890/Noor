@@ -48,7 +48,9 @@ class ShahadaScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[800]
+                    : Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -68,7 +70,9 @@ class ShahadaScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.blue[900]
+                    : Colors.blue[50],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -88,7 +92,9 @@ class ShahadaScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.green[50],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.green[900]
+                    : Colors.green[50],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -212,7 +218,9 @@ class _InfoCard extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[400]
+                        : Colors.grey[700],
                       height: 1.4,
                     ),
                   ),

@@ -8,6 +8,7 @@ import '../learning/wudu_guide_screen.dart';
 import '../learning/six_pillars_iman_screen.dart';
 import '../learning/daily_adhkar_screen.dart';
 import '../learning/islamic_etiquettes_screen.dart';
+import '../learning/halal_haram_screen.dart';
 import '../../models/quran_model.dart';
 
 class NewMuslimHomeScreen extends StatelessWidget {
@@ -165,6 +166,20 @@ class NewMuslimHomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const IslamicEtiquettesScreen()),
+              );
+            },
+          ),
+          
+          _LearningCard(
+            title: 'Halal & Haram',
+            subtitle: 'What is permissible and forbidden',
+            icon: Icons.rule,
+            color: Colors.green,
+            progress: 0.0,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HalalHaramScreen()),
               );
             },
           ),

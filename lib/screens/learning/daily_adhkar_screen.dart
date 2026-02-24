@@ -60,7 +60,9 @@ class DailyAdhkarScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[800]
+                        : Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -88,7 +90,9 @@ class DailyAdhkarScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.green[50],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.green[900]
+                          : Colors.green[50],
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -112,32 +116,41 @@ class DailyAdhkarScreen extends StatelessWidget {
   static final List<Map<String, String>> _morningAdhkar = [
     {
       'title': 'Morning Dua',
-      'arabic': 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ',
-      'transliteration': 'Asbahna wa asbahal mulku lillah',
-      'translation': 'We have entered morning and the kingdom belongs to Allah',
+      'arabic': 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
+      'transliteration': 'Asbahna wa asbahal mulku lillah walhamdulillah',
+      'translation': 'We have entered morning and the kingdom belongs to Allah, and all praise is for Allah',
+      'repeat': '1 time',
     },
     {
       'title': 'Ayat al-Kursi',
-      'arabic': 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
-      'transliteration': 'Allahu la ilaha illa huwal hayyul qayyum',
-      'translation': 'Allah - there is no deity except Him, the Ever-Living, the Sustainer',
+      'arabic': 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ',
+      'transliteration': 'Allahu la ilaha illa huwal hayyul qayyum, la ta\'khudhuhu sinatun wa la nawm',
+      'translation': 'Allah - there is no deity except Him, the Ever-Living, the Sustainer. Neither drowsiness overtakes Him nor sleep',
       'repeat': '1 time',
     },
     {
       'title': 'Protection Dua',
-      'arabic': 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ',
-      'transliteration': 'Bismillahil ladhi la yadurru ma\'asmihi shay\'un',
-      'translation': 'In the name of Allah with whose name nothing can harm',
+      'arabic': 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
+      'transliteration': 'Bismillahil ladhi la yadurru ma\'asmihi shay\'un fil ardi wa la fis sama',
+      'translation': 'In the name of Allah with whose name nothing can harm in the earth nor in the heaven',
       'repeat': '3 times',
+    },
+    {
+      'title': 'Tasbih',
+      'arabic': 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
+      'transliteration': 'Subhanallahi wa bihamdihi',
+      'translation': 'Glory be to Allah and praise Him',
+      'repeat': '100 times',
     },
   ];
 
   static final List<Map<String, String>> _eveningAdhkar = [
     {
       'title': 'Evening Dua',
-      'arabic': 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ',
-      'transliteration': 'Amsayna wa amsal mulku lillah',
-      'translation': 'We have entered evening and the kingdom belongs to Allah',
+      'arabic': 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
+      'transliteration': 'Amsayna wa amsal mulku lillah walhamdulillah',
+      'translation': 'We have entered evening and the kingdom belongs to Allah, and all praise is for Allah',
+      'repeat': '1 time',
     },
     {
       'title': 'Seeking Refuge',
@@ -146,20 +159,33 @@ class DailyAdhkarScreen extends StatelessWidget {
       'translation': 'I seek refuge in the perfect words of Allah from the evil of what He created',
       'repeat': '3 times',
     },
+    {
+      'title': 'Last 3 Surahs',
+      'arabic': 'قُلْ هُوَ اللَّهُ أَحَدٌ',
+      'transliteration': 'Qul huwallahu ahad',
+      'translation': 'Say: He is Allah, the One (Surah Al-Ikhlas)',
+      'repeat': '3 times each (Al-Ikhlas, Al-Falaq, An-Nas)',
+    },
   ];
 
   static final List<Map<String, String>> _mealsAdhkar = [
     {
       'title': 'Before Eating',
-      'arabic': 'بِسْمِ اللَّهِ',
-      'transliteration': 'Bismillah',
-      'translation': 'In the name of Allah',
+      'arabic': 'بِسْمِ اللَّهِ وَعَلَىٰ بَرَكَةِ اللَّهِ',
+      'transliteration': 'Bismillah wa \'ala barakatillah',
+      'translation': 'In the name of Allah and with the blessings of Allah',
+    },
+    {
+      'title': 'If Forgot Bismillah',
+      'arabic': 'بِسْمِ اللَّهِ أَوَّلَهُ وَآخِرَهُ',
+      'transliteration': 'Bismillahi awwalahu wa akhirahu',
+      'translation': 'In the name of Allah at its beginning and at its end',
     },
     {
       'title': 'After Eating',
-      'arabic': 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا',
-      'transliteration': 'Alhamdulillahil ladhi at\'amana wa saqana',
-      'translation': 'Praise be to Allah who has fed us and given us drink',
+      'arabic': 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+      'transliteration': 'Alhamdulillahil ladhi at\'amana wa saqana wa ja\'alana muslimin',
+      'translation': 'Praise be to Allah who has fed us, given us drink, and made us Muslims',
     },
   ];
 
@@ -186,10 +212,17 @@ class DailyAdhkarScreen extends StatelessWidget {
       'translation': 'In Your name O Allah, I die and I live',
     },
     {
+      'title': 'Ayat al-Kursi Before Sleep',
+      'arabic': 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
+      'transliteration': 'Allahu la ilaha illa huwal hayyul qayyum',
+      'translation': 'Allah - there is no deity except Him, the Ever-Living, the Sustainer',
+      'repeat': '1 time',
+    },
+    {
       'title': 'Waking Up',
-      'arabic': 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا',
-      'transliteration': 'Alhamdulillahil ladhi ahyana ba\'da ma amatana',
-      'translation': 'Praise be to Allah who gave us life after death',
+      'arabic': 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
+      'transliteration': 'Alhamdulillahil ladhi ahyana ba\'da ma amatana wa ilayhin nushur',
+      'translation': 'Praise be to Allah who gave us life after death and to Him is the resurrection',
     },
   ];
 
