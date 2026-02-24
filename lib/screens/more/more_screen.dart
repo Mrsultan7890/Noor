@@ -16,6 +16,7 @@ import '../profile/profile_screen.dart';
 import '../leaderboard/leaderboard_screen.dart';
 import '../tasks/daily_tasks_screen.dart';
 import '../auth/login_screen.dart';
+import '../stories/stories_home_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -174,6 +175,16 @@ class MoreScreen extends StatelessWidget {
           const SizedBox(height: 24),
           
           const _SectionHeader(title: 'Islamic Knowledge', icon: Icons.book),
+          _FeatureTile(
+            title: 'Islamic Stories',
+            subtitle: 'Seerat, Sahaba & Prophets stories',
+            icon: Icons.auto_stories,
+            color: Colors.deepOrange,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const StoriesHomeScreen()),
+            ),
+          ),
           _FeatureTile(
             title: 'Hadith',
             subtitle: 'Authentic Hadith collection',
