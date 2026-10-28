@@ -1,9 +1,52 @@
 import 'package:flutter/material.dart';
-import '../../data/stories_data.dart';
+import '../../services/stories_service.dart';
+import '../../models/story_model.dart';
 import 'story_list_screen.dart';
 
-class StoriesHomeScreen extends StatelessWidget {
+class StoriesHomeScreen extends StatefulWidget {
   const StoriesHomeScreen({super.key});
+
+  @override
+  State<StoriesHomeScreen> createState() => _StoriesHomeScreenState();
+}
+
+class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
+  final StoriesService _service = StoriesService();
+  List<StoryCategory> _categories = [];
+  List<IslamicStory> _stories = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStories();
+  }
+
+  Future<void> _loadStories() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final data = await _service.getStories();
+      setState(() {
+        _categories = _service.parseCategories(data['categories']);
+        _stories = _service.parseStories(data['stories']);
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load stories. Please check your connection.';
+        _isLoading = false;
+      });
+    }
+  }
+
+  List<IslamicStory> _getStoriesByCategory(String categoryId) {
+    return _stories.where((s) => s.category == categoryId).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,14 +55,42 @@ class StoriesHomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Islamic Stories - اسلامی کہانیاں'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await _service.clearCache();
+              _loadStories();
+            },
+            tooltip: 'Refresh stories',
+          ),
+        ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: storyCategories.length,
-        itemBuilder: (context, index) {
-          final category = storyCategories[index];
-          final color = Color(int.parse(category.color));
-          final stories = getStoriesByCategory(category.id);
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const SizedBox(height: 16),
+                      Text(_error!),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadStories,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _categories.length,
+                  itemBuilder: (context, index) {
+                    final category = _categories[index];
+                    final color = Color(int.parse(category.color));
+                    final stories = _getStoriesByCategory(category.id);
           
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -28,7 +99,10 @@ class StoriesHomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => StoryListScreen(category: category),
+                    builder: (context) => StoryListScreen(
+                      category: category,
+                      stories: stories,
+                    ),
                   ),
                 );
               },

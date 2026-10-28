@@ -1,0 +1,85 @@
+{
+  "categories": [
+    {
+      "id": "seerat",
+      "name": "Life of Prophet ﷺ",
+      "nameUrdu": "سیرت النبی ﷺ",
+      "icon": "🌙",
+      "color": "0xFF2E7D32",
+      "description": "Stories from the blessed life of Prophet Muhammad ﷺ"
+    },
+    {
+      "id": "sahaba",
+      "name": "Companions Stories",
+      "nameUrdu": "صحابہ کرام کی کہانیاں",
+      "icon": "⭐",
+      "color": "0xFFFFD700",
+      "description": "Inspiring stories of the noble companions"
+    },
+    {
+      "id": "prophets",
+      "name": "Prophets Stories",
+      "nameUrdu": "انبیاء کی کہانیاں",
+      "icon": "📖",
+      "color": "0xFF00897B",
+      "description": "Stories of the prophets mentioned in Quran"
+    }
+  ],
+  "stories": [
+    {
+      "id": "s1",
+      "title": "The Birth of Prophet Muhammad ﷺ",
+      "titleUrdu": "نبی کریم ﷺ کی ولادت",
+      "category": "seerat",
+      "content": "Prophet Muhammad ﷺ was born in Makkah on Monday, 12th Rabi-ul-Awwal, in the Year of the Elephant (570 CE). His father Abdullah had passed away before his birth. His mother Aminah saw dreams of light spreading across the world. When he was born, his grandfather Abdul Muttalib was overjoyed and named him Muhammad, meaning \"the praised one\".",
+      "contentUrdu": "نبی کریم ﷺ کی ولادت پیر کے دن، 12 ربیع الاول، عام الفیل (570 عیسوی) میں مکہ میں ہوئی۔ آپ کے والد عبداللہ آپ کی پیدائش سے پہلے فوت ہو چکے تھے۔ آپ کی والدہ آمنہ نے خواب میں دیکھا کہ دنیا میں نور پھیل رہا ہے۔ جب آپ پیدا ہوئے تو آپ کے دادا عبدالمطلب بہت خوش ہوئے اور آپ کا نام محمد رکھا، جس کا مطلب ہے \"تعریف کیا ہوا\"۔",
+      "lesson": "Every child is born with a purpose. The Prophet ﷺ was destined to bring light to the world.",
+      "lessonUrdu": "ہر بچہ ایک مقصد کے ساتھ پیدا ہوتا ہے۔ نبی کریم ﷺ دنیا میں نور لانے کے لیے مقدر تھے۔",
+      "tags": ["Birth", "Makkah", "Childhood"]
+    },
+    {
+      "id": "s2",
+      "title": "The Trustworthy - Al-Ameen",
+      "titleUrdu": "الامین - امانت دار",
+      "category": "seerat",
+      "content": "Even before prophethood, Muhammad ﷺ was known as \"Al-Ameen\" (The Trustworthy) and \"As-Sadiq\" (The Truthful). People would leave their valuables with him for safekeeping. His honesty was so well-known that even his enemies trusted him. When he migrated to Madinah, he left Ali RA behind to return all the trusts to their owners.",
+      "contentUrdu": "نبوت سے پہلے بھی محمد ﷺ کو \"الامین\" (امانت دار) اور \"الصادق\" (سچا) کے نام سے جانا جاتا تھا۔ لوگ اپنی قیمتی چیزیں آپ کے پاس محفوظ رکھنے کے لیے چھوڑ دیتے تھے۔ آپ کی ایمانداری اتنی مشہور تھی کہ آپ کے دشمن بھی آپ پر بھروسہ کرتے تھے۔ جب آپ مدینہ ہجرت کر گئے تو علی رضی اللہ عنہ کو پیچھے چھوڑا تاکہ وہ تمام امانتیں ان کے مالکوں کو واپس کر دیں۔",
+      "lesson": "Honesty and trustworthiness are the foundation of good character.",
+      "lessonUrdu": "ایمانداری اور امانت داری اچھے کردار کی بنیاد ہیں۔",
+      "tags": ["Character", "Honesty", "Trust"]
+    },
+    {
+      "id": "s3",
+      "title": "The First Revelation",
+      "titleUrdu": "پہلی وحی",
+      "category": "seerat",
+      "content": "At age 40, Prophet Muhammad ﷺ was meditating in Cave Hira when Angel Jibreel appeared and said \"Iqra\" (Read). The Prophet ﷺ replied, \"I cannot read.\" The angel embraced him and repeated three times. Then the first verses of Surah Al-Alaq were revealed: \"Read in the name of your Lord who created.\" The Prophet ﷺ returned home trembling, and Khadijah RA comforted him.",
+      "contentUrdu": "چالیس سال کی عمر میں، نبی کریم ﷺ غار حرا میں عبادت کر رہے تھے جب فرشتہ جبرائیل ظاہر ہوئے اور کہا \"اقرا\" (پڑھو)۔ نبی ﷺ نے جواب دیا، \"میں نہیں پڑھ سکتا۔\" فرشتے نے آپ کو گلے لگایا اور تین بار دہرایا۔ پھر سورہ العلق کی پہلی آیات نازل ہوئیں: \"پڑھو اپنے رب کے نام سے جس نے پیدا کیا۔\" نبی ﷺ کانپتے ہوئے گھر واپس آئے، اور خدیجہ رضی اللہ عنہا نے آپ کو تسلی دی۔",
+      "lesson": "Knowledge is the first command of Islam. Seek knowledge throughout your life.",
+      "lessonUrdu": "علم اسلام کا پہلا حکم ہے۔ زندگی بھر علم حاصل کرو۔",
+      "tags": ["Revelation", "Cave Hira", "Jibreel"]
+    },
+    {
+      "id": "s4",
+      "title": "The Night Journey - Isra and Miraj",
+      "titleUrdu": "اسراء و معراج",
+      "category": "seerat",
+      "content": "One night, Angel Jibreel brought Buraq, a heavenly creature, and took the Prophet ﷺ from Makkah to Jerusalem (Isra). From there, he ascended through the seven heavens (Miraj), meeting previous prophets. He reached a place where even Jibreel could not go, and Allah spoke to him directly. The five daily prayers were prescribed on this blessed night.",
+      "contentUrdu": "ایک رات، فرشتہ جبرائیل براق لائے، ایک آسمانی مخلوق، اور نبی ﷺ کو مکہ سے بیت المقدس لے گئے (اسراء)۔ وہاں سے، آپ سات آسمانوں سے گزرے (معراج)، پچھلے نبیوں سے ملے۔ آپ ایک ایسی جگہ پہنچے جہاں جبرائیل بھی نہیں جا سکتے تھے، اور اللہ نے آپ سے براہ راست بات کی۔ اس مبارک رات پانچ نمازیں فرض کی گئیں۔",
+      "lesson": "Prayer is the gift from Allah that connects us directly to Him.",
+      "lessonUrdu": "نماز اللہ کی طرف سے تحفہ ہے جو ہمیں براہ راست اس سے جوڑتی ہے۔",
+      "tags": ["Miraj", "Prayer", "Miracle"]
+    },
+    {
+      "id": "s5",
+      "title": "The Hijrah to Madinah",
+      "titleUrdu": "مدینہ کی طرف ہجرت",
+      "category": "seerat",
+      "content": "When persecution in Makkah became unbearable, Allah commanded the Prophet ﷺ to migrate to Madinah. The Quraysh plotted to kill him, but he left with Abu Bakr RA at night. They hid in Cave Thawr for three days. A spider spun a web and a dove laid eggs at the entrance, making enemies think no one was inside. They safely reached Madinah where people welcomed them with joy.",
+      "contentUrdu": "جب مکہ میں ظلم ناقابل برداشت ہو گیا، تو اللہ نے نبی ﷺ کو مدینہ ہجرت کرنے کا حکم دیا۔ قریش نے آپ کو قتل کرنے کی سازش کی، لیکن آپ رات کو ابوبکر رضی اللہ عنہ کے ساتھ نکل گئے۔ وہ تین دن غار ثور میں چھپے رہے۔ ایک مکڑی نے جالا بنایا اور ایک کبوتر نے داخلے پر انڈے دیے، جس سے دشمنوں نے سوچا کہ اندر کوئی نہیں ہے۔ وہ محفوظ طریقے سے مدینہ پہنچے جہاں لوگوں نے خوشی سے ان کا استقبال کیا۔",
+      "lesson": "Trust in Allah and take action. Allah will protect those who strive in His path.",
+      "lessonUrdu": "اللہ پر بھروسہ کرو اور عمل کرو۔ اللہ ان کی حفاظت کرے گا جو اس کی راہ میں کوشش کرتے ہیں۔",
+      "tags": ["Hijrah", "Migration", "Abu Bakr"]
+    }
+  ]
+}

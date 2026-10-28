@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../models/story_model.dart';
-import '../../data/stories_data.dart';
 import 'story_detail_screen.dart';
 
 class StoryListScreen extends StatelessWidget {
   final StoryCategory category;
+  final List<IslamicStory> stories;
 
-  const StoryListScreen({super.key, required this.category});
+  const StoryListScreen({
+    super.key,
+    required this.category,
+    required this.stories,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final stories = getStoriesByCategory(category.id);
     final color = Color(int.parse(category.color));
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
