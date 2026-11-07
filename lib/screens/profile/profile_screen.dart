@@ -171,7 +171,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         radius: 50,
                         backgroundColor: Theme.of(context).colorScheme.surface,
                         child: Text(
-                          user.username[0].toUpperCase(),
+                          user.username.isEmpty
+                              ? '?'
+                              : user.username[0].toUpperCase(),
                           style: TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
@@ -184,6 +186,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           Text(
                             user.username,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -192,6 +196,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Text(
                             user.email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.9),
                               fontSize: 13,
@@ -200,16 +206,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 16,
+                        runSpacing: 8,
                         children: [
-                          const Icon(Icons.location_on, color: Colors.white70, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            user.country,
-                            style: const TextStyle(color: Colors.white70),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                color: Colors.white70,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 160),
+                                child: Text(
+                                  user.country,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style:
+                                      const TextStyle(color: Colors.white70),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 16),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
@@ -237,17 +260,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _StatItem(
-                          icon: Icons.star,
-                          label: 'Points',
-                          value: user.points.toString(),
-                          color: Colors.amber,
+                        Expanded(
+                          child: _StatItem(
+                            icon: Icons.star,
+                            label: 'Points',
+                            value: user.points.toString(),
+                            color: Colors.amber,
+                          ),
                         ),
-                        _StatItem(
-                          icon: Icons.local_fire_department,
-                          label: 'Streak',
-                          value: '${user.streakDays} days',
-                          color: Colors.orange,
+                        Expanded(
+                          child: _StatItem(
+                            icon: Icons.local_fire_department,
+                            label: 'Streak',
+                            value: '${user.streakDays} days',
+                            color: Colors.orange,
+                          ),
                         ),
                       ],
                     ),
@@ -274,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 1.5,
+                  childAspectRatio: 0.75,
                   children: [
                     _StatsCard(
                       icon: Icons.menu_book,
@@ -392,6 +419,9 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -399,6 +429,9 @@ class _StatItem extends StatelessWidget {
         ),
         Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
             color: colorScheme.onSurface.withOpacity(0.85),
@@ -430,16 +463,16 @@ class _StatsCard extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: 8),
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 4),
             if (isLoading)
               SizedBox(
-                width: 20,
-                height: 20,
+                width: 18,
+                height: 18,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: colorScheme.primary,
@@ -448,8 +481,10 @@ class _StatsCard extends StatelessWidget {
             else
               Text(
                 value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface,
                 ),
@@ -457,9 +492,11 @@ class _StatsCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: colorScheme.onSurface.withOpacity(0.85),
               ),
             ),

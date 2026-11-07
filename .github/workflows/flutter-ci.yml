@@ -34,15 +34,15 @@ jobs:
     - name: Run tests
       run: flutter test || echo "No tests found"
     
-    - name: Build debug APK for CI
-      run: flutter build apk --debug --split-per-abi
+    - name: Build arm64 debug APK for CI
+      run: flutter build apk --debug --target-platform android-arm64
     
     - name: Build iOS (no sign)
       run: flutter build ios --release --no-codesign
       if: runner.os == 'macOS'
     
-    - name: Upload CI debug APK
+    - name: Upload CI arm64 debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: ci-debug-apk
-        path: build/app/outputs/flutter-apk/app-*-debug.apk
+        name: ci-debug-arm64-apk
+        path: build/app/outputs/flutter-apk/app-debug.apk

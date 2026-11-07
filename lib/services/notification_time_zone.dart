@@ -5,6 +5,13 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationTimeZone {
   static Future<void>? _initialization;
 
+  static String canonicalizeTimeZoneName(String timeZoneName) {
+    return switch (timeZoneName) {
+      'Asia/Calcutta' => 'Asia/Kolkata',
+      _ => timeZoneName,
+    };
+  }
+
   static Future<void> initialize() async {
     try {
       await (_initialization ??= _initialize());
@@ -16,7 +23,8 @@ class NotificationTimeZone {
 
   static Future<void> _initialize() async {
     timezone_data.initializeTimeZones();
-    final timeZoneName = await FlutterTimezone.getLocalTimezone();
+    final deviceTimeZoneName = await FlutterTimezone.getLocalTimezone();
+    final timeZoneName = canonicalizeTimeZoneName(deviceTimeZoneName);
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 }

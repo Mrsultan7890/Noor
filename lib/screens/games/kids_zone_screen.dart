@@ -96,7 +96,11 @@ class KidsZoneScreen extends StatelessWidget {
                           Icons.local_fire_department_rounded,
                           color: Theme.of(context).colorScheme.tertiary,
                         ),
-                        title: Text('${user.points} points'),
+                        title: Text(
+                          '${user.points} points',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text('${user.streakDays}-day streak'),
                         trailing: const Icon(Icons.stars_rounded),
                       ),
@@ -112,7 +116,7 @@ class KidsZoneScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 0.94,
+                    mainAxisExtent: 260,
                   ),
                   itemBuilder: (context, index) {
                     return games[index];
@@ -161,12 +165,16 @@ class _GameCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -20,
-              right: -20,
-              child: Icon(icon, size: 120, color: colors.primary.withOpacity(0.06)),
+              top: 0,
+              right: 0,
+              child: Icon(
+                icon,
+                size: 96,
+                color: colors.primary.withOpacity(0.06),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -181,6 +189,8 @@ class _GameCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -196,6 +206,8 @@ class _GameCard extends StatelessWidget {
                     ),
                     child: Text(
                       levels,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
                         color: colors.primary,

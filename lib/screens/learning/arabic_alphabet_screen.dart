@@ -62,7 +62,7 @@ class _LettersTab extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 0.8,
+        mainAxisExtent: 168,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
@@ -74,7 +74,7 @@ class _LettersTab extends StatelessWidget {
           child: InkWell(
             onTap: () => _showLetterDetails(context, letter),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -82,20 +82,26 @@ class _LettersTab extends StatelessWidget {
                     letter.arabic,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 48,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     letter.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
                     letter.transliteration,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -114,7 +120,7 @@ class _LettersTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -338,9 +344,11 @@ class _QuizTabState extends State<_QuizTab> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Card(
             color: Theme.of(context).primaryColor,
@@ -349,45 +357,61 @@ class _QuizTabState extends State<_QuizTab> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Score',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 16,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Score',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '$_score / $_totalQuestions',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          '$_score / $_totalQuestions',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        'Accuracy',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 16,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Accuracy',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _totalQuestions > 0
-                            ? '${((_score / _totalQuestions) * 100).toStringAsFixed(0)}%'
-                            : '0%',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          _totalQuestions > 0
+                              ? '${((_score / _totalQuestions) * 100).toStringAsFixed(0)}%'
+                              : '0%',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -424,40 +448,42 @@ class _QuizTabState extends State<_QuizTab> {
             ),
           ),
           const SizedBox(height: 32),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: _options.length,
-              itemBuilder: (context, index) {
-                final option = _options[index];
-                final isCorrect = option == _currentLetter!.name;
-                final isSelected = option == _selectedAnswer;
-                
-                Color? backgroundColor;
-                if (_showResult && isSelected) {
-                  backgroundColor = isCorrect ? Colors.green : Colors.red;
-                } else if (_showResult && isCorrect) {
-                  backgroundColor = Colors.green;
-                }
-                
-                return ElevatedButton(
-                  onPressed: _showResult ? null : () => _checkAnswer(option),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: backgroundColor,
-                    foregroundColor: _showResult ? Colors.white : null,
-                  ),
-                  child: Text(
-                    option,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                );
-              },
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisExtent: 64,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
             ),
+            itemCount: _options.length,
+            itemBuilder: (context, index) {
+              final option = _options[index];
+              final isCorrect = option == _currentLetter!.name;
+              final isSelected = option == _selectedAnswer;
+
+              Color? backgroundColor;
+              if (_showResult && isSelected) {
+                backgroundColor = isCorrect ? Colors.green : Colors.red;
+              } else if (_showResult && isCorrect) {
+                backgroundColor = Colors.green;
+              }
+
+              return ElevatedButton(
+                onPressed: _showResult ? null : () => _checkAnswer(option),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: backgroundColor,
+                  foregroundColor: _showResult ? Colors.white : null,
+                ),
+                child: Text(
+                  option,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 16),
           Row(

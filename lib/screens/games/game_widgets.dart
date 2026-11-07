@@ -48,8 +48,17 @@ class GameLevelCard extends StatelessWidget {
           foregroundColor: unlocked ? colors.onPrimary : colors.onSurface.withOpacity(0.65),
           child: unlocked ? Text('$level') : const Icon(Icons.lock_outline),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle),
+        title: Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          subtitle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
         trailing: stars > 0
             ? Row(
                 mainAxisSize: MainAxisSize.min,
