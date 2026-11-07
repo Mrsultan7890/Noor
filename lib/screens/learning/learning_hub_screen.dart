@@ -208,10 +208,10 @@ class LearningHubScreen extends StatelessWidget {
           
           Card(
             color: Colors.amber.shade50,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+            child: const Padding(
+              padding: EdgeInsets.all(16),
               child: Row(
-                children: const [
+                children: [
                   Icon(
                     Icons.emoji_events,
                     color: Color(0xFFFFB300),
