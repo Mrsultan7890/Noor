@@ -97,7 +97,7 @@ class PrayerTimesService {
     }
 
     if (results.length != requestedDates.length) {
-      throw FormatException(
+      throw const FormatException(
         'Prayer-times calendar did not include all requested dates.',
       );
     }
