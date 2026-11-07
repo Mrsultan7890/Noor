@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'screens/splash_screen.dart';
 import 'providers/theme_provider.dart';
 import 'providers/quran_provider.dart';
@@ -17,29 +18,59 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeProvider = await ThemeProvider.load();
   
-  tz.initializeTimeZones();
-  
   await Hive.initFlutter();
   Hive.registerAdapter(ScheduleAdapter());
   
   await NotificationService().init();
   await DailyReminderService.init();
   await PrayerNotificationService.initialize();
-  await DailyReminderService.scheduleDailyReminder();
   
   runApp(NoorApp(themeProvider: themeProvider));
 }
 
-class NoorApp extends StatelessWidget {
+class NoorApp extends StatefulWidget {
   const NoorApp({super.key, required this.themeProvider});
 
   final ThemeProvider themeProvider;
 
   @override
+  State<NoorApp> createState() => _NoorAppState();
+}
+
+class _NoorAppState extends State<NoorApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(_refreshPrayerNotifications());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_refreshPrayerNotifications());
+    }
+  }
+
+  Future<void> _refreshPrayerNotifications() async {
+    try {
+      await PrayerNotificationService.refreshFromSavedLocation();
+    } catch (error, stackTrace) {
+      debugPrint('Could not refresh prayer notifications: $error\n$stackTrace');
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: widget.themeProvider),
         ChangeNotifierProvider(create: (_) => QuranProvider()),
         ChangeNotifierProvider(create: (_) => TasbihProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),

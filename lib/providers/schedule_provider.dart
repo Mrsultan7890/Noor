@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/schedule_model.dart';
+import '../services/notification_service.dart';
 
 class ScheduleProvider extends ChangeNotifier {
   List<Schedule> _schedules = [];
@@ -26,6 +27,13 @@ class ScheduleProvider extends ChangeNotifier {
   
   Future<void> deleteSchedule(int index) async {
     final box = await Hive.openBox<Schedule>('schedules');
+    final schedule = _schedules[index];
+    final key = schedule.key;
+    if (key is! int) {
+      throw StateError('Cannot find a stable key for the schedule alarm.');
+    }
+    await NotificationService().cancelScheduleAlarms(key);
+    await NotificationService().cancelNotification(index);
     await box.deleteAt(index);
     _schedules.removeAt(index);
     notifyListeners();

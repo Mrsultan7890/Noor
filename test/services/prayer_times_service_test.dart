@@ -39,6 +39,18 @@ void main() {
       );
     });
 
+    test('rejects an empty prayer-times date range', () async {
+      await expectLater(
+        service.getPrayerTimesForRange(
+          latitude: 0,
+          longitude: 0,
+          startDate: DateTime(2026, 1, 1),
+          days: 0,
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('finds the next prayer and its countdown', () {
       final now = DateTime(2026, 1, 1, 10);
       expect(service.getNextPrayer(times, reference: now), 'Dhuhr');

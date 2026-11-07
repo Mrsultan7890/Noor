@@ -4,18 +4,24 @@ import 'package:http/http.dart' as http;
 
 import 'dart:math';
 import 'package:timezone/timezone.dart' as tz;
+import 'notification_service.dart';
+import 'notification_time_zone.dart';
 import 'utf8_json.dart';
 
 class DailyReminderService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    await NotificationTimeZone.initialize();
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: android);
     await _notifications.initialize(settings);
   }
 
-  static Future<void> scheduleDailyReminder() async {
+  static Future<void> scheduleDailyReminder({
+    bool permissionsAlreadyGranted = false,
+  }) async {
+    await NotificationTimeZone.initialize();
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool('daily_reminder_enabled') ?? false;
     
@@ -23,7 +29,12 @@ class DailyReminderService {
 
     final hour = prefs.getInt('daily_reminder_hour') ?? 9;
     final minute = prefs.getInt('daily_reminder_minute') ?? 0;
+    if (!permissionsAlreadyGranted &&
+        !await NotificationService().requestPermissions()) {
+      throw StateError('Notification or exact-alarm permission was denied.');
+    }
 
+    await _notifications.cancel(999);
     await _notifications.zonedSchedule(
       999,
       'Daily Islamic Reminder',
@@ -48,7 +59,14 @@ class DailyReminderService {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
+      scheduledDate = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day + 1,
+        hour,
+        minute,
+      );
     }
     return scheduledDate;
   }
@@ -133,11 +151,14 @@ class DailyReminderService {
   }
 
   static Future<void> enableReminder(int hour, int minute) async {
+    if (!await NotificationService().requestPermissions()) {
+      throw StateError('Notification or exact-alarm permission was denied.');
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('daily_reminder_enabled', true);
     await prefs.setInt('daily_reminder_hour', hour);
     await prefs.setInt('daily_reminder_minute', minute);
-    await scheduleDailyReminder();
+    await scheduleDailyReminder(permissionsAlreadyGranted: true);
   }
 
   static Future<void> disableReminder() async {

@@ -4,16 +4,21 @@ import '../models/prayer_times_model.dart';
 import 'utf8_json.dart';
 
 class PrayerTimesService {
-  static const String _baseUrl = 'https://api.aladhan.com/v1';
-
   Future<PrayerTimes> getPrayerTimes({
     required double latitude,
     required double longitude,
   }) async {
     final response = await http
         .get(
-          Uri.parse(
-            '$_baseUrl/timings?latitude=$latitude&longitude=$longitude&method=2',
+          Uri.https(
+            'api.aladhan.com',
+            '/v1/timings',
+            {
+              'latitude': '$latitude',
+              'longitude': '$longitude',
+              'method': '2',
+              'school': '1',
+            },
           ),
         )
         .timeout(const Duration(seconds: 15));
@@ -24,6 +29,82 @@ class PrayerTimesService {
     }
     return PrayerTimes.fromJson(decodeUtf8JsonResponse(response));
   }
+
+  Future<Map<DateTime, PrayerTimes>> getPrayerTimesForRange({
+    required double latitude,
+    required double longitude,
+    required DateTime startDate,
+    required int days,
+  }) async {
+    if (days < 1) {
+      throw ArgumentError.value(days, 'days', 'Must be greater than zero.');
+    }
+
+    final requestedDates = List.generate(
+      days,
+      (index) => DateTime(
+        startDate.year,
+        startDate.month,
+        startDate.day + index,
+      ),
+    );
+    final months = requestedDates
+        .map((date) => DateTime(date.year, date.month))
+        .toSet()
+        .toList();
+
+    final monthResponses = await Future.wait(
+      months.map((month) async {
+        final response = await http
+            .get(
+              Uri.https(
+                'api.aladhan.com',
+                '/v1/calendar/${month.year}/${month.month}',
+                {
+                  'latitude': '$latitude',
+                  'longitude': '$longitude',
+                  'method': '2',
+                  'school': '1',
+                },
+              ),
+            )
+            .timeout(const Duration(seconds: 15));
+        if (response.statusCode != 200) {
+          throw Exception(
+            'Prayer-times calendar returned HTTP ${response.statusCode}.',
+          );
+        }
+        final decoded = decodeUtf8JsonResponse(response);
+        final entries = decoded['data'] as List<dynamic>;
+        return entries.map((entry) => Map<String, dynamic>.from(entry as Map));
+      }),
+    );
+
+    final requestedKeys = requestedDates.map(_dateKey).toSet();
+    final results = <DateTime, PrayerTimes>{};
+    for (final entry in monthResponses.expand((entries) => entries)) {
+      final dateData =
+          (entry['date'] as Map<String, dynamic>)['gregorian']
+              as Map<String, dynamic>;
+      final dateParts = (dateData['date'] as String)
+          .split('-')
+          .map(int.parse)
+          .toList();
+      final date = DateTime(dateParts[2], dateParts[1], dateParts[0]);
+      if (requestedKeys.contains(_dateKey(date))) {
+        results[date] = PrayerTimes.fromJson({'data': entry});
+      }
+    }
+
+    if (results.length != requestedDates.length) {
+      throw FormatException(
+        'Prayer-times calendar did not include all requested dates.',
+      );
+    }
+    return results;
+  }
+
+  String _dateKey(DateTime date) => '${date.year}-${date.month}-${date.day}';
 
   Future<Position> getCurrentLocation() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();

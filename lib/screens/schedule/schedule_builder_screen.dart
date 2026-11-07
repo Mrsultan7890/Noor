@@ -281,21 +281,52 @@ class _ScheduleBuilderScreenState extends State<ScheduleBuilderScreen> {
       );
       
       final provider = Provider.of<ScheduleProvider>(context, listen: false);
-      
-      if (widget.schedule == null) {
-        await provider.addSchedule(schedule);
-      } else {
-        await provider.updateSchedule(widget.index!, schedule);
-      }
-      
-      // Schedule notification
-      if (_hasAlarm) {
-        await NotificationService().scheduleNotification(
-          id: widget.index ?? DateTime.now().millisecondsSinceEpoch ~/ 1000,
-          title: schedule.title,
-          body: schedule.description,
-          scheduledTime: scheduleTime,
-        );
+      var scheduleSaved = false;
+      try {
+        if (_hasAlarm && !await NotificationService().requestPermissions()) {
+          throw StateError('Notification or exact-alarm permission was denied.');
+        }
+
+        final existingKey = widget.schedule?.key;
+        if (widget.schedule == null) {
+          await provider.addSchedule(schedule);
+        } else {
+          await provider.updateSchedule(widget.index!, schedule);
+          await NotificationService().cancelNotification(widget.index!);
+        }
+        scheduleSaved = true;
+
+        final scheduleKey = existingKey ?? schedule.key;
+        if (scheduleKey is! int) {
+          throw StateError('Could not determine a stable schedule alarm ID.');
+        }
+
+        if (_hasAlarm) {
+          await NotificationService().scheduleScheduleAlarm(
+            scheduleKey: scheduleKey,
+            title: schedule.title,
+            body: schedule.description,
+            scheduledTime: scheduleTime,
+            recurring: _isRecurring,
+            recurringDays: _selectedDays,
+          );
+        } else {
+          await NotificationService().cancelScheduleAlarms(scheduleKey);
+        }
+      } catch (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                scheduleSaved
+                    ? 'Schedule saved, but its alarm could not be scheduled: $error'
+                    : 'Could not save the schedule: $error',
+              ),
+            ),
+          );
+          if (scheduleSaved) Navigator.pop(context);
+        }
+        return;
       }
       
       if (mounted) {

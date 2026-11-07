@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/daily_reminder_service.dart';
+import '../../services/notification_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/arabic_text.dart';
@@ -93,10 +94,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _setPrayerNotificationsEnabled(bool enabled) async {
     try {
+      if (enabled && !await NotificationService().requestPermissions()) {
+        throw StateError('Notification or exact-alarm permission was denied.');
+      }
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('prayer_notifications_enabled', enabled);
       if (!enabled) {
         await PrayerNotificationService.cancelPrayerNotifications();
+      }
+      await prefs.setBool('prayer_notifications_enabled', enabled);
+      if (enabled) {
+        await PrayerNotificationService.refreshFromSavedLocation();
       }
       if (!mounted) return;
       setState(() => _prayerNotificationsEnabled = enabled);

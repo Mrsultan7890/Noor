@@ -17,7 +17,8 @@ class PrayerTimesScreen extends StatefulWidget {
   State<PrayerTimesScreen> createState() => _PrayerTimesScreenState();
 }
 
-class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
+class _PrayerTimesScreenState extends State<PrayerTimesScreen>
+    with WidgetsBindingObserver {
   final PrayerTimesService _service = PrayerTimesService();
   PrayerTimes? _prayerTimes;
   bool _isLoading = true;
@@ -27,10 +28,12 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   String? _errorMessage;
   String? _notificationError;
   List<PrayerLog> _todayLogs = [];
+  bool _isFetchingPrayerTimes = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadPrayerTimes();
     _loadTodayLogs();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateCountdown());
@@ -38,11 +41,21 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadPrayerTimes();
+    }
+  }
+
   Future<void> _loadPrayerTimes() async {
+    if (_isFetchingPrayerTimes) return;
+    _isFetchingPrayerTimes = true;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -57,10 +70,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       );
       if (!mounted) return;
 
+      await PrayerNotificationService.saveLocation(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
       final prefs = await SharedPreferences.getInstance();
       if (prefs.getBool('prayer_notifications_enabled') ?? true) {
         try {
-          await PrayerNotificationService.schedulePrayerNotifications(times);
+          await PrayerNotificationService.refreshFromSavedLocation();
         } catch (e) {
           _notificationError =
               'Prayer times loaded, but reminders could not be scheduled: $e';
@@ -80,6 +97,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         _errorMessage = 'Unable to load prayer times: $e';
         _isLoading = false;
       });
+    } finally {
+      _isFetchingPrayerTimes = false;
     }
   }
 
