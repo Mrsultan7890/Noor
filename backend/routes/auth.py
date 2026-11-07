@@ -1,24 +1,20 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from models.schemas import UserRegister, UserLogin, Token, UserProfile
-from utils.auth import get_password_hash, create_access_token, decode_token
-from utils.mock_storage import mock_storage as pb_client
-from datetime import timedelta
+from utils.auth import create_access_token, decode_token
+from utils.turso_storage import turso_storage as storage
+import logging
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer()
+logger = logging.getLogger(__name__)
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserRegister):
-    """
-    Register new user with anonymous email
-    
-    Privacy Notice: Use any fake email (e.g., user123@temp.com)
-    We don't verify emails or collect personal data!
-    """
+    """Create an account and return an access token."""
     try:
-        # Create user in PocketBase
-        user = await pb_client.create_user(
+        # Create user in Turso
+        user = await storage.create_user(
             email=user_data.email,
             password=user_data.password,
             username=user_data.username,
@@ -49,23 +45,25 @@ async def register(user_data: UserRegister):
         )
         
         return Token(access_token=access_token, user=user_profile)
-        
-    except Exception as e:
+
+    except ValueError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e),
+        ) from e
+    except Exception as e:
+        logger.exception("Account registration failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to create account right now.",
+        ) from e
 
 @router.post("/login", response_model=Token)
 async def login(credentials: UserLogin):
-    """
-    Login with email and password
-    
-    Remember: Use the same fake email you registered with!
-    """
+    """Authenticate an account using its registered email and password."""
     try:
-        # Authenticate with PocketBase
-        user = await pb_client.authenticate_user(
+        # Authenticate against Turso
+        user = await storage.authenticate_user(
             email=credentials.email,
             password=credentials.password
         )
@@ -103,10 +101,11 @@ async def login(credentials: UserLogin):
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception("Account login failed")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
+            detail="Unable to sign in right now.",
+        ) from e
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     """Dependency to get current authenticated user"""
@@ -120,7 +119,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             detail="Invalid authentication credentials"
         )
     
-    user = await pb_client.get_user(user_id)
+    user = await storage.get_user(user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

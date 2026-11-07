@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Query
 from typing import Optional, List
 from models.schemas import LeaderboardEntry
-from utils.mock_storage import mock_storage as pb_client
+from utils.turso_storage import turso_storage as storage
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
 
@@ -15,7 +15,7 @@ async def get_global_leaderboard(
     Returns top users worldwide sorted by points
     """
     try:
-        leaderboard = await pb_client.get_leaderboard(limit=limit)
+        leaderboard = await storage.get_leaderboard(limit=limit)
         
         return [
             LeaderboardEntry(
@@ -45,7 +45,7 @@ async def get_country_leaderboard(
     Returns top users from a specific country sorted by points
     """
     try:
-        leaderboard = await pb_client.get_leaderboard(limit=limit, country=country)
+        leaderboard = await storage.get_leaderboard(limit=limit, country=country)
         
         return [
             LeaderboardEntry(

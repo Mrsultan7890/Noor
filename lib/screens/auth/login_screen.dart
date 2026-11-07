@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 import 'register_screen.dart';
 
@@ -52,16 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppTheme
-                .palettes[context.watch<ThemeProvider>().selectedTheme]!
-                .gradientColors,
-          ),
+          gradient: context.watch<ThemeProvider>().backgroundGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -74,52 +69,58 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   width: 100,
                   height: 100,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.mosque, size: 50, color: Color(0xFF2E7D32)),
+                  child: Icon(
+                    Icons.mosque,
+                    size: 50,
+                    color: colorScheme.primary,
+                  ),
                 ),
                 
                 const SizedBox(height: 20),
                 
-                const Text(
+                Text(
                   'Welcome Back',
-                  style: TextStyle(
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 
                 const SizedBox(height: 40),
                 
-                // Privacy Notice
+                // Account sign-in guidance
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: colorScheme.surface.withOpacity(0.92),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                    border: Border.all(
+                      color: colorScheme.secondary.withOpacity(0.45),
+                    ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Icon(Icons.lock, color: Colors.white, size: 32),
-                      SizedBox(height: 8),
+                      Icon(Icons.lock, color: colorScheme.secondary, size: 32),
+                      const SizedBox(height: 8),
                       Text(
-                        'Privacy First',
-                        style: TextStyle(
-                          color: Colors.white,
+                        'Sign in to your account',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        'Use the same fake email you registered with.\nWe don\'t collect personal data!',
+                        'Enter the email address and password you used to create your account.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: colorScheme.onSurface.withOpacity(0.75),
                           fontSize: 14,
                         ),
                       ),
@@ -133,8 +134,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: colorScheme.secondary.withOpacity(0.35),
+                    ),
                   ),
                   child: Form(
                     key: _formKey,
@@ -145,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             labelText: 'Email',
-                            hintText: 'user123@temp.com',
+                            hintText: 'name@example.com',
                             prefixIcon: Icon(Icons.email),
                             border: OutlineInputBorder(),
                           ),
@@ -194,18 +198,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: ElevatedButton(
                                 onPressed: userProvider.isLoading ? null : _login,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2E7D32),
+                                  backgroundColor: colorScheme.primary,
+                                  foregroundColor: colorScheme.onPrimary,
                                   padding: const EdgeInsets.all(16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                                 child: userProvider.isLoading
-                                    ? const SizedBox(
+                                    ? SizedBox(
                                         height: 20,
                                         width: 20,
                                         child: CircularProgressIndicator(
-                                          color: Colors.white,
+                                          color: colorScheme.onPrimary,
                                           strokeWidth: 2,
                                         ),
                                       )
@@ -213,7 +218,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         'Login',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
                                         ),
                                       ),
                               ),

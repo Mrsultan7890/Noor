@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from models.schemas import UserProfile, UserUpdate, ActivityLog
 from routes.auth import get_current_user
-from utils.mock_storage import mock_storage as pb_client
+from utils.turso_storage import turso_storage as storage
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -40,7 +40,7 @@ async def update_my_profile(
                 detail="No data to update"
             )
         
-        updated_user = await pb_client.update_user(current_user["id"], data_to_update)
+        updated_user = await storage.update_user(current_user["id"], data_to_update)
         
         return UserProfile(
             id=updated_user["id"],
@@ -85,7 +85,7 @@ async def log_activity(
                 detail="Cannot log activity for another user"
             )
         
-        updated_user = await pb_client.log_activity(
+        updated_user = await storage.log_activity(
             user_id=activity.user_id,
             activity_type=activity.activity_type,
             points=activity.points,
@@ -109,7 +109,7 @@ async def log_activity(
 async def get_my_rank(current_user: dict = Depends(get_current_user)):
     """Get current user's rank in global leaderboard"""
     try:
-        rank_data = await pb_client.get_user_rank(current_user["id"])
+        rank_data = await storage.get_user_rank(current_user["id"])
         return rank_data
     except Exception as e:
         raise HTTPException(

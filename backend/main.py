@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -9,30 +11,29 @@ load_dotenv()
 
 # Import routes
 from routes import auth, users, leaderboard
+from utils.turso_storage import turso_storage
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await turso_storage.initialize()
+    yield
 
 # Create FastAPI app
 app = FastAPI(
     title="Noor API",
     description="""
     🌙 Noor - Islamic Companion App Backend
-    
-    ## Privacy First Approach
-    
-    We prioritize user privacy:
-    - ✅ Use any fake email (no verification required)
-    - ✅ No personal data collection
-    - ✅ Anonymous profiles
-    - ✅ GDPR compliant by default
-    
+
     ## Features
-    
-    - **Authentication**: Simple email/password (no verification)
+
+    - **Authentication**: Email and password accounts
     - **User Profiles**: Track progress and stats
     - **Leaderboard**: Global and country rankings
     - **Activity Logging**: Earn points for Islamic activities
-    
+
     ## Points System
-    
+
     - Quran reading: 10 points/surah
     - Daily prayers: 5 points/prayer
     - Lessons completed: 20 points/lesson
@@ -40,7 +41,8 @@ app = FastAPI(
     """,
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS middleware
@@ -64,7 +66,6 @@ async def root():
         "message": "Noor API - Islamic Companion App",
         "version": "1.0.0",
         "docs": "/docs",
-        "privacy": "We don't collect personal data. Use fake emails!",
         "status": "operational"
     }
 
@@ -73,7 +74,7 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
-        "pocketbase_url": os.getenv("POCKETBASE_URL", "not_configured")
+        "database": "turso",
     }
 
 # Error handlers

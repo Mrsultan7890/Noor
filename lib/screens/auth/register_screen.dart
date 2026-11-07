@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -74,6 +73,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -82,59 +83,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppTheme
-                .palettes[context.watch<ThemeProvider>().selectedTheme]!
-                .gradientColors,
-          ),
+          gradient: context.watch<ThemeProvider>().backgroundGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                const Text(
+                Text(
                   'Create Account',
-                  style: TextStyle(
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 
                 const SizedBox(height: 20),
                 
-                // Privacy Notice
+                // Account information
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.2),
+                    color: colorScheme.surface.withOpacity(0.92),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.amber),
+                    border: Border.all(
+                      color: colorScheme.secondary.withOpacity(0.45),
+                    ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Icon(Icons.privacy_tip, color: Colors.amber, size: 32),
-                      SizedBox(height: 8),
+                      Icon(
+                        Icons.privacy_tip,
+                        color: colorScheme.secondary,
+                        size: 32,
+                      ),
+                      const SizedBox(height: 8),
                       Text(
-                        '🔒 Privacy First!',
-                        style: TextStyle(
-                          color: Colors.white,
+                        'Account details',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        '✅ Use ANY fake email (e.g., user123@temp.com)\n'
-                        '✅ No verification needed\n'
-                        '✅ We don\'t collect personal data\n'
-                        '⚠️ Remember your credentials!',
+                        'Use an email address you can access, and choose a strong password.\n'
+                        'Remember your sign-in details.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: colorScheme.onSurface,
                           fontSize: 13,
                         ),
                       ),
@@ -148,8 +147,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: colorScheme.secondary.withOpacity(0.35),
+                    ),
                   ),
                   child: Form(
                     key: _formKey,
@@ -177,8 +179,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
-                            labelText: 'Email (can be fake)',
-                            hintText: 'user123@temp.com',
+                            labelText: 'Email',
+                            hintText: 'name@example.com',
                             prefixIcon: Icon(Icons.email),
                             border: OutlineInputBorder(),
                           ),
@@ -224,7 +226,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
+                            color: colorScheme.surface.withOpacity(0.75),
+                            border: Border.all(
+                              color: colorScheme.secondary.withOpacity(0.25),
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Column(
@@ -257,18 +262,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               child: ElevatedButton(
                                 onPressed: userProvider.isLoading ? null : _register,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2E7D32),
+                                  backgroundColor: colorScheme.primary,
+                                  foregroundColor: colorScheme.onPrimary,
                                   padding: const EdgeInsets.all(16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                                 child: userProvider.isLoading
-                                    ? const SizedBox(
+                                    ? SizedBox(
                                         height: 20,
                                         width: 20,
                                         child: CircularProgressIndicator(
-                                          color: Colors.white,
+                                          color: colorScheme.onPrimary,
                                           strokeWidth: 2,
                                         ),
                                       )
@@ -276,7 +282,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         'Create Account',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
                                         ),
                                       ),
                               ),

@@ -81,7 +81,10 @@ class MoreScreen extends StatelessWidget {
                     Card(
                       color: Theme.of(context).primaryColor.withOpacity(0.1),
                       child: ListTile(
-                        leading: const Icon(Icons.login, color: Color(0xFF2E7D32)),
+                        leading: Icon(
+                          Icons.login,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         title: const Text('Login to sync your progress'),
                         subtitle: const Text('Track stats & compete on leaderboard'),
                         trailing: ElevatedButton(

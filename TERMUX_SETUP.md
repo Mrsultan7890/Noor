@@ -15,8 +15,6 @@ pkg update && pkg upgrade
 # Install required packages
 pkg install python git
 
-# Install pip packages
-pip install fastapi uvicorn python-dotenv pydantic python-jose passlib httpx
 ```
 
 ### 3. Repository Clone karo
@@ -31,6 +29,9 @@ cd Noor
 
 ```bash
 cd backend
+pip install -r requirements.txt
+cp .env.example .env
+# .env mein apna TURSO_DATABASE_URL, TURSO_AUTH_TOKEN aur SECRET_KEY set karo
 python main.py
 ```
 
@@ -105,5 +106,5 @@ flutter run --dart-define=API_BASE_URL=https://noor-api.onrender.com
 
 - ✅ Backend can be tested locally from the phone browser
 - ✅ App login testing uses HTTPS to protect account traffic
-- ✅ Backend restart pe data clear hoga (mock storage)
-- ✅ Production ke liye PocketBase + Render use karo
+- - ✅ Account and activity data are persisted in Turso.
+- ✅ Production ke liye Turso + Render use karo

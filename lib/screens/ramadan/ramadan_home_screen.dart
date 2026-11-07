@@ -113,47 +113,47 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
   Widget _buildPlanner(BuildContext context) {
     final times = _prayerTimes!;
     final isRamadan = times.hijriMonth == 9;
+    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             // Sehri Timer
             Card(
-              color: Colors.purple[50],
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.nightlight_round,
                       size: 64,
-                      color: Colors.purple,
+                      color: colorScheme.secondary,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Time until Sehri',
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _formatDuration(_timeUntilSehri),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 42,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
-                        color: Color(0xFF1E293B),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Sehri ends at ${_prayerTimesService.formatPrayerTime(times.fajr)}',
-                      style: const TextStyle(
-                        color: Color(0xFF334155),
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.78),
                         fontSize: 15,
                       ),
                     ),
@@ -166,41 +166,40 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
             
             // Iftar Timer
             Card(
-              color: Colors.orange[50],
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.wb_sunny,
                       size: 64,
-                      color: Colors.orange,
+                      color: colorScheme.secondary,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Time until Iftar',
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _formatDuration(_timeUntilIftar),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 42,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
-                        color: Color(0xFF1E293B),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Iftar at ${_prayerTimesService.formatPrayerTime(times.maghrib)}',
-                      style: const TextStyle(
-                        color: Color(0xFF334155),
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.78),
                         fontSize: 15,
                       ),
                     ),
@@ -249,7 +248,7 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 16),
-                    const ArabicText(
+                    ArabicText(
                       'اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ',
                       textAlign: TextAlign.right,
                       style: TextStyle(
@@ -258,13 +257,13 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const ArabicText(
+                    ArabicText(
                       'اے اللہ! میں نے تیرے لیے روزہ رکھا اور تجھ پر ایمان لایا اور تجھ پر بھروسہ کیا اور تیرے رزق سے افطار کیا',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontFamily: 'Amiri',
                         fontSize: 16,
-                        color: Color(0xFF1E293B),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ],

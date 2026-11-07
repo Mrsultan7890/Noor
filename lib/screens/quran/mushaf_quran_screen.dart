@@ -61,6 +61,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('Mushaf - Page $_currentPage/604'),
@@ -71,15 +72,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.brown.shade50, Colors.amber.shade50],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: PageView.builder(
+      body: PageView.builder(
           controller: _pageController,
           onPageChanged: (index) {
             final page = index + 1;
@@ -96,7 +89,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                   return Center(
                     child: Text(
                       'Unable to load this Mushaf page: ${snapshot.error}',
-                      style: const TextStyle(color: Color(0xFF1E293B)),
+                      style: TextStyle(color: colorScheme.onSurface),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -117,7 +110,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                             vertical: 30,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: const [
                               BoxShadow(
@@ -135,10 +128,10 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                                 child: ArabicText(
                                   lines[i],
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 20,
                                     height: 2.5,
-                                    color: Color(0xFF1E293B),
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
                               );
@@ -151,7 +144,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                         'Page $page',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.brown.shade700,
+                          color: colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -161,12 +154,11 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
               },
             );
           },
-        ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: colorScheme.surface,
         child: IconTheme(
-          data: const IconThemeData(color: Color(0xFF1E293B)),
+          data: IconThemeData(color: colorScheme.onSurface),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -188,10 +180,10 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
               ),
               Text(
                 '$_currentPage / 604',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E293B),
+                  color: colorScheme.onSurface,
                 ),
               ),
               IconButton(

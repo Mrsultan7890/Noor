@@ -224,7 +224,7 @@ Response: [
 ## Notes
 
 - Points are stored in backend (mock storage)
-- Backend restart = data lost (use PocketBase for persistence)
+- Account and activity data are persisted in Turso.
 - Frontend needs integration in 4 screens
 - Real-time leaderboard updates
 - Profile auto-refreshes after activity

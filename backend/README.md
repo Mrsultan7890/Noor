@@ -1,126 +1,52 @@
 # Noor API Backend
 
-🌙 Privacy-first backend for Noor Islamic Companion App
+FastAPI backend for Noor, with account and activity data stored in Turso.
 
-## Features
-
-- ✅ Anonymous authentication (fake emails allowed)
-- ✅ User profiles with progress tracking
-- ✅ Global & country leaderboards
-- ✅ Activity logging with points system
-- ✅ PocketBase integration
-- ✅ JWT authentication
-- ✅ FastAPI with auto-generated docs
-
-## Tech Stack
-
-- **Framework**: FastAPI
-- **Database**: PocketBase (HuggingFace hosted)
-- **Deployment**: Render
-- **Auth**: JWT tokens
-- **Language**: Python 3.11+
-
-## Setup
-
-### 1. Install Dependencies
+## Local setup
 
 ```bash
 cd backend
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-
-```bash
 cp .env.example .env
-# Edit .env with your PocketBase URL and credentials
 ```
 
-### 3. Run Locally
+Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in `.env`. Get both from your
+Turso database dashboard or Turso CLI. Keep the auth token private.
+
+Run the API:
 
 ```bash
-python main.py
-# or
 uvicorn main:app --reload
 ```
 
-API will be available at: http://localhost:8000
+The API is available at `http://localhost:8000`; OpenAPI docs are at
+`http://localhost:8000/docs`. The backend creates its `users` and `activities`
+tables automatically at startup.
 
-## API Documentation
+## Render deployment
 
-Once running, visit:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+The Render blueprint is in `render.yaml`. Create a web service using the
+repository and configure these secret environment variables in Render:
 
-## Endpoints
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `SECRET_KEY` (use a long, random value)
 
-### Authentication
-- `POST /auth/register` - Register new user
-- `POST /auth/login` - Login user
+The blueprint sets the Python version, install/start commands, and non-secret
+JWT settings. `DEBUG` should remain `False` in production.
 
-### Users
-- `GET /users/me` - Get current user profile
-- `PUT /users/me` - Update profile
-- `POST /users/activity` - Log activity & earn points
-- `GET /users/rank` - Get user's rank
+## API
 
-### Leaderboard
-- `GET /leaderboard/global` - Global rankings
-- `GET /leaderboard/country/{country}` - Country rankings
+- `POST /auth/register` - create an account
+- `POST /auth/login` - sign in
+- `GET /users/me` - get the signed-in user's profile
+- `PUT /users/me` - update the profile
+- `POST /users/activity` - record activity and points
+- `GET /users/rank` - get the user's leaderboard rank
+- `GET /leaderboard/global` - global leaderboard
+- `GET /leaderboard/country/{country}` - country leaderboard
 
-## Points System
-
-| Activity | Points |
-|----------|--------|
-| Quran reading (per surah) | 10 |
-| Prayer logged | 5 |
-| Lesson completed | 20 |
-| Dua memorized | 15 |
-
-## PocketBase Collections
-
-### users
-```json
-{
-  "email": "string",
-  "password": "string",
-  "username": "string",
-  "country": "string",
-  "level": "string",
-  "points": "number",
-  "streak_days": "number",
-  "quran_progress": "number",
-  "prayers_logged": "number",
-  "lessons_completed": "number",
-  "avatar": "string"
-}
-```
-
-### activities
-```json
-{
-  "user_id": "relation",
-  "activity_type": "string",
-  "points": "number",
-  "metadata": "json"
-}
-```
-
-## Deployment to Render
-
-1. Push code to GitHub
-2. Connect Render to your repo
-3. Add environment variables in Render dashboard
-4. Deploy!
-
-## Privacy Notice
-
-⚠️ **Important**: This API is designed for privacy-first approach:
-- Users can use fake emails (e.g., user123@temp.com)
-- No email verification required
-- No personal data collection
-- Anonymous profiles only
-
-## License
-
-MIT License
+Passwords are hashed before they are stored. Use a valid email address and
+keep your account credentials private.

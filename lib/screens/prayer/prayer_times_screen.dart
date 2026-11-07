@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../theme/app_theme.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../../models/prayer_times_model.dart';
@@ -212,31 +211,34 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     final hours = _timeUntilNext.inHours;
     final minutes = _timeUntilNext.inMinutes % 60;
     final seconds = _timeUntilNext.inSeconds % 60;
+    final theme = Theme.of(context);
+    final foreground = theme.brightness == Brightness.dark
+        ? Colors.white
+        : theme.colorScheme.onSurface;
+    final timeBoxBackground = theme.brightness == Brightness.dark
+        ? Colors.white.withOpacity(0.2)
+        : theme.colorScheme.onSurface.withOpacity(0.08);
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: AppTheme
-              .palettes[context.watch<ThemeProvider>().selectedTheme]!
-              .gradientColors,
-        ),
+        gradient: context.watch<ThemeProvider>().backgroundGradient,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Next Prayer',
             style: TextStyle(
-              color: Colors.white70,
+              color: foreground.withOpacity(0.75),
               fontSize: 16,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _nextPrayer,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: foreground,
               fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
@@ -245,15 +247,30 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _TimeBox(value: hours, label: 'Hours'),
+              _TimeBox(
+                value: hours,
+                label: 'Hours',
+                foreground: foreground,
+                background: timeBoxBackground,
+              ),
               const SizedBox(width: 8),
-              const Text(':', style: TextStyle(color: Colors.white, fontSize: 24)),
+              Text(':', style: TextStyle(color: foreground, fontSize: 24)),
               const SizedBox(width: 8),
-              _TimeBox(value: minutes, label: 'Min'),
+              _TimeBox(
+                value: minutes,
+                label: 'Min',
+                foreground: foreground,
+                background: timeBoxBackground,
+              ),
               const SizedBox(width: 8),
-              const Text(':', style: TextStyle(color: Colors.white, fontSize: 24)),
+              Text(':', style: TextStyle(color: foreground, fontSize: 24)),
               const SizedBox(width: 8),
-              _TimeBox(value: seconds, label: 'Sec'),
+              _TimeBox(
+                value: seconds,
+                label: 'Sec',
+                foreground: foreground,
+                background: timeBoxBackground,
+              ),
             ],
           ),
         ],
@@ -318,8 +335,15 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
 class _TimeBox extends StatelessWidget {
   final int value;
   final String label;
+  final Color foreground;
+  final Color background;
 
-  const _TimeBox({required this.value, required this.label});
+  const _TimeBox({
+    required this.value,
+    required this.label,
+    required this.foreground,
+    required this.background,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -328,13 +352,13 @@ class _TimeBox extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: background,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             value.toString().padLeft(2, '0'),
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: foreground,
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
@@ -343,8 +367,8 @@ class _TimeBox extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white70,
+          style: TextStyle(
+            color: foreground.withOpacity(0.75),
             fontSize: 12,
           ),
         ),
