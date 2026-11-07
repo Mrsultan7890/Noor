@@ -4,6 +4,7 @@ import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
+import '../../services/api_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,12 +14,39 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ApiService _apiService = ApiService();
+  int? _rank;
+  bool _isRankLoading = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserProvider>(context, listen: false).loadProfile();
+      _loadProfile();
     });
+  }
+
+  Future<void> _loadProfile() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.loadProfile();
+    if (!mounted || userProvider.currentUser == null) return;
+
+    try {
+      final rankData = await _apiService.getUserRank();
+      final rank = rankData['rank'];
+      if (rank is! int) {
+        throw const FormatException('Rank response is invalid.');
+      }
+      if (!mounted) return;
+      setState(() {
+        _rank = rank;
+        _isRankLoading = false;
+      });
+    } catch (error) {
+      debugPrint('Failed to load profile rank: $error');
+      if (!mounted) return;
+      setState(() => _isRankLoading = false);
+    }
   }
 
   @override
@@ -136,10 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           value: user.points.toString(),
                           color: Colors.amber,
                         ),
-                        const _StatItem(
+                        _StatItem(
                           icon: Icons.local_fire_department,
                           label: 'Streak',
-                          value: '0 days',
+                          value: '${user.streakDays} days',
                           color: Colors.orange,
                         ),
                       ],
@@ -164,23 +192,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       value: '${user.quranProgress.toStringAsFixed(1)}%',
                       color: Colors.green,
                     ),
-                    const _StatsCard(
+                    _StatsCard(
                       icon: Icons.self_improvement,
                       title: 'Prayers Logged',
-                      value: '0',
+                      value: user.prayersLogged.toString(),
                       color: Colors.blue,
                     ),
-                    const _StatsCard(
+                    _StatsCard(
                       icon: Icons.school,
                       title: 'Lessons Done',
-                      value: '0',
+                      value: user.lessonsCompleted.toString(),
                       color: Colors.purple,
                     ),
-                    const _StatsCard(
+                    _StatsCard(
                       icon: Icons.emoji_events,
                       title: 'Rank',
-                      value: 'Loading...',
+                      value: _rank == null ? '—' : '#$_rank',
                       color: Colors.amber,
+                      isLoading: _isRankLoading,
                     ),
                   ],
                 ),
@@ -266,6 +295,7 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Icon(icon, color: color, size: 32),
@@ -281,7 +311,7 @@ class _StatItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[600],
+            color: colorScheme.onSurface.withOpacity(0.85),
           ),
         ),
       ],
@@ -294,16 +324,19 @@ class _StatsCard extends StatelessWidget {
   final String title;
   final String value;
   final Color color;
+  final bool isLoading;
 
   const _StatsCard({
     required this.icon,
     required this.title,
     required this.value,
     required this.color,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       elevation: 2,
       child: Padding(
@@ -313,20 +346,31 @@ class _StatsCard extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 32),
             const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            if (isLoading)
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colorScheme.primary,
+                ),
+              )
+            else
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
               ),
-            ),
             const SizedBox(height: 4),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: colorScheme.onSurface.withOpacity(0.85),
               ),
             ),
           ],

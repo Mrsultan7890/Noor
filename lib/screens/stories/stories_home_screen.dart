@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../services/stories_service.dart';
 import '../../models/story_model.dart';
@@ -32,14 +33,19 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
 
     try {
       final data = await _service.getStories();
+      final categories = _service.parseCategories(data['categories'] as List);
+      final stories = _service.parseStories(data['stories'] as List);
+      if (!mounted) return;
       setState(() {
-        _categories = _service.parseCategories(data['categories']);
-        _stories = _service.parseStories(data['stories']);
+        _categories = categories;
+        _stories = stories;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (error) {
+      debugPrint('Failed to load bundled Islamic stories: $error');
+      if (!mounted) return;
       setState(() {
-        _error = 'Failed to load stories. Please check your connection.';
+        _error = 'Stories could not be loaded. Tap retry to try again.';
         _isLoading = false;
       });
     }
@@ -59,10 +65,7 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              await _service.clearCache();
-              _loadStories();
-            },
+            onPressed: _loadStories,
             tooltip: 'Refresh stories',
           ),
         ],
@@ -90,7 +93,9 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
                   itemCount: _categories.length,
                   itemBuilder: (context, index) {
                     final category = _categories[index];
-                    final color = Color(int.parse(category.color));
+                    final color = Color(
+                      int.parse(category.color.substring(2), radix: 16),
+                    );
                     final stories = _getStoriesByCategory(category.id);
           
           return Card(

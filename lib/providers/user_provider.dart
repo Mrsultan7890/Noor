@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/api_service.dart';
@@ -13,6 +15,50 @@ class UserProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _currentUser != null;
+
+  Future<void> restoreSession() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      if (!await _apiService.hasStoredToken()) return;
+
+      final cachedProfile = await _apiService.getCachedProfile();
+      if (cachedProfile != null) {
+        _currentUser = User.fromJson(cachedProfile);
+        _isLoading = false;
+        notifyListeners();
+        unawaited(_refreshRestoredProfile());
+        return;
+      }
+
+      _currentUser = User.fromJson(await _apiService.getProfile());
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+    } catch (error) {
+      _error = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _refreshRestoredProfile() async {
+    try {
+      _currentUser = User.fromJson(await _apiService.getProfile());
+      _error = null;
+      notifyListeners();
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+      notifyListeners();
+    } catch (error) {
+      // Keep the cached profile when the API is temporarily unavailable.
+      _error = error.toString();
+    }
+  }
   
   Future<bool> register({
     required String email,
@@ -81,6 +127,12 @@ class UserProvider extends ChangeNotifier {
       _currentUser = User.fromJson(response);
       _isLoading = false;
       notifyListeners();
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+      _error = 'Your session expired. Please sign in again.';
+      _isLoading = false;
+      notifyListeners();
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
@@ -141,6 +193,7 @@ class UserProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _apiService.clearToken();
     _currentUser = null;
+    _error = null;
     notifyListeners();
   }
 }

@@ -3,6 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utf8_json.dart';
 
+class AuthSessionExpiredException implements Exception {
+  const AuthSessionExpiredException();
+}
+
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
@@ -25,6 +29,29 @@ class ApiService {
   }
   
   String? _token;
+
+  Future<bool> hasStoredToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token') != null;
+  }
+
+  Future<Map<String, dynamic>?> getCachedProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedProfile = prefs.getString('cached_profile');
+    if (cachedProfile == null) return null;
+
+    final decoded = json.decode(cachedProfile);
+    if (decoded is! Map<String, dynamic>) {
+      await prefs.remove('cached_profile');
+      return null;
+    }
+    return decoded;
+  }
+
+  Future<void> _saveProfile(Map<String, dynamic> profile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cached_profile', json.encode(profile));
+  }
   
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,6 +67,7 @@ class ApiService {
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
+    await prefs.remove('cached_profile');
     _token = null;
   }
   
@@ -77,6 +105,7 @@ class ApiService {
       if (response.statusCode == 201) {
         final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
+        await _saveProfile(Map<String, dynamic>.from(data['user']));
         return data;
       } else {
         throw Exception(decodeUtf8JsonResponse(response)['detail']);
@@ -103,6 +132,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
+        await _saveProfile(Map<String, dynamic>.from(data['user']));
         return data;
       } else {
         throw Exception(decodeUtf8JsonResponse(response)['detail']);
@@ -119,14 +149,19 @@ class ApiService {
       final response = await http.get(
         _endpoint('/users/me'),
         headers: _getHeaders(),
-      );
+      ).timeout(const Duration(seconds: 15));
       
       if (response.statusCode == 200) {
-        return decodeUtf8JsonResponse(response);
-      } else {
-        throw Exception('Failed to load profile');
+        final profile = decodeUtf8JsonResponse(response);
+        await _saveProfile(profile);
+        return profile;
       }
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw const AuthSessionExpiredException();
+      }
+      throw Exception('Failed to load profile (HTTP ${response.statusCode}).');
     } catch (e) {
+      if (e is AuthSessionExpiredException) rethrow;
       throw Exception('Error: $e');
     }
   }
@@ -152,7 +187,9 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return decodeUtf8JsonResponse(response);
+        final profile = decodeUtf8JsonResponse(response);
+        await _saveProfile(profile);
+        return profile;
       } else {
         throw Exception('Failed to update profile');
       }
@@ -197,7 +234,7 @@ class ApiService {
       final response = await http.get(
         _endpoint('/users/rank'),
         headers: _getHeaders(),
-      );
+      ).timeout(const Duration(seconds: 15));
       
       if (response.statusCode == 200) {
         return decodeUtf8JsonResponse(response);

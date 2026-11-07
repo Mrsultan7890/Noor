@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../navigation/main_navigation_screen.dart';
 import 'onboarding/onboarding_screen.dart';
+import '../providers/user_provider.dart';
 import '../widgets/arabic_text.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,17 +28,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Timer(const Duration(seconds: 3), () async {
       final prefs = await SharedPreferences.getInstance();
       final onboardingComplete = prefs.getBool('onboarding_complete') ?? false;
-      
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => onboardingComplete 
-                ? const MainNavigationScreen()
-                : const OnboardingScreen(),
-          ),
-        );
+
+      if (!mounted) return;
+      if (onboardingComplete) {
+        await Provider.of<UserProvider>(context, listen: false).restoreSession();
       }
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => onboardingComplete
+              ? const MainNavigationScreen()
+              : const OnboardingScreen(),
+        ),
+      );
     });
   }
 
