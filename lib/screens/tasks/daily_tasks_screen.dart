@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../theme/app_theme.dart';
 
 class DailyTasksScreen extends StatefulWidget {
@@ -70,27 +71,101 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
   Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final savedDate = prefs.getString('tasks_date') ?? '';
-    
+
     if (savedDate != _todayDate) {
-      await prefs.clear();
       await prefs.setString('tasks_date', _todayDate);
     }
-    
-    setState(() {
-      for (var category in _categories) {
-        for (var task in category.tasks) {
-          _completedTasks[task.id] = prefs.getBool(task.id) ?? false;
-        }
+
+    final oldTaskKeys = _categories
+        .expand((category) => category.tasks)
+        .map((task) => task.id)
+        .toList();
+    final completedTasks = <String, bool>{};
+    for (final taskId in oldTaskKeys) {
+      final storedValue = prefs.getBool(_taskPreferenceKey(taskId));
+      final legacyValue =
+          savedDate == _todayDate ? prefs.getBool(taskId) : null;
+      completedTasks[taskId] = storedValue ?? legacyValue ?? false;
+      if (storedValue == null && legacyValue != null) {
+        await prefs.setBool(_taskPreferenceKey(taskId), legacyValue);
       }
+    }
+    for (final taskKey in oldTaskKeys) {
+      await prefs.remove(taskKey);
+    }
+    if (!mounted) return;
+    setState(() {
+      _completedTasks
+        ..clear()
+        ..addAll(completedTasks);
+    });
+  }
+
+  String _taskPreferenceKey(String taskId) =>
+      'daily_task_${_todayDate}_$taskId';
+
+  Future<void> _resetTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    _todayDate = DateTime.now().toIso8601String().split(' ')[0];
+    await prefs.setString('tasks_date', _todayDate);
+    for (final category in _categories) {
+      for (final task in category.tasks) {
+        await prefs.remove(_taskPreferenceKey(task.id));
+        await prefs.remove(task.id);
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _completedTasks
+        ..clear()
+        ..addEntries(
+          _categories
+              .expand((category) => category.tasks)
+              .map((task) => MapEntry(task.id, false)),
+        );
     });
   }
 
   Future<void> _toggleTask(String taskId, bool value) async {
+    if (value) {
+      final task = _categories
+          .expand((category) => category.tasks)
+          .firstWhere((task) => task.id == taskId);
+      final userProvider = context.read<UserProvider>();
+      if (userProvider.isAuthenticated) {
+        final pointsEarned = await userProvider.logActivity(
+          activityType: 'daily_task_completed',
+          points: task.points,
+          metadata: {'task_id': task.id},
+        );
+        if (pointsEarned == null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Could not sync this task: ${userProvider.error ?? 'Please try again.'}',
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
+    }
+
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(taskId, value);
+    await prefs.setBool(_taskPreferenceKey(taskId), value);
+    if (!mounted) return;
     setState(() {
       _completedTasks[taskId] = value;
     });
+    if (value && !context.read<UserProvider>().isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Task saved locally. Sign in to sync points to your profile.'),
+        ),
+      );
+    }
   }
 
   int _getTotalPoints() {
@@ -130,12 +205,7 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
-              await prefs.setString('tasks_date', _todayDate);
-              _loadTasks();
-            },
+            onPressed: _resetTasks,
           ),
         ],
       ),

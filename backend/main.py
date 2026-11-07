@@ -34,10 +34,15 @@ app = FastAPI(
 
     ## Points System
 
-    - Quran reading: 10 points/surah
-    - Daily prayers: 5 points/prayer
-    - Lessons completed: 20 points/lesson
-    - Dua memorized: 15 points/dua
+    - Quran reading: 10 points per surah each day
+    - Daily prayers: 5 points per prayer each day
+    - Lessons completed: 20 points per lesson
+    - Dua memorized: 15 points per dua
+    - Completed game levels: 10 points per level
+    - Daily tasks: server-assigned rewards shown in the app
+
+    Rewards are assigned by the server and duplicate activity submissions do
+    not grant points more than once for the same activity period.
     """,
     version="1.0.0",
     docs_url="/docs",

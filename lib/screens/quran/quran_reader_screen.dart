@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/quran_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
 import '../../models/quran_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/arabic_text.dart';
@@ -147,22 +148,17 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   Future<void> _markAsCompleted(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.isAuthenticated) {
-      await userProvider.logActivity(
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
         activityType: 'quran_read',
         points: 10,
         metadata: {
           'surah_number': widget.surah.number,
           'surah_name': widget.surah.englishName,
         },
+        activityName: 'Surah',
       );
-      
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Surah completed! +10 points'),
-          ),
-        );
-      }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -156,7 +156,9 @@ class ApiService {
         await _saveProfile(profile);
         return profile;
       }
-      if (response.statusCode == 401 || response.statusCode == 403) {
+      if (response.statusCode == 401 ||
+          response.statusCode == 403 ||
+          response.statusCode == 404) {
         throw const AuthSessionExpiredException();
       }
       throw Exception('Failed to load profile (HTTP ${response.statusCode}).');
@@ -190,9 +192,15 @@ class ApiService {
         final profile = decodeUtf8JsonResponse(response);
         await _saveProfile(profile);
         return profile;
+      } else if (response.statusCode == 401 ||
+          response.statusCode == 403 ||
+          response.statusCode == 404) {
+        throw const AuthSessionExpiredException();
       } else {
         throw Exception('Failed to update profile');
       }
+    } on AuthSessionExpiredException {
+      rethrow;
     } catch (e) {
       throw Exception('Error: $e');
     }
@@ -215,14 +223,29 @@ class ApiService {
           'activity_type': activityType,
           'points': points,
           'metadata': metadata,
+          'activity_date': DateTime.now().toIso8601String().split('T').first,
         })),
       );
       
       if (response.statusCode == 201) {
-        return decodeUtf8JsonResponse(response);
+        final result = decodeUtf8JsonResponse(response);
+        final profile = result['user'];
+        if (profile is Map<String, dynamic>) {
+          await _saveProfile(profile);
+        }
+        return result;
+      } else if (response.statusCode == 401 ||
+          response.statusCode == 403 ||
+          response.statusCode == 404) {
+        throw const AuthSessionExpiredException();
       } else {
-        throw Exception('Failed to log activity');
+        throw Exception(
+          decodeUtf8JsonResponse(response)['detail'] ??
+              'Failed to log activity (HTTP ${response.statusCode}).',
+        );
       }
+    } on AuthSessionExpiredException {
+      rethrow;
     } catch (e) {
       throw Exception('Error: $e');
     }

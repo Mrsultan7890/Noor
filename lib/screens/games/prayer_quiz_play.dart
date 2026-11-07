@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/sound_service.dart';
+import 'game_widgets.dart';
 
 class PrayerQuizPlay extends StatefulWidget {
   final int level;
@@ -66,28 +67,54 @@ class _PrayerQuizPlayState extends State<PrayerQuizPlay> {
   @override
   Widget build(BuildContext context) {
     final q = _questions[_currentQ];
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text('Level ${widget.level}')),
-      body: Container(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Question ${_currentQ + 1}/5', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 32),
-            Text(q['q'], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-            const SizedBox(height: 48),
-            ...(q['o'] as List).map((opt) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: ElevatedButton(
-                onPressed: () => _answer(opt),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 60),
-                ),
-                child: Text(opt, style: const TextStyle(fontSize: 20)),
+      body: GameScreenBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              LinearProgressIndicator(
+                value: (_currentQ + 1) / _questions.length,
+                minHeight: 6,
               ),
-            )),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'Question ${_currentQ + 1} of ${_questions.length}',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 20),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    q['q'],
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ...(q['o'] as List<String>).map(
+                (option) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: OutlinedButton(
+                    onPressed: () => _answer(option),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: colors.onSurface,
+                      side: BorderSide(color: colors.primary.withOpacity(0.5)),
+                      minimumSize: const Size.fromHeight(56),
+                    ),
+                    child: Text(option, style: const TextStyle(fontSize: 18)),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

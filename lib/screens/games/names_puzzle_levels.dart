@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/user_provider.dart';
 import '../../services/names_service.dart';
+import '../../utils/activity_feedback.dart';
 import '../../widgets/arabic_text.dart';
+import 'game_widgets.dart';
 
 class NamesPuzzleLevels extends StatefulWidget {
   const NamesPuzzleLevels({super.key});
@@ -54,10 +58,26 @@ class _NamesPuzzleLevelsState extends State<NamesPuzzleLevels> {
     final completed = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => _NamesPuzzlePlay(name: name, names: _names),
+        builder: (_) => _NamesPuzzlePlay(
+          name: name,
+          names: _names,
+          level: level,
+        ),
       ),
     );
     if (completed != true || !mounted) return;
+
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.isAuthenticated) {
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
+        activityType: 'game_completed',
+        points: 10,
+        metadata: {'game_id': 'names_puzzle', 'level': level},
+        activityName: '99 Names Puzzle level',
+      );
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final nextLevel = level == _unlockedLevel && _unlockedLevel < 99
@@ -75,59 +95,58 @@ class _NamesPuzzleLevelsState extends State<NamesPuzzleLevels> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('99 Names Puzzle'),
-        backgroundColor: Colors.amber,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(_errorMessage!, textAlign: TextAlign.center),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _load,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _names.length,
-                  itemBuilder: (context, index) {
-                    final level = index + 1;
-                    final unlocked = level <= _unlockedLevel;
-                    return Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor:
-                              unlocked ? Colors.amber : Colors.grey,
-                          child: Text('$level'),
-                        ),
-                        title: Text(_names[index]['transliteration']!),
-                        subtitle: Text('Name $level'),
-                        trailing: Icon(
-                          unlocked ? Icons.play_arrow : Icons.lock,
-                        ),
-                        onTap: unlocked ? () => _openLevel(level) : null,
+      body: GameScreenBackground(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _errorMessage != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_errorMessage!, textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _load,
+                            child: const Text('Retry'),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _names.length,
+                    itemBuilder: (context, index) {
+                      final level = index + 1;
+                      final unlocked = level <= _unlockedLevel;
+                      final name = _names[index];
+                      return GameLevelCard(
+                        level: level,
+                        title: name['transliteration']!,
+                        subtitle: 'Name $level',
+                        unlocked: unlocked,
+                        onTap: unlocked ? () => _openLevel(level) : null,
+                      );
+                    },
+                  ),
+      ),
     );
   }
 }
 
 class _NamesPuzzlePlay extends StatefulWidget {
-  const _NamesPuzzlePlay({required this.name, required this.names});
+  const _NamesPuzzlePlay({
+    required this.name,
+    required this.names,
+    required this.level,
+  });
 
   final Map<String, String> name;
   final List<Map<String, String>> names;
+  final int level;
 
   @override
   State<_NamesPuzzlePlay> createState() => _NamesPuzzlePlayState();
@@ -183,33 +202,52 @@ class _NamesPuzzlePlayState extends State<_NamesPuzzlePlay> {
     final name = widget.name;
     return Scaffold(
       appBar: AppBar(title: const Text('99 Names Puzzle')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ArabicText(
-              name['name']!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 44, height: 1.8),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'What is the meaning of ${name['transliteration']}?',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 32),
-            for (final option in _options)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ElevatedButton(
-                  onPressed: _answered ? null : () => _answer(option),
-                  child: Text(option),
+      body: GameScreenBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              LinearProgressIndicator(value: widget.level / 99, minHeight: 6),
+              const SizedBox(height: 24),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Name ${widget.level} of 99',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 12),
+                      ArabicText(
+                        name['name']!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 44, height: 1.8),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'What is the meaning of ${name['transliteration']}?',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-          ],
+              const SizedBox(height: 24),
+              for (final option in _options)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: ElevatedButton(
+                    onPressed: _answered ? null : () => _answer(option),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(56),
+                    ),
+                    child: Text(option),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

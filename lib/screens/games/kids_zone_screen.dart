@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
-import '../../theme/app_theme.dart';
+import '../../providers/user_provider.dart';
 import 'memory_game_levels.dart';
 import 'prayer_quiz_levels.dart';
 import 'names_puzzle_levels.dart';
 import 'wudu_game_levels.dart';
+import 'game_widgets.dart';
 
 class KidsZoneScreen extends StatelessWidget {
   const KidsZoneScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppTheme
-                .palettes[context.watch<ThemeProvider>().selectedTheme]!
-                .gradientColors,
-          ),
+    final games = [
+      _GameCard(
+        title: 'Memory Match',
+        icon: Icons.grid_on,
+        levels: '50 Levels',
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MemoryGameLevels()),
         ),
+      ),
+      _GameCard(
+        title: 'Prayer Quiz',
+        icon: Icons.quiz,
+        levels: '50 Levels',
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PrayerQuizLevels()),
+        ),
+      ),
+      _GameCard(
+        title: '99 Names Puzzle',
+        icon: Icons.extension,
+        levels: '99 Levels',
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const NamesPuzzleLevels()),
+        ),
+      ),
+      _GameCard(
+        title: 'Wudu Steps',
+        icon: Icons.water_drop,
+        levels: '12 Levels',
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const WuduGameLevels()),
+        ),
+      ),
+    ];
+
+    return Scaffold(
+      body: GameScreenBackground(
         child: SafeArea(
           child: Column(
             children: [
@@ -31,63 +61,62 @@ class KidsZoneScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                      icon: const Icon(Icons.arrow_back, size: 28),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Expanded(
-                      child: Text(
-                        '🎮 Kids Zone',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(blurRadius: 10, color: Colors.black26, offset: Offset(2, 2)),
-                          ],
-                        ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Games',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            'Learn, play, and make progress',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 48),
                   ],
                 ),
               ),
+              Consumer<UserProvider>(
+                builder: (context, userProvider, _) {
+                  final user = userProvider.currentUser;
+                  if (user == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: Card(
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.local_fire_department_rounded,
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
+                        title: Text('${user.points} points'),
+                        subtitle: Text('${user.streakDays}-day streak'),
+                        trailing: const Icon(Icons.stars_rounded),
+                      ),
+                    ),
+                  );
+                },
+              ),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
+                child: GridView.builder(
                   padding: const EdgeInsets.all(20),
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  children: [
-                    _GameCard(
-                      title: 'Memory\nMatch',
-                      icon: Icons.grid_on,
-                      gradient: [Colors.blue.shade400, Colors.cyan.shade300],
-                      levels: '50 Levels',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemoryGameLevels())),
-                    ),
-                    _GameCard(
-                      title: 'Prayer\nQuiz',
-                      icon: Icons.quiz,
-                      gradient: [Colors.orange.shade400, Colors.red.shade300],
-                      levels: '50 Levels',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerQuizLevels())),
-                    ),
-                    _GameCard(
-                      title: '99 Names\nPuzzle',
-                      icon: Icons.extension,
-                      gradient: [Colors.amber.shade400, Colors.yellow.shade300],
-                      levels: '99 Levels',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NamesPuzzleLevels())),
-                    ),
-                    _GameCard(
-                      title: 'Wudu\nSteps',
-                      icon: Icons.water_drop,
-                      gradient: [Colors.teal.shade400, Colors.green.shade300],
-                      levels: '12 Levels',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WuduGameLevels())),
-                    ),
-                  ],
+                  itemCount: 4,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.94,
+                  ),
+                  itemBuilder: (context, index) {
+                    return games[index];
+                  },
                 ),
               ),
             ],
@@ -101,28 +130,32 @@ class KidsZoneScreen extends StatelessWidget {
 class _GameCard extends StatelessWidget {
   final String title;
   final IconData icon;
-  final List<Color> gradient;
   final String levels;
   final VoidCallback onTap;
 
   const _GameCard({
     required this.title,
     required this.icon,
-    required this.gradient,
     required this.levels,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
+          color: colors.surface,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: colors.primary.withOpacity(0.24)),
           boxShadow: [
-            BoxShadow(color: gradient[0].withOpacity(0.5), blurRadius: 15, offset: const Offset(0, 8)),
+            BoxShadow(
+              color: colors.shadow.withOpacity(0.1),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
           ],
         ),
         child: Stack(
@@ -130,7 +163,7 @@ class _GameCard extends StatelessWidget {
             Positioned(
               top: -20,
               right: -20,
-              child: Icon(icon, size: 120, color: Colors.white.withOpacity(0.2)),
+              child: Icon(icon, size: 120, color: colors.primary.withOpacity(0.06)),
             ),
             Padding(
               padding: const EdgeInsets.all(20),
@@ -140,10 +173,10 @@ class _GameCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: colors.primary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, size: 40, color: Colors.white),
+                    child: Icon(icon, size: 40, color: colors.primary),
                   ),
                   const Spacer(),
                   Text(
@@ -151,7 +184,6 @@ class _GameCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
                       height: 1.2,
                     ),
                   ),
@@ -159,12 +191,16 @@ class _GameCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: colors.primary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       levels,
-                      style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

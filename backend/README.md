@@ -35,7 +35,8 @@ repository and configure these secret environment variables in Render:
 - `SECRET_KEY` (use a long, random value)
 
 The blueprint sets the Python version, install/start commands, and non-secret
-JWT settings. `DEBUG` should remain `False` in production.
+JWT settings. Access tokens last 30 days by default; keep `DEBUG` set to
+`False` in production.
 
 ## API
 
@@ -50,3 +51,14 @@ JWT settings. `DEBUG` should remain `False` in production.
 
 Passwords are hashed before they are stored. Use a valid email address and
 keep your account credentials private.
+
+Activity rewards are assigned by the server, not by the points value sent by
+the app. Repeated prayers and Quran surahs are rewarded once per local day;
+lessons, duas, and game levels are rewarded once per item. Activity submissions
+are idempotent, update the user's streak, and refresh the profile response.
+
+Run backend tests from this directory:
+
+```bash
+python -m unittest discover -s tests -v
+```

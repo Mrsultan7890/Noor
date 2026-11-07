@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
 import '../../widgets/arabic_text.dart';
 
 class DuaScreen extends StatefulWidget {
@@ -38,19 +39,14 @@ class _DuaScreenState extends State<DuaScreen> {
       
       // Award points for memorizing
       if (userProvider.isAuthenticated) {
-        await userProvider.logActivity(
+        await logActivityWithFeedback(
+          context: context,
+          userProvider: userProvider,
           activityType: 'dua_memorized',
           points: 15,
           metadata: {'dua_title': duaTitle},
+          activityName: 'Dua',
         );
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Dua memorized! +15 points'),
-            ),
-          );
-        }
       }
     }
     

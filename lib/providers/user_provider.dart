@@ -57,6 +57,7 @@ class UserProvider extends ChangeNotifier {
     } catch (error) {
       // Keep the cached profile when the API is temporarily unavailable.
       _error = error.toString();
+      notifyListeners();
     }
   }
   
@@ -125,6 +126,7 @@ class UserProvider extends ChangeNotifier {
     try {
       final response = await _apiService.getProfile();
       _currentUser = User.fromJson(response);
+      _error = null;
       _isLoading = false;
       notifyListeners();
     } on AuthSessionExpiredException {
@@ -156,9 +158,17 @@ class UserProvider extends ChangeNotifier {
       );
       
       _currentUser = User.fromJson(response);
+      _error = null;
       _isLoading = false;
       notifyListeners();
       return true;
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+      _error = 'Your session expired. Please sign in again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
@@ -167,26 +177,42 @@ class UserProvider extends ChangeNotifier {
     }
   }
   
-  Future<void> logActivity({
+  Future<int?> logActivity({
     required String activityType,
     required int points,
     Map<String, dynamic>? metadata,
   }) async {
-    if (_currentUser == null) return;
+    if (_currentUser == null) {
+      _error = 'Sign in to sync activity and earn profile points.';
+      notifyListeners();
+      return null;
+    }
     
     try {
-      await _apiService.logActivity(
+      final result = await _apiService.logActivity(
         userId: _currentUser!.id,
         activityType: activityType,
         points: points,
         metadata: metadata,
       );
-      
-      // Reload profile to get updated points
-      await loadProfile();
+      final profile = result['user'];
+      if (profile is Map<String, dynamic>) {
+        _currentUser = User.fromJson(profile);
+      }
+      _error = null;
+      notifyListeners();
+      final pointsEarned = result['points_earned'];
+      return pointsEarned is int ? pointsEarned : null;
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+      _error = 'Your session expired. Please sign in again.';
+      notifyListeners();
+      return null;
     } catch (e) {
       _error = e.toString();
       notifyListeners();
+      return null;
     }
   }
   

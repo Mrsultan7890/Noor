@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../services/sound_service.dart';
+import 'game_widgets.dart';
 
 class MemoryGamePlay extends StatefulWidget {
   final int level;
@@ -145,6 +146,7 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('Level ${widget.level}'),
@@ -157,7 +159,8 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
           ),
         ],
       ),
-      body: GridView.builder(
+      body: GameScreenBackground(
+        child: GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: _getPairsCount() <= 6 ? 3 : 4,
@@ -174,10 +177,10 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
                   borderRadius: BorderRadius.circular(12),
                   gradient: LinearGradient(
                     colors: _matched[index]
-                        ? [Colors.green, Colors.green.shade700]
+                        ? [colors.tertiary, colors.primary]
                         : _flipped[index]
-                            ? [Colors.white, Colors.grey.shade100]
-                            : [Colors.pink, Colors.purple],
+                            ? [colors.surface, colors.surface]
+                            : [colors.primary, colors.primary.withOpacity(0.75)],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -191,18 +194,23 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
                   child: _flipped[index] || _matched[index]
                       ? Text(
                           _cards[index],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: colors.onSurface,
                           ),
                         )
-                      : const Icon(Icons.question_mark, size: 48, color: Colors.white),
+                      : Icon(
+                          Icons.question_mark,
+                          size: 48,
+                          color: colors.onPrimary,
+                        ),
                 ),
               ),
             );
           },
         ),
+      ),
     );
   }
 }

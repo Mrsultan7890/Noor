@@ -16,6 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ApiService _apiService = ApiService();
   int? _rank;
+  int? _rankForPoints;
   bool _isRankLoading = true;
 
   @override
@@ -27,10 +28,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadProfile() async {
+    if (mounted) setState(() => _isRankLoading = true);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     await userProvider.loadProfile();
-    if (!mounted || userProvider.currentUser == null) return;
+    if (!mounted) return;
+    final user = userProvider.currentUser;
+    if (user == null) {
+      setState(() => _isRankLoading = false);
+      return;
+    }
 
+    await _loadRank(user.points);
+  }
+
+  Future<void> _loadRank(int points) async {
+    if (!mounted) return;
+    setState(() => _isRankLoading = true);
     try {
       final rankData = await _apiService.getUserRank();
       final rank = rankData['rank'];
@@ -40,12 +53,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       setState(() {
         _rank = rank;
+        _rankForPoints = points;
         _isRankLoading = false;
       });
     } catch (error) {
       debugPrint('Failed to load profile rank: $error');
       if (!mounted) return;
-      setState(() => _isRankLoading = false);
+      setState(() {
+        _rank = null;
+        _rankForPoints = points;
+        _isRankLoading = false;
+      });
     }
   }
 
@@ -55,6 +73,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: const Text('Profile'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh profile',
+            onPressed: _loadProfile,
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
@@ -73,19 +96,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
-          if (userProvider.isLoading) {
+          if (userProvider.isLoading && userProvider.currentUser == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
           final user = userProvider.currentUser;
           if (user == null) {
-            return const Center(child: Text('Please login'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.person_outline, size: 56),
+                    const SizedBox(height: 12),
+                    Text(
+                      userProvider.error ?? 'Sign in to view your profile.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: _loadProfile,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Try again'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (_rankForPoints != user.points && !_isRankLoading) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _rankForPoints != user.points) {
+                _loadRank(user.points);
+              }
+            });
           }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                if (userProvider.error != null)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.cloud_off,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      title: const Text('Profile refresh failed'),
+                      subtitle: Text(userProvider.error!),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: _loadProfile,
+                      ),
+                    ),
+                  ),
+                if (userProvider.error != null) const SizedBox(height: 12),
                 // Profile Header
                 Container(
                   padding: const EdgeInsets.all(24),
@@ -112,13 +180,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        user.username,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      Column(
+                        children: [
+                          Text(
+                            user.username,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            user.email,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -176,6 +255,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 const SizedBox(height: 16),
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Your progress',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 12),
 
                 // Stats Grid
                 GridView.count(

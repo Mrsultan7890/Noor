@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
 import '../../widgets/arabic_text.dart';
 
 class WuduGuideScreen extends StatelessWidget {
@@ -258,19 +259,16 @@ class WuduGuideScreen extends StatelessWidget {
     );
   }
 
-  void _markAsCompleted(BuildContext context) {
+  Future<void> _markAsCompleted(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.isAuthenticated) {
-      userProvider.logActivity(
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
         activityType: 'lesson_completed',
         points: 20,
         metadata: {'lesson': 'How to Perform Wudu'},
-      );
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lesson completed! +20 points'),
-        ),
+        activityName: 'Lesson',
       );
     }
   }

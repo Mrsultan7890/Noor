@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
+import 'game_widgets.dart';
 
 class WuduGameLevels extends StatefulWidget {
   const WuduGameLevels({super.key});
@@ -34,6 +38,18 @@ class _WuduGameLevelsState extends State<WuduGameLevels> {
     );
     if (completed != true || !mounted) return;
 
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.isAuthenticated) {
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
+        activityType: 'game_completed',
+        points: 10,
+        metadata: {'game_id': 'wudu_steps', 'level': level},
+        activityName: 'Wudu Steps level',
+      );
+    }
+
     final nextLevel =
         level == _unlockedLevel && _unlockedLevel < _wuduSteps.length
             ? _unlockedLevel + 1
@@ -51,32 +67,28 @@ class _WuduGameLevelsState extends State<WuduGameLevels> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wudu Steps Game'),
-        backgroundColor: Colors.blue,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+      body: GameScreenBackground(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _wuduSteps.length,
               itemBuilder: (context, index) {
                 final level = index + 1;
                 final unlocked = level <= _unlockedLevel;
-                return Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: unlocked ? Colors.blue : Colors.grey,
-                      child: Text('$level'),
-                    ),
-                    title: Text('Level $level'),
-                    subtitle: const Text('Wudu steps quiz'),
-                    trailing: Icon(
-                      unlocked ? Icons.play_arrow : Icons.lock,
-                    ),
-                    onTap: unlocked ? () => _openLevel(level) : null,
-                  ),
+                return GameLevelCard(
+                  level: level,
+                  title: 'Level $level',
+                  subtitle: unlocked
+                      ? 'Review ${_wuduSteps[index]}'
+                      : 'Complete earlier levels to unlock',
+                  unlocked: unlocked,
+                  onTap: unlocked ? () => _openLevel(level) : null,
                 );
               },
             ),
+      ),
     );
   }
 }
@@ -150,27 +162,39 @@ class _WuduStepQuestionState extends State<_WuduStepQuestion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Wudu Step ${widget.level}')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Which action is Step ${widget.level}?',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 32),
-            for (final option in _options)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ElevatedButton(
-                  onPressed: _answered ? null : () => _answer(option),
-                  child: Text(option),
+      body: GameScreenBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LinearProgressIndicator(
+                  value: widget.level / _wuduSteps.length,
+                  minHeight: 6,
                 ),
-              ),
-          ],
+                const SizedBox(height: 24),
+                Text(
+                  'Which action is Step ${widget.level}?',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 32),
+                for (final option in _options)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ElevatedButton(
+                      onPressed: _answered ? null : () => _answer(option),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(56),
+                      ),
+                      child: Text(option),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

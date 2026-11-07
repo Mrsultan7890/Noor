@@ -8,6 +8,7 @@ import '../../models/prayer_times_model.dart';
 import '../../services/prayer_times_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
 
 class PrayerTimesScreen extends StatefulWidget {
   const PrayerTimesScreen({super.key});
@@ -123,23 +124,20 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     if (!mounted) return;
     setState(() {});
     
-    // Log activity to backend for points
-    if (mounted) {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      if (userProvider.isAuthenticated) {
-        await userProvider.logActivity(
-          activityType: 'prayer_logged',
-          points: 5,
-          metadata: {'prayer': prayer, 'time': DateTime.now().toIso8601String()},
-        );
-      }
-    }
-    
-    if (mounted) {
+    if (!mounted) return;
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (userProvider.isAuthenticated) {
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
+        activityType: 'prayer_logged',
+        points: 5,
+        metadata: {'prayer': prayer, 'time': DateTime.now().toIso8601String()},
+        activityName: '$prayer prayer',
+      );
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('$prayer logged! +5 points'),
-        ),
+        SnackBar(content: Text('$prayer logged. Sign in to sync profile points.')),
       );
     }
   }

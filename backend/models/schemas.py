@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
 
 class UserRegister(BaseModel):
     email: EmailStr
@@ -36,9 +36,10 @@ class UserUpdate(BaseModel):
 
 class ActivityLog(BaseModel):
     user_id: str
-    activity_type: str  # quran_read, prayer_logged, lesson_completed, dua_memorized
-    points: int
+    activity_type: str
+    points: int = Field(default=0, ge=0)
     metadata: Optional[dict] = None
+    activity_date: Optional[date] = None
 
 class LeaderboardEntry(BaseModel):
     rank: int

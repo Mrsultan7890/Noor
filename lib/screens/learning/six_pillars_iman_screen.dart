@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/activity_feedback.dart';
 
 class SixPillarsImanScreen extends StatelessWidget {
   const SixPillarsImanScreen({super.key});
@@ -147,19 +148,16 @@ class SixPillarsImanScreen extends StatelessWidget {
     );
   }
 
-  void _markAsCompleted(BuildContext context) {
+  Future<void> _markAsCompleted(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.isAuthenticated) {
-      userProvider.logActivity(
+      await logActivityWithFeedback(
+        context: context,
+        userProvider: userProvider,
         activityType: 'lesson_completed',
         points: 20,
         metadata: {'lesson': 'Six Pillars of Iman'},
-      );
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lesson completed! +20 points'),
-        ),
+        activityName: 'Lesson',
       );
     }
   }
