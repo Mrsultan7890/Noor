@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/names_service.dart';
+import '../../widgets/arabic_text.dart';
 
 class NamesPuzzleLevels extends StatefulWidget {
   const NamesPuzzleLevels({super.key});
@@ -188,10 +189,10 @@ class _NamesPuzzlePlayState extends State<_NamesPuzzlePlay> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            ArabicText(
               name['name']!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 44, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 44, height: 1.8),
             ),
             const SizedBox(height: 8),
             Text(

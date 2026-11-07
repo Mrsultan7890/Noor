@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/arabic_text.dart';
 
 class ShahadaScreen extends StatelessWidget {
   const ShahadaScreen({super.key});
@@ -53,7 +54,7 @@ class ShahadaScreen extends StatelessWidget {
                     : Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: const ArabicText(
                 'أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ ٱللَّٰهِ',
                 style: TextStyle(fontSize: 24, height: 2),
                 textAlign: TextAlign.center,

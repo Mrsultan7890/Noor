@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/arabic_text.dart';
 
 class WuduGuideScreen extends StatelessWidget {
   const WuduGuideScreen({super.key});
@@ -189,7 +190,7 @@ class WuduGuideScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-                  Text(
+                  ArabicText(
                     'أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
                     style: TextStyle(fontSize: 18, height: 2),
                     textAlign: TextAlign.center,
@@ -341,10 +342,11 @@ class _StepCard extends StatelessWidget {
                   ),
                   if (arabic.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    Text(
+                    ArabicText(
                       arabic,
                       style: const TextStyle(
                         fontSize: 20,
+                        height: 1.8,
                         color: Colors.green,
                       ),
                       textAlign: TextAlign.center,

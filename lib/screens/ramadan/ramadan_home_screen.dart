@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../models/prayer_times_model.dart';
 import '../../services/prayer_times_service.dart';
+import '../../widgets/arabic_text.dart';
 
 class RamadanHomeScreen extends StatefulWidget {
   const RamadanHomeScreen({super.key});
@@ -236,7 +237,7 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    const ArabicText(
                       'اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ',
                       textAlign: TextAlign.right,
                       style: TextStyle(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/arabic_text.dart';
 
 class MushafQuranScreen extends StatefulWidget {
   const MushafQuranScreen({super.key});
@@ -118,15 +119,12 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                             itemBuilder: (context, i) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: Text(
+                                child: ArabicText(
                                   lines[i],
                                   textAlign: TextAlign.center,
-                                  textDirection: TextDirection.rtl,
                                   style: const TextStyle(
                                     fontSize: 20,
                                     height: 2.5,
-                                    fontFamily: 'Amiri',
-                                    letterSpacing: 0.3,
                                   ),
                                 ),
                               );

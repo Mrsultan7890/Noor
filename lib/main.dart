@@ -51,6 +51,12 @@ class NoorApp extends StatelessWidget {
             darkTheme: themeProvider.darkTheme,
             themeMode: themeProvider.themeMode,
             home: const SplashScreen(),
+            builder: (context, child) => DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: themeProvider.backgroundGradient,
+              ),
+              child: child ?? const SizedBox.shrink(),
+            ),
           );
         },
       ),

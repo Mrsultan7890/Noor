@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/arabic_alphabet_model.dart';
 import '../../providers/user_provider.dart';
 import 'dart:math';
+import '../../widgets/arabic_text.dart';
 
 class ArabicAlphabetScreen extends StatefulWidget {
   const ArabicAlphabetScreen({super.key});
@@ -75,8 +76,9 @@ class _LettersTab extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  ArabicText(
                     letter.arabic,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
@@ -115,8 +117,9 @@ class _LettersTab extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              ArabicText(
                 letter.arabic,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 80,
                   fontWeight: FontWeight.bold,
@@ -149,8 +152,9 @@ class _LettersTab extends StatelessWidget {
               const SizedBox(height: 12),
               ...letter.examples.map((example) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
+                child: ArabicText(
                   example,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 24),
                 ),
               )),
@@ -189,8 +193,9 @@ class _HarakatTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
-                    child: Text(
+                    child: ArabicText(
                       harakat.example,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,

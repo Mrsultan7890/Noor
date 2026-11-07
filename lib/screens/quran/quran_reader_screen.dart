@@ -4,6 +4,7 @@ import '../../providers/quran_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../models/quran_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/arabic_text.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   final Surah surah;
@@ -90,10 +91,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                           color: Theme.of(context).primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(
+                        child: ArabicText(
                           'آیت ${verse.number}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
+                            fontSize: 14,
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -102,11 +104,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                       const SizedBox(height: 16),
                       
                       // Arabic text
-                      Text(
+                      ArabicText(
                         verse.text,
-                        textAlign: TextAlign.right,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 30,
                           height: 2,
                         ),
                       ),

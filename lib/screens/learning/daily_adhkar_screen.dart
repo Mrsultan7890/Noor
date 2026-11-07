@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/arabic_text.dart';
 
 class DailyAdhkarScreen extends StatelessWidget {
   const DailyAdhkarScreen({super.key});
@@ -65,10 +66,9 @@ class DailyAdhkarScreen extends StatelessWidget {
                         : Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
+                  child: ArabicText(
                     dua['arabic']!,
                     style: const TextStyle(fontSize: 22, height: 2),
-                    textAlign: TextAlign.right,
                   ),
                 ),
                 const SizedBox(height: 12),

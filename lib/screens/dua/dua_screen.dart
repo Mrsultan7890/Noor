@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/arabic_text.dart';
 
 class DuaScreen extends StatefulWidget {
   const DuaScreen({super.key});
@@ -171,9 +172,8 @@ class _DuaScreenState extends State<DuaScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Text(
+                        ArabicText(
                           dua['arabic']!,
-                          textAlign: TextAlign.right,
                           style: const TextStyle(fontSize: 24, height: 2),
                         ),
                         const SizedBox(height: 12),

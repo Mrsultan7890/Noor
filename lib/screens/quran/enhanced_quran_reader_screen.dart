@@ -5,6 +5,7 @@ import '../../providers/quran_provider.dart';
 import '../../models/quran_model.dart';
 import '../../services/enhanced_quran_service.dart';
 import '../../models/word_by_word_model.dart';
+import '../../widgets/arabic_text.dart';
 
 class EnhancedQuranReaderScreen extends StatefulWidget {
   final Surah surah;
@@ -177,9 +178,10 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                               color: Theme.of(context).primaryColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Text(
+                            child: ArabicText(
                               'آیت ${verse.number}',
                               style: TextStyle(
+                                fontSize: 14,
                                 color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -214,11 +216,10 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                       const SizedBox(height: 16),
                       
                       // Arabic text
-                      Text(
+                      ArabicText(
                         verse.text,
-                        textAlign: TextAlign.right,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 30,
                           height: 2,
                         ),
                       ),
@@ -333,12 +334,12 @@ class _WordByWordDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Arabic word
-                          Text(
+                          ArabicText(
                             word.arabicText,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 32,
-                              height: 1.5,
+                              height: 1.8,
                             ),
                           ),
                           const SizedBox(height: 8),

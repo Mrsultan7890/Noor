@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/quran_provider.dart';
 import 'quran_reader_screen.dart';
 import 'enhanced_quran_reader_screen.dart';
+import '../../widgets/arabic_text.dart';
 
 class QuranListScreen extends StatefulWidget {
   const QuranListScreen({super.key});
@@ -74,7 +75,7 @@ class _QuranListScreenState extends State<QuranListScreen> {
                       ),
                     ),
                   ),
-                  title: Text(
+                  title: ArabicText(
                     surah.name,
                     style: const TextStyle(
                       fontSize: 20,

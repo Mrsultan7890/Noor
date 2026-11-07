@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/hadith_service.dart';
 import '../../models/hadith_model.dart';
+import '../../widgets/arabic_text.dart';
 
 class HadithScreen extends StatefulWidget {
   const HadithScreen({super.key});
@@ -108,10 +109,9 @@ class _HadithScreenState extends State<HadithScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Text(
+                            ArabicText(
                               hadith.arabicText,
-                              textAlign: TextAlign.right,
-                              style: const TextStyle(fontSize: 20, height: 2),
+                              style: const TextStyle(fontSize: 24, height: 2),
                             ),
                             const Divider(height: 32),
                             Text(

@@ -76,6 +76,7 @@ flutter build ios --release
 - **Audio Quran** - Surah playback with multiple reciters
 - **Islamic Learning** - Hadith, Dua, stories, and guided lessons
 - **Kids Zone** - Memory and quiz games
+- **App Settings** - Three selectable gradient themes, light appearance, Arabic text sizing, and daily/prayer reminders
 
 ## 🎨 Theme
 

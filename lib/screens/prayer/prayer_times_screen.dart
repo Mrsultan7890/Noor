@@ -55,10 +55,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       );
       if (!mounted) return;
 
-      try {
-        await PrayerNotificationService.schedulePrayerNotifications(times);
-      } catch (e) {
-        _notificationError = 'Prayer times loaded, but reminders could not be scheduled: $e';
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool('prayer_notifications_enabled') ?? true) {
+        try {
+          await PrayerNotificationService.schedulePrayerNotifications(times);
+        } catch (e) {
+          _notificationError =
+              'Prayer times loaded, but reminders could not be scheduled: $e';
+        }
       }
 
       if (!mounted) return;

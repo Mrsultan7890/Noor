@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/names_service.dart';
+import '../../widgets/arabic_text.dart';
 
 class NamesScreen extends StatefulWidget {
   const NamesScreen({super.key});
@@ -71,8 +72,9 @@ class _NamesScreenState extends State<NamesScreen> {
                           backgroundColor: Theme.of(context).primaryColor,
                           child: Text(name['number']!, style: const TextStyle(color: Colors.white)),
                         ),
-                        title: Text(
+                        title: ArabicText(
                           name['name']!,
+                          textAlign: TextAlign.right,
                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
