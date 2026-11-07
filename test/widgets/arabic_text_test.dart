@@ -18,8 +18,19 @@ void main() {
     );
 
     final richText = tester.widget<RichText>(find.byType(RichText));
-    final rootSpan = richText.text as TextSpan;
-    final arabicSpan = rootSpan.children!.last as TextSpan;
+    final textSpans = <TextSpan>[];
+    void collectSpans(InlineSpan span) {
+      if (span is! TextSpan) return;
+      textSpans.add(span);
+      for (final child in span.children ?? const <InlineSpan>[]) {
+        collectSpans(child);
+      }
+    }
+
+    collectSpans(richText.text);
+    final arabicSpan = textSpans.singleWhere(
+      (span) => span.text == 'سیکھیں',
+    );
     expect(arabicSpan.text, 'سیکھیں');
     expect(arabicSpan.style?.fontFamily, 'Amiri');
   });
