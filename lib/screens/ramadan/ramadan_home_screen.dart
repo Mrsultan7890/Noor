@@ -248,7 +248,7 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 16),
-                    ArabicText(
+                    const ArabicText(
                       'اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ',
                       textAlign: TextAlign.right,
                       style: TextStyle(

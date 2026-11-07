@@ -61,7 +61,7 @@ host="127.0.0.1"  # Localhost only
 ```dart
 static const String baseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://noor-api.onrender.com',
+  defaultValue: 'https://noor-api-cse6.onrender.com',
 );
 ```
 
@@ -99,7 +99,7 @@ Production ke liye:
 **Frontend**: Set an HTTPS API endpoint using `--dart-define=API_BASE_URL=...`
 
 ```dart
-flutter run --dart-define=API_BASE_URL=https://noor-api.onrender.com
+flutter run --dart-define=API_BASE_URL=https://noor-api-cse6.onrender.com
 ```
 
 ## Notes

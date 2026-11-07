@@ -6,7 +6,7 @@ import 'utf8_json.dart';
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://noor-api.onrender.com',
+    defaultValue: 'https://noor-api-cse6.onrender.com',
   );
 
   static Uri _endpoint(

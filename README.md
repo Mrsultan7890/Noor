@@ -95,7 +95,7 @@ flutter build ios --release
 ### API Used
 - **Quran API**: https://api.alquran.cloud/v1
 - Free, unlimited, no API key required
-- **Account backend**: `API_BASE_URL` (defaults to `https://noor-api.onrender.com`)
+- **Account backend**: `API_BASE_URL` (defaults to `https://noor-api-cse6.onrender.com`)
 - The account backend URL must use HTTPS; local setup guidance is in [TERMUX_SETUP.md](./TERMUX_SETUP.md).
 
 ### Notifications
