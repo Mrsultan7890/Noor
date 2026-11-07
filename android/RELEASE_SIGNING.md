@@ -22,6 +22,21 @@ them.
 Then build the release package with `flutter build apk --release` or
 `flutter build appbundle --release`.
 
+The GitHub release workflow expects these repository secrets:
+
+- `ANDROID_KEYSTORE_BASE64`: base64-encoded original upload keystore
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
+
+On Linux, encode the existing keystore with `base64 -w 0 /path/to/upload-key.jks`
+and save its output directly as the `ANDROID_KEYSTORE_BASE64` repository secret.
+Do not paste the encoded key or passwords into chat or commit them.
+
+For CI builds, the Flutter CI workflow builds and uploads a **debug-only APK**
+for testing. It is not signed with the release key and must not be submitted to
+APKPure.
+
 Do not generate a new keystore as a substitute for the original: it has a
 different signature and will still be rejected as an update. If the original
 keystore is lost, contact APKPure support about recovery before uploading.
