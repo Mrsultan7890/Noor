@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/arabic_text.dart';
+import '../../services/quran_audio_service.dart';
 
 class AudioQuranScreen extends StatefulWidget {
   const AudioQuranScreen({super.key});
@@ -13,15 +14,16 @@ class AudioQuranScreen extends StatefulWidget {
 
 class _AudioQuranScreenState extends State<AudioQuranScreen> {
   final AudioPlayer _player = AudioPlayer();
+  final QuranAudioService _audioService = QuranAudioService();
   int? _currentSurah;
   bool _isLoading = false;
   String _selectedReciter = 'ar.alafasy';
 
   final Map<String, String> _reciters = {
-    'ar.alafasy': 'Mishary Rashid Alafasy',
     'ar.abdulbasitmurattal': 'Abdul Basit (Murattal)',
+    'ar.abdullahbasfar': 'Abdullah Basfar',
     'ar.abdurrahmaansudais': 'Abdur-Rahman As-Sudais',
-    'ar.saadalghamadi': 'Saad Al-Ghamdi',
+    'ar.alafasy': 'Mishary Rashid Alafasy',
     'ar.minshawi': 'Mohamed Siddiq Al-Minshawi',
     'ar.husary': 'Mahmoud Khalil Al-Hussary',
   };
@@ -62,7 +64,12 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   Future<void> _loadReciter() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
-    setState(() => _selectedReciter = prefs.getString('reciter') ?? 'ar.alafasy');
+    final savedReciter = prefs.getString('reciter');
+    setState(() {
+      _selectedReciter = _reciters.containsKey(savedReciter)
+          ? savedReciter!
+          : 'ar.alafasy';
+    });
   }
 
   Future<void> _saveReciter(String reciter) async {
@@ -70,6 +77,10 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
     await prefs.setString('reciter', reciter);
     if (!mounted) return;
     setState(() => _selectedReciter = reciter);
+    final currentSurah = _currentSurah;
+    if (currentSurah != null) {
+      await _playAudio(currentSurah);
+    }
   }
 
   @override
@@ -83,14 +94,22 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
     
     try {
       await _player.stop();
+      if (!mounted) return;
       
       setState(() {
         _isLoading = true;
         _currentSurah = surahNumber;
       });
 
-      final url = 'https://cdn.islamic.network/quran/audio/128/$_selectedReciter/$surahNumber.mp3';
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
+      final audioUrls = await _audioService.getSurahAudioUrls(
+        surahNumber,
+        _selectedReciter,
+      );
+      final source = ConcatenatingAudioSource(
+        useLazyPreparation: true,
+        children: audioUrls.map((url) => AudioSource.uri(url)).toList(),
+      );
+      await _player.setAudioSource(source);
       if (!mounted) return;
       setState(() => _isLoading = false);
       unawaited(_startPlayback());
@@ -140,7 +159,7 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
             groupValue: _selectedReciter,
             onChanged: (val) {
               if (val != null) {
-                _saveReciter(val);
+                unawaited(_saveReciter(val));
                 Navigator.pop(context);
               }
             },
@@ -244,12 +263,22 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                     builder: (context, snapshot) {
                       final position = snapshot.data ?? Duration.zero;
                       final duration = _player.duration ?? Duration.zero;
+                      final maxSeconds = duration.inSeconds > 0
+                          ? duration.inSeconds.toDouble()
+                          : 1.0;
                       return Column(
                         children: [
                           Slider(
-                            value: position.inSeconds.toDouble(),
-                            max: duration.inSeconds > 0 ? duration.inSeconds.toDouble() : 1.0,
-                            onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
+                            value: position.inSeconds
+                                .toDouble()
+                                .clamp(0.0, maxSeconds)
+                                .toDouble(),
+                            max: maxSeconds,
+                            onChanged: duration.inSeconds > 0
+                                ? (value) => _player.seek(
+                                      Duration(seconds: value.toInt()),
+                                    )
+                                : null,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),

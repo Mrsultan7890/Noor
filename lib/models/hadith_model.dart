@@ -3,6 +3,7 @@ class Hadith {
   final String hadithNumber;
   final String arabicText;
   final String englishText;
+  final String urduText;
   final String narrator;
 
   Hadith({
@@ -10,6 +11,7 @@ class Hadith {
     required this.hadithNumber,
     required this.arabicText,
     required this.englishText,
+    required this.urduText,
     required this.narrator,
   });
 
@@ -19,6 +21,7 @@ class Hadith {
       hadithNumber: json['hadithNumber']?.toString() ?? '',
       arabicText: json['hadithArabic'] ?? '',
       englishText: json['hadithEnglish'] ?? '',
+      urduText: json['hadithUrdu'] ?? '',
       narrator: json['englishNarrator'] ?? '',
     );
   }
