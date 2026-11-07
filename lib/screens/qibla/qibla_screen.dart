@@ -344,7 +344,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                               const Expanded(
                                 child: Text(
                                   'Face the arrow shown to pray towards the Kaaba',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF1E293B),
                                   ),
