@@ -44,7 +44,7 @@ jobs:
       run: flutter pub get
     
     - name: Build APK
-      run: flutter build apk --release
+      run: flutter build apk --release --split-per-abi
       env:
         ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/noor-upload-key.jks
         ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -63,7 +63,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          build/app/outputs/flutter-apk/app-release.apk
+          build/app/outputs/flutter-apk/app-*-release.apk
           build/app/outputs/bundle/release/app-release.aab
         body: |
           ## Noor App - نور

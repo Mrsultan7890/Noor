@@ -22,6 +22,14 @@ them.
 Then build the release package with `flutter build apk --release` or
 `flutter build appbundle --release`.
 
+To reduce the APK download size, build one APK per processor architecture with
+`flutter build apk --release --split-per-abi`. Flutter creates separate
+`armeabi-v7a`, `arm64-v8a`, and `x86_64` APKs; upload the matching APK for the
+target device, or provide the complete set if the store supports multiple APKs.
+The unsplit APK contains all supported native architectures and is larger.
+An app bundle can also let a compatible store deliver only device-specific
+components.
+
 The GitHub release workflow expects these repository secrets:
 
 - `ANDROID_KEYSTORE_BASE64`: base64-encoded original upload keystore
