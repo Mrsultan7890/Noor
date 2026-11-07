@@ -28,10 +28,11 @@ To reduce the APK download size, build one APK per processor architecture with
 target device, or provide the complete set if the store supports multiple APKs.
 The unsplit APK contains all supported native architectures and is larger.
 An app bundle can also let a compatible store deliver only device-specific
-components. For an APKPure update, upload the signed release APK itself, not
-the GitHub Actions ZIP or the debug APK; choose the `arm64-v8a` APK for modern
-64-bit Android phones. The current second release is version `1.0.1` with
-version code `2`.
+components. For a new APKPure listing, upload the signed release APK itself,
+not the GitHub Actions ZIP or the debug APK; choose the `arm64-v8a` APK for
+modern 64-bit Android phones. This first listing build is version `1.0.0` with
+version code `1`. Keep this new listing's upload keystore backed up securely
+and use the same key for every future update.
 
 The GitHub release workflow expects these repository secrets:
 
