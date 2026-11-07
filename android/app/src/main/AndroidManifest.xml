@@ -15,7 +15,7 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false">
         <activity
-            android:name=".MainActivity"
+            android:name="com.noor.app.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
@@ -28,60 +28,60 @@
               />
         </activity>
         <activity-alias
-            android:name=".MainActivitySandalwood"
+            android:name="com.noorislamiclearning.app.MainActivitySandalwood"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_sandalwood"
             android:label="Noor"
-            android:targetActivity=".MainActivity">
+            android:targetActivity="com.noor.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".MainActivityOliveBranch"
+            android:name="com.noorislamiclearning.app.MainActivityOliveBranch"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_olive_branch"
             android:label="Noor"
-            android:targetActivity=".MainActivity">
+            android:targetActivity="com.noor.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".MainActivityEmeraldArch"
+            android:name="com.noorislamiclearning.app.MainActivityEmeraldArch"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_emerald_arch"
             android:label="Noor"
-            android:targetActivity=".MainActivity">
+            android:targetActivity="com.noor.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".MainActivityRoseMarble"
+            android:name="com.noorislamiclearning.app.MainActivityRoseMarble"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_rose_marble"
             android:label="Noor"
-            android:targetActivity=".MainActivity">
+            android:targetActivity="com.noor.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".MainActivityRoseLeaves"
+            android:name="com.noorislamiclearning.app.MainActivityRoseLeaves"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_rose_leaves"
             android:label="Noor"
-            android:targetActivity=".MainActivity">
+            android:targetActivity="com.noor.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -22,6 +22,33 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def releaseSigningProperties = new Properties()
+def releaseSigningPropertiesFile = rootProject.file('key.properties')
+if (releaseSigningPropertiesFile.exists()) {
+    releaseSigningPropertiesFile.withInputStream { stream ->
+        releaseSigningProperties.load(stream)
+    }
+}
+
+def signingValue = { String propertyName, String environmentName ->
+    def value = System.getenv(environmentName)
+    if (value == null || value.trim().isEmpty()) {
+        value = releaseSigningProperties.getProperty(propertyName)
+    }
+    value?.trim()
+}
+
+def releaseStoreFile = signingValue('storeFile', 'ANDROID_KEYSTORE_PATH')
+def releaseStorePassword = signingValue('storePassword', 'ANDROID_KEYSTORE_PASSWORD')
+def releaseKeyAlias = signingValue('keyAlias', 'ANDROID_KEY_ALIAS')
+def releaseKeyPassword = signingValue('keyPassword', 'ANDROID_KEY_PASSWORD')
+def hasReleaseSigning = [
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+].every { value -> value != null && !value.isEmpty() }
+
 android {
     namespace "com.noor.app"
     compileSdk 34
@@ -38,19 +65,50 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.noor.app"
+        applicationId "com.noorislamiclearning.app"
         minSdk 23
         targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    def releasePackagingTasks = taskGraph.allTasks.findAll { task ->
+        task.name.toLowerCase().contains('release') &&
+            (task.name.startsWith('assemble') ||
+                task.name.startsWith('bundle') ||
+                task.name.startsWith('package') ||
+                task.name.startsWith('sign'))
+    }
+    if (!releasePackagingTasks.isEmpty() && !hasReleaseSigning) {
+        throw new GradleException(
+            'Release APK/AAB signing is not configured. Set android/key.properties ' +
+                'or the ANDROID_KEYSTORE_PATH, ANDROID_KEYSTORE_PASSWORD, ' +
+                'ANDROID_KEY_ALIAS, and ANDROID_KEY_PASSWORD environment variables. ' +
+                'Use the same keystore as the APKPure upload you are updating.'
+        )
     }
 }
 

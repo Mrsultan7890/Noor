@@ -4,7 +4,7 @@
 
 ### Android Embedding V2
 - ✅ MainActivity.kt created
-- ✅ Package: com.noor.app
+- ✅ Package: com.noorislamiclearning.app
 - ✅ Flutter embedding v2 compatible
 
 ## 📦 Complete File Structure
