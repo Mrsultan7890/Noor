@@ -77,7 +77,11 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
       final prefs = await SharedPreferences.getInstance();
       if (prefs.getBool('prayer_notifications_enabled') ?? true) {
         try {
-          await PrayerNotificationService.refreshFromSavedLocation();
+          await PrayerNotificationService.schedulePrayerNotifications(
+            times,
+            latitude: position.latitude,
+            longitude: position.longitude,
+          );
         } catch (e) {
           _notificationError =
               'Prayer times loaded, but reminders could not be scheduled: $e';

@@ -3,55 +3,30 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <group android:scaleX="0.46"
-      android:scaleY="0.46"
-      android:translateX="29.16"
-      android:translateY="29.16">
-    <!-- Main Mosque Structure -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,20C58,20,60,25,60,25L60,100L48,100L48,25C48,25,50,20,54,20Z"/>
-    <!-- Left Minaret -->
+        android:fillColor="#00000000"
+        android:strokeColor="#D4AF37"
+        android:strokeWidth="2.8"
+        android:strokeLineCap="round"
+        android:pathData="M20,89 L20,55 C20,36 35,21 54,21 C73,21 88,36 88,55 L88,89" />
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M20,30L20,100L30,100L30,30L20,30Z"/>
-    <!-- Right Minaret -->
+        android:fillColor="#00000000"
+        android:strokeColor="#E9E2D0"
+        android:strokeWidth="2"
+        android:pathData="M31,89 L31,61 C31,48 41,38 54,38 C67,38 77,48 77,61 L77,89" />
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M78,30L78,100L88,100L88,30L78,30Z"/>
-    <!-- Main Dome -->
+        android:fillColor="#E9E2D0"
+        android:pathData="M40,53 L40,48 L46,43 L54,36 L62,43 L68,48 L68,53 L64,53 L64,50 L54,41 L44,50 L44,53 Z" />
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,15C62,15,68,21,68,29L68,40L40,40L40,29C40,21,46,15,54,15Z"/>
-    <!-- Left Dome Top -->
+        android:fillColor="#E9E2D0"
+        android:pathData="M43,54 L65,54 L65,81 L43,81 Z" />
     <path
-        android:fillColor="#FFD700"
-        android:pathData="M25,25C27,25,29,27,29,29C29,31,27,33,25,33C23,33,21,31,21,29C21,27,23,25,25,25Z"/>
-    <!-- Right Dome Top -->
+        android:fillColor="#0B221B"
+        android:pathData="M50,81 L50,70 C50,66 52,63 54,63 C56,63 58,66 58,70 L58,81 Z" />
     <path
-        android:fillColor="#FFD700"
-        android:pathData="M83,25C85,25,87,27,87,29C87,31,85,33,83,33C81,33,79,31,79,29C79,27,81,25,83,25Z"/>
-    <!-- Main Crescent -->
+        android:fillColor="#E9E2D0"
+        android:pathData="M35,58 L39,58 L39,81 L35,81 Z M69,58 L73,58 L73,81 L69,81 Z" />
     <path
-        android:fillColor="#FFD700"
-        android:pathData="M54,8C56.5,8,58.5,10,58.5,12.5C58.5,15,56.5,17,54,17C51.5,17,49.5,15,49.5,12.5C49.5,10,51.5,8,54,8Z"/>
-    <path
-        android:fillColor="#FFD700"
-        android:pathData="M54,10L56,15L52,15L54,10Z"/>
-    <!-- Main Building -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M35,45L35,100L73,100L73,45L54,35L35,45Z"/>
-    <!-- Door -->
-    <path
-        android:fillColor="#2E7D32"
-        android:pathData="M48,70L48,100L60,100L60,70C60,65,56,62,54,62C52,62,48,65,48,70Z"/>
-    <!-- Windows -->
-    <path
-        android:fillColor="#2E7D32"
-        android:pathData="M42,55L42,62L46,62L46,55L42,55Z"/>
-    <path
-        android:fillColor="#2E7D32"
-        android:pathData="M62,55L62,62L66,62L66,55L62,55Z"/>
-  </group>
+        android:fillColor="#D4AF37"
+        android:pathData="M54,14 L56.5,19 L62,20 L58,24 L59,29 L54,26.5 L49,29 L50,24 L46,20 L51.5,19 Z" />
 </vector>

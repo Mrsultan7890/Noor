@@ -7,17 +7,25 @@ import 'notification_time_zone.dart';
 import 'prayer_times_service.dart';
 
 class PrayerNotificationService {
+  static Future<void>? _initialization;
   static const _latitudeKey = 'prayer_notification_latitude';
   static const _longitudeKey = 'prayer_notification_longitude';
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
-  static Future<void> initialize() async {
-    await NotificationTimeZone.initialize();
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const ios = DarwinInitializationSettings();
-    const settings = InitializationSettings(android: android, iOS: ios);
-    
-    await _notifications.initialize(settings);
+  static Future<void> initialize() =>
+      _initialization ??= _initialize();
+
+  static Future<void> _initialize() async {
+    try {
+      await NotificationTimeZone.initialize();
+      const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const ios = DarwinInitializationSettings();
+      const settings = InitializationSettings(android: android, iOS: ios);
+      await _notifications.initialize(settings);
+    } catch (_) {
+      _initialization = null;
+      rethrow;
+    }
   }
 
   static Future<void> schedulePrayerNotifications(
@@ -25,6 +33,7 @@ class PrayerNotificationService {
     required double latitude,
     required double longitude,
   }) async {
+    await initialize();
     if (!await NotificationService().requestPermissions()) {
       throw StateError('Notification or exact-alarm permission was denied.');
     }
@@ -93,6 +102,7 @@ class PrayerNotificationService {
   }
 
   static Future<void> refreshFromSavedLocation() async {
+    await initialize();
     final preferences = await SharedPreferences.getInstance();
     if (!(preferences.getBool('prayer_notifications_enabled') ?? true)) {
       return;
@@ -101,6 +111,7 @@ class PrayerNotificationService {
     final latitude = preferences.getDouble(_latitudeKey);
     final longitude = preferences.getDouble(_longitudeKey);
     if (latitude == null || longitude == null) return;
+    if (!await NotificationService().canScheduleWithoutPrompting()) return;
 
     final times = await PrayerTimesService().getPrayerTimes(
       latitude: latitude,

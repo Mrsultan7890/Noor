@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/daily_reminder_service.dart';
+import '../../services/app_icon_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../theme/app_theme.dart';
@@ -147,6 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onSelected: () async {
                               try {
                                 await context.read<ThemeProvider>().setTheme(theme);
+                                await AppIconService.setForTheme(theme);
                               } catch (error) {
                                 if (context.mounted) {
                                   _showError('Could not save theme: $error');

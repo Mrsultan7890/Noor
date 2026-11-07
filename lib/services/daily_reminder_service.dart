@@ -9,18 +9,27 @@ import 'notification_time_zone.dart';
 import 'utf8_json.dart';
 
 class DailyReminderService {
+  static Future<void>? _initialization;
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
-  static Future<void> init() async {
-    await NotificationTimeZone.initialize();
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const settings = InitializationSettings(android: android);
-    await _notifications.initialize(settings);
+  static Future<void> init() => _initialization ??= _initialize();
+
+  static Future<void> _initialize() async {
+    try {
+      await NotificationTimeZone.initialize();
+      const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const settings = InitializationSettings(android: android);
+      await _notifications.initialize(settings);
+    } catch (_) {
+      _initialization = null;
+      rethrow;
+    }
   }
 
   static Future<void> scheduleDailyReminder({
     bool permissionsAlreadyGranted = false,
   }) async {
+    await init();
     await NotificationTimeZone.initialize();
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool('daily_reminder_enabled') ?? false;
@@ -151,6 +160,7 @@ class DailyReminderService {
   }
 
   static Future<void> enableReminder(int hour, int minute) async {
+    await init();
     if (!await NotificationService().requestPermissions()) {
       throw StateError('Notification or exact-alarm permission was denied.');
     }
@@ -162,6 +172,7 @@ class DailyReminderService {
   }
 
   static Future<void> disableReminder() async {
+    await init();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('daily_reminder_enabled', false);
     await _notifications.cancel(999);

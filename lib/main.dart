@@ -8,9 +8,9 @@ import 'providers/quran_provider.dart';
 import 'providers/tasbih_provider.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/user_provider.dart';
-import 'services/notification_service.dart';
-import 'services/daily_reminder_service.dart';
+import 'services/notification_bootstrap.dart';
 import 'services/prayer_notification_service.dart';
+import 'services/app_icon_service.dart';
 import 'models/schedule_model.dart';
 
 void main() async {
@@ -20,11 +20,23 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ScheduleAdapter());
   
-  await NotificationService().init();
-  await DailyReminderService.init();
-  await PrayerNotificationService.initialize();
-  
   runApp(NoorApp(themeProvider: themeProvider));
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(
+      AppIconService.setForTheme(themeProvider.selectedTheme).catchError(
+        (Object error, StackTrace stackTrace) {
+          debugPrint('Could not apply the selected launcher icon: $error\n$stackTrace');
+        },
+      ),
+    );
+    unawaited(
+      NotificationBootstrap.initialize().catchError(
+        (Object error, StackTrace stackTrace) {
+          debugPrint('Could not initialize notifications: $error\n$stackTrace');
+        },
+      ),
+    );
+  });
 }
 
 class NoorApp extends StatefulWidget {
@@ -41,7 +53,6 @@ class _NoorAppState extends State<NoorApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    unawaited(_refreshPrayerNotifications());
   }
 
   @override

@@ -40,6 +40,12 @@ void main() {
         data.colorScheme.onPrimary,
       );
       expect(data.dialogTheme.backgroundColor, data.colorScheme.surface);
+      final cardShape = data.cardTheme.shape! as RoundedRectangleBorder;
+      expect(cardShape.side.color, data.colorScheme.primary.withOpacity(0.42));
+      expect(
+        data.inputDecorationTheme.focusedBorder,
+        isA<OutlineInputBorder>(),
+      );
       expect(data.bottomSheetTheme.backgroundColor, data.colorScheme.surface);
       expect(data.popupMenuTheme.color, data.colorScheme.surface);
       expect(data.snackBarTheme.contentTextStyle?.color, Colors.white);
@@ -54,6 +60,12 @@ void main() {
       AppTheme.palettes[NoorTheme.emeraldArch]!.gradientEnd,
     );
     expect(lightData.colorScheme.onPrimary, Colors.white);
+    final lightCardShape =
+        lightData.cardTheme.shape! as RoundedRectangleBorder;
+    expect(
+      lightCardShape.side.color,
+      lightData.colorScheme.primary.withOpacity(0.32),
+    );
   });
 
   test('selecting the already-selected palette activates its dark gradient', () async {

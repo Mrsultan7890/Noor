@@ -4,27 +4,34 @@ import 'notification_time_zone.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
+  static Future<void>? _initialization;
   factory NotificationService() => _instance;
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _notifications = 
       FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
-    await NotificationTimeZone.initialize();
-    
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings();
-    
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-    
-    await _notifications.initialize(initSettings);
+  Future<void> init() => _initialization ??= _initialize();
+
+  Future<void> _initialize() async {
+    try {
+      await NotificationTimeZone.initialize();
+      const androidSettings =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+      const iosSettings = DarwinInitializationSettings();
+      const initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
+      await _notifications.initialize(initSettings);
+    } catch (_) {
+      _initialization = null;
+      rethrow;
+    }
   }
 
   Future<bool> requestPermissions() async {
+    await init();
     var notificationsAllowed = true;
     var exactAlarmsAllowed = true;
 
@@ -64,12 +71,26 @@ class NotificationService {
     return notificationsAllowed && exactAlarmsAllowed;
   }
 
+  Future<bool> canScheduleWithoutPrompting() async {
+    await init();
+    final android = _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) return true;
+
+    final notificationsEnabled = await android.areNotificationsEnabled();
+    final canScheduleExact = await android.canScheduleExactNotifications();
+    return notificationsEnabled == true && canScheduleExact == true;
+  }
+
   Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
     required DateTime scheduledTime,
   }) async {
+    await init();
     await NotificationTimeZone.initialize();
     if (!await requestPermissions()) {
       throw StateError('Notification or exact-alarm permission was denied.');
@@ -118,6 +139,7 @@ class NotificationService {
     required bool recurring,
     required List<int> recurringDays,
   }) async {
+    await init();
     await NotificationTimeZone.initialize();
     if (!await requestPermissions()) {
       throw StateError('Notification or exact-alarm permission was denied.');

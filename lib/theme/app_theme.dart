@@ -80,6 +80,7 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
     final accent = palette.accent;
     final primary = isDark ? palette.accent : palette.gradientEnd;
+    final borderColor = primary.withOpacity(isDark ? 0.42 : 0.32);
     final onPrimary = isDark ? const Color(0xFF17120B) : Colors.white;
     final secondary = isDark ? palette.secondaryAccent : palette.gradientEnd;
     final surface = isDark ? const Color(0xFF20222A) : const Color(0xFFFFFCF7);
@@ -126,7 +127,8 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: accent.withOpacity(isDark ? 0.18 : 0.3),
+            color: borderColor,
+            width: 1.2,
           ),
         ),
       ),
@@ -137,6 +139,7 @@ class AppTheme {
         contentTextStyle: textTheme.bodyMedium,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: borderColor),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
@@ -144,8 +147,9 @@ class AppTheme {
         modalBackgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         dragHandleColor: accent,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          side: BorderSide(color: borderColor),
         ),
       ),
       popupMenuTheme: PopupMenuThemeData(
@@ -154,6 +158,7 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: borderColor),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -173,6 +178,23 @@ class AppTheme {
         hintStyle: TextStyle(color: foreground.withOpacity(0.55)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: primary, width: 1.8),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.error, width: 1.8),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
