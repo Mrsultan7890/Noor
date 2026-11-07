@@ -22,6 +22,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   Timer? _timer;
   Duration _timeUntilNext = Duration.zero;
   String _nextPrayer = '';
+  String? _errorMessage;
+  String? _notificationError;
   List<PrayerLog> _todayLogs = [];
 
   @override
@@ -39,27 +41,39 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   }
 
   Future<void> _loadPrayerTimes() async {
-    setState(() => _isLoading = true);
-    
-    final position = await _service.getCurrentLocation();
-    if (position != null) {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _notificationError = null;
+    });
+
+    try {
+      final position = await _service.getCurrentLocation();
       final times = await _service.getPrayerTimes(
         latitude: position.latitude,
         longitude: position.longitude,
       );
-      
-      if (times != null) {
+      if (!mounted) return;
+
+      try {
         await PrayerNotificationService.schedulePrayerNotifications(times);
-        
-        setState(() {
-          _prayerTimes = times;
-          _nextPrayer = _service.getNextPrayer(times);
-          _timeUntilNext = _service.getTimeUntilNext(times);
-          _isLoading = false;
-        });
+      } catch (e) {
+        _notificationError = 'Prayer times loaded, but reminders could not be scheduled: $e';
       }
-    } else {
-      setState(() => _isLoading = false);
+
+      if (!mounted) return;
+      setState(() {
+        _prayerTimes = times;
+        _nextPrayer = _service.getNextPrayer(times);
+        _timeUntilNext = _service.getTimeUntilNext(times);
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Unable to load prayer times: $e';
+        _isLoading = false;
+      });
     }
   }
 
@@ -74,6 +88,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
 
   Future<void> _loadTodayLogs() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     final today = DateTime.now().toIso8601String().split('T')[0];
     final logsJson = prefs.getString('prayer_logs_$today');
     
@@ -100,7 +115,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       'prayer_logs_$today',
       json.encode(_todayLogs.map((e) => e.toJson()).toList()),
     );
-    
+    if (!mounted) return;
     setState(() {});
     
     // Log activity to backend for points
@@ -143,7 +158,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _prayerTimes == null
+          : _errorMessage != null || _prayerTimes == null
               ? _buildErrorState()
               : RefreshIndicator(
                   onRefresh: _loadPrayerTimes,
@@ -152,6 +167,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
+                        if (_notificationError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(
+                              _notificationError!,
+                              style: TextStyle(color: Theme.of(context).colorScheme.error),
+                            ),
+                          ),
                         _buildNextPrayerCard(),
                         const SizedBox(height: 24),
                         _buildPrayersList(),
@@ -169,11 +192,11 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         children: [
           const Icon(Icons.location_off, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
-          const Text('Location permission required'),
+          Text(_errorMessage ?? 'Prayer times are unavailable.'),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadPrayerTimes,
-            child: const Text('Enable Location'),
+            child: const Text('Try again'),
           ),
         ],
       ),

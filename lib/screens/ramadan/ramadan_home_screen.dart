@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../../models/prayer_times_model.dart';
+import '../../services/prayer_times_service.dart';
 
 class RamadanHomeScreen extends StatefulWidget {
   const RamadanHomeScreen({super.key});
@@ -9,53 +11,61 @@ class RamadanHomeScreen extends StatefulWidget {
 }
 
 class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
+  final PrayerTimesService _prayerTimesService = PrayerTimesService();
   Timer? _timer;
   Duration _timeUntilSehri = Duration.zero;
   Duration _timeUntilIftar = Duration.zero;
-  
-  // Example times - should be fetched from API
-  final TimeOfDay _sehriTime = const TimeOfDay(hour: 5, minute: 30);
-  final TimeOfDay _iftarTime = const TimeOfDay(hour: 18, minute: 45);
-  
+  PrayerTimes? _prayerTimes;
+  bool _isLoading = true;
+  String? _errorMessage;
+
   @override
   void initState() {
     super.initState();
-    _calculateTimes();
+    _loadPrayerTimes();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _calculateTimes();
     });
   }
-  
-  void _calculateTimes() {
-    final now = DateTime.now();
-    
-    // Calculate Sehri time
-    var sehri = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      _sehriTime.hour,
-      _sehriTime.minute,
-    );
-    if (now.isAfter(sehri)) {
-      sehri = sehri.add(const Duration(days: 1));
-    }
-    
-    // Calculate Iftar time
-    var iftar = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      _iftarTime.hour,
-      _iftarTime.minute,
-    );
-    if (now.isAfter(iftar)) {
-      iftar = iftar.add(const Duration(days: 1));
-    }
-    
+
+  Future<void> _loadPrayerTimes() async {
     setState(() {
-      _timeUntilSehri = sehri.difference(now);
-      _timeUntilIftar = iftar.difference(now);
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final position = await _prayerTimesService.getCurrentLocation();
+      if (!mounted) return;
+
+      final times = await _prayerTimesService.getPrayerTimes(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+      if (!mounted) return;
+
+      setState(() {
+        _prayerTimes = times;
+        _isLoading = false;
+      });
+      _calculateTimes();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Unable to load local timings: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _calculateTimes() {
+    final times = _prayerTimes;
+    if (times == null || !mounted) return;
+    setState(() {
+      _timeUntilSehri =
+          _prayerTimesService.timeUntilNextOccurrence(times.fajr);
+      _timeUntilIftar =
+          _prayerTimesService.timeUntilNextOccurrence(times.maghrib);
     });
   }
   
@@ -71,9 +81,38 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ramadan Mubarak 🌙'),
+        title: const Text('Ramadan Planner 🌙'),
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null || _prayerTimes == null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.location_off, size: 56),
+                        const SizedBox(height: 16),
+                        Text(_errorMessage ?? 'Local timings are unavailable.',
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _loadPrayerTimes,
+                          child: const Text('Try again'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : _buildPlanner(context),
+    );
+  }
+
+  Widget _buildPlanner(BuildContext context) {
+    final times = _prayerTimes!;
+    final isRamadan = times.hijriMonth == 9;
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -108,7 +147,7 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sehri ends at ${_sehriTime.format(context)}',
+                      'Sehri ends at ${_prayerTimesService.formatPrayerTime(times.fajr)}',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
@@ -149,7 +188,7 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Iftar at ${_iftarTime.format(context)}',
+                      'Iftar at ${_prayerTimesService.formatPrayerTime(times.maghrib)}',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
@@ -159,29 +198,29 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
             
             const SizedBox(height: 24),
             
-            // Ramadan Progress
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Ramadan Progress',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 16),
-                    LinearProgressIndicator(
-                      value: 0.3, // Example: 9/30 days
-                      minHeight: 10,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('Day 9 of 30'),
-                  ],
+            if (isRamadan)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Ramadan Progress',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      LinearProgressIndicator(
+                        value: times.hijriDay / 30,
+                        minHeight: 10,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Hijri day ${times.hijriDay} of Ramadan'),
+                    ],
+                  ),
                 ),
               ),
-            ),
             
             const SizedBox(height: 16),
             
@@ -217,7 +256,6 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
             ),
           ],
         ),
-      ),
     );
   }
   

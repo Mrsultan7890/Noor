@@ -3,10 +3,25 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Backend on laptop, app on phone (same WiFi)
-  static const String baseUrl = 'http://192.168.0.217:8000'; // Laptop IP (Bridge Mode)
-  // static const String baseUrl = 'http://127.0.0.1:8000'; // Same device
-  // static const String baseUrl = 'https://your-render-url.onrender.com'; // Production
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://noor-api.onrender.com',
+  );
+
+  static Uri _endpoint(
+    String path, {
+    Map<String, String>? queryParameters,
+  }) {
+    final baseUri = Uri.parse(baseUrl);
+    if (baseUri.scheme != 'https' ||
+        baseUri.host.isEmpty ||
+        baseUri.userInfo.isNotEmpty ||
+        baseUri.hasQuery ||
+        baseUri.hasFragment) {
+      throw StateError('API_BASE_URL must be a valid HTTPS URL.');
+    }
+    return baseUri.resolve(path).replace(queryParameters: queryParameters);
+  }
   
   String? _token;
   
@@ -47,7 +62,7 @@ class ApiService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/register'),
+        _endpoint('/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': email,
@@ -76,7 +91,7 @@ class ApiService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
+        _endpoint('/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': email,
@@ -101,7 +116,7 @@ class ApiService {
     await _loadToken();
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/users/me'),
+        _endpoint('/users/me'),
         headers: _getHeaders(),
       );
       
@@ -130,7 +145,7 @@ class ApiService {
       if (avatar != null) body['avatar'] = avatar;
       
       final response = await http.put(
-        Uri.parse('$baseUrl/users/me'),
+        _endpoint('/users/me'),
         headers: _getHeaders(),
         body: json.encode(body),
       );
@@ -155,7 +170,7 @@ class ApiService {
     await _loadToken();
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/users/activity'),
+        _endpoint('/users/activity'),
         headers: _getHeaders(),
         body: json.encode({
           'user_id': userId,
@@ -179,7 +194,7 @@ class ApiService {
     await _loadToken();
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/users/rank'),
+        _endpoint('/users/rank'),
         headers: _getHeaders(),
       );
       
@@ -197,7 +212,10 @@ class ApiService {
   Future<List<dynamic>> getGlobalLeaderboard({int limit = 100}) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/leaderboard/global?limit=$limit'),
+        _endpoint(
+          '/leaderboard/global',
+          queryParameters: {'limit': '$limit'},
+        ),
         headers: _getHeaders(),
       );
       
@@ -217,7 +235,10 @@ class ApiService {
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/leaderboard/country/$country?limit=$limit'),
+        _endpoint(
+          '/leaderboard/country/${Uri.encodeComponent(country)}',
+          queryParameters: {'limit': '$limit'},
+        ),
         headers: _getHeaders(),
       );
       

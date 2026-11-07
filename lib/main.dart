@@ -10,6 +10,7 @@ import 'providers/schedule_provider.dart';
 import 'providers/user_provider.dart';
 import 'services/notification_service.dart';
 import 'services/daily_reminder_service.dart';
+import 'services/prayer_notification_service.dart';
 import 'models/schedule_model.dart';
 
 void main() async {
@@ -22,6 +23,7 @@ void main() async {
   
   await NotificationService().init();
   await DailyReminderService.init();
+  await PrayerNotificationService.initialize();
   await DailyReminderService.scheduleDailyReminder();
   
   runApp(const NoorApp());

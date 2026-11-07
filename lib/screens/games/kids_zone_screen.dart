@@ -79,7 +79,7 @@ class KidsZoneScreen extends StatelessWidget {
                       title: 'Wudu\nSteps',
                       icon: Icons.water_drop,
                       gradient: [Colors.teal.shade400, Colors.green.shade300],
-                      levels: '20 Levels',
+                      levels: '12 Levels',
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WuduGameLevels())),
                     ),
                   ],

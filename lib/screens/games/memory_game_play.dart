@@ -18,6 +18,7 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
   int _moves = 0;
   int _matches = 0;
   bool _isChecking = false;
+  Timer? _mismatchTimer;
 
   final List<String> _arabicWords = [
     'ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر',
@@ -80,7 +81,8 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
         }
       } else {
         SoundService.playWrong();
-        Timer(const Duration(milliseconds: 800), () {
+        _mismatchTimer = Timer(const Duration(milliseconds: 800), () {
+          if (!mounted) return;
           setState(() {
             _flipped[_firstIndex!] = false;
             _flipped[index] = false;
@@ -119,9 +121,9 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context, true);
+              Navigator.pop(context, stars);
             },
-            child: const Text('Next Level'),
+            child: const Text('Complete'),
           ),
           TextButton(
             onPressed: () {
@@ -133,6 +135,12 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _mismatchTimer?.cancel();
+    super.dispose();
   }
 
   @override

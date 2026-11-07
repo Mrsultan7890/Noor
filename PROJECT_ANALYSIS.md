@@ -1,6 +1,6 @@
 # Noor App - Project Analysis
 
-## 📊 Project Status: MVP COMPLETE ✅
+## 📊 Project Status: Core features implemented; validation pending
 
 ### What's Built (Working Features):
 
@@ -28,9 +28,9 @@
 
 4. ✅ **Ramadan Features**
    - Sehri/Iftar countdown timers
-   - Ramadan progress tracker
+   - Ramadan progress based on the returned Hijri date
    - Iftar dua display
-   - Auto-hides after Ramadan
+   - Available year-round from the More screen
 
 5. ✅ **Theme System**
    - Light/Dark mode
@@ -150,9 +150,8 @@ noor/
 
 2. Notification permissions need to be requested at runtime
 
-3. Ramadan dates are hardcoded (should be dynamic)
-
-4. Prayer times not implemented yet
+3. Prayer calculation uses a fixed method; user-selectable calculation settings are not implemented.
+4. Prayer times and Ramadan countdowns need device and location-based runtime verification.
 
 ## 🚀 Deployment Checklist
 

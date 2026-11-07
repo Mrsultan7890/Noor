@@ -11,6 +11,7 @@ class MemoryGameLevels extends StatefulWidget {
 
 class _MemoryGameLevelsState extends State<MemoryGameLevels> {
   int _unlockedLevel = 1;
+  final Map<int, int> _starsByLevel = {};
 
   @override
   void initState() {
@@ -20,8 +21,14 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
 
   Future<void> _loadProgress() async {
     final prefs = await SharedPreferences.getInstance();
+    final starsByLevel = <int, int>{
+      for (var level = 1; level <= 50; level++)
+        level: prefs.getInt('memory_stars_$level') ?? 0,
+    };
+    if (!mounted) return;
     setState(() {
       _unlockedLevel = prefs.getInt('memory_unlocked_level') ?? 1;
+      _starsByLevel.addAll(starsByLevel);
     });
   }
 
@@ -56,20 +63,32 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
                   GestureDetector(
                     onTap: isUnlocked
                         ? () async {
-                            final result = await Navigator.push(
+                            final stars = await Navigator.push<int>(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => MemoryGamePlay(level: level),
                               ),
                             );
-                            if (result == true) {
+                            if (stars != null) {
+                              final prefs = await SharedPreferences.getInstance();
+                              final bestStars = stars > (_starsByLevel[level] ?? 0)
+                                  ? stars
+                                  : (_starsByLevel[level] ?? 0);
+                              await prefs.setInt('memory_stars_$level', bestStars);
+                              final unlockedLevel = level == _unlockedLevel &&
+                                      _unlockedLevel < 50
+                                  ? _unlockedLevel + 1
+                                  : _unlockedLevel;
+                              if (unlockedLevel != _unlockedLevel) {
+                                await prefs.setInt(
+                                  'memory_unlocked_level',
+                                  unlockedLevel,
+                                );
+                              }
+                              if (!mounted) return;
                               setState(() {
-                                if (level == _unlockedLevel) {
-                                  _unlockedLevel++;
-                                  SharedPreferences.getInstance().then((prefs) {
-                                    prefs.setInt('memory_unlocked_level', _unlockedLevel);
-                                  });
-                                }
+                                _starsByLevel[level] = bestStars;
+                                _unlockedLevel = unlockedLevel;
                               });
                             }
                           }
@@ -129,7 +148,6 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
   }
 
   int _getStars(int level) {
-    // TODO: Load from SharedPreferences
-    return 0;
+    return _starsByLevel[level] ?? 0;
   }
 }

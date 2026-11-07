@@ -1,6 +1,6 @@
 # Termux Setup - Same Device Testing
 
-## Phone pe Backend aur Frontend dono chalao
+## Termux Backend Testing
 
 ### 1. Termux Install karo
 - F-Droid se Termux download karo (Play Store wala outdated hai)
@@ -38,13 +38,10 @@ Backend `http://127.0.0.1:8000` pe run hoga
 
 ### 5. Flutter App Run karo (Dusre terminal ya Android Studio se)
 
-```bash
-# Agar Termux mein Flutter hai
-cd ~/Noor
-flutter run
-
-# Ya Android Studio se run karo
-```
+The Android app only accepts HTTPS API endpoints so login credentials and
+account traffic are not sent over cleartext HTTP. Use the deployed HTTPS API
+for app testing, or put a local backend behind a trusted HTTPS development
+tunnel and pass its URL with `--dart-define=API_BASE_URL=https://...`.
 
 ### 6. Test karo
 
@@ -59,9 +56,12 @@ flutter run
 host="127.0.0.1"  # Localhost only
 ```
 
-### Frontend (api_service.dart)
+### Frontend (API endpoint)
 ```dart
-static const String baseUrl = 'http://127.0.0.1:8000';
+static const String baseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://noor-api.onrender.com',
+);
 ```
 
 ## Troubleshooting
@@ -78,8 +78,8 @@ python main.py
 
 ### App connect nahi ho raha?
 1. Backend running hai check karo
-2. Browser mein `http://127.0.0.1:8000/docs` kholo
-3. App rebuild karo: `flutter clean && flutter run`
+2. Verify the HTTPS endpoint is reachable from the phone.
+3. Run with `flutter run --dart-define=API_BASE_URL=https://your-https-api.example`
 
 ### Termux mein Flutter install karne ke liye
 ```bash
@@ -95,15 +95,15 @@ flutter doctor
 Production ke liye:
 
 **Backend**: Render pe deploy karo
-**Frontend**: `api_service.dart` mein production URL uncomment karo
+**Frontend**: Set an HTTPS API endpoint using `--dart-define=API_BASE_URL=...`
 
 ```dart
-static const String baseUrl = 'https://noor-api.onrender.com';
+flutter run --dart-define=API_BASE_URL=https://noor-api.onrender.com
 ```
 
 ## Notes
 
-- ✅ Same device pe testing fast hai
-- ✅ Network issues nahi honge
+- ✅ Backend can be tested locally from the phone browser
+- ✅ App login testing uses HTTPS to protect account traffic
 - ✅ Backend restart pe data clear hoga (mock storage)
 - ✅ Production ke liye PocketBase + Render use karo

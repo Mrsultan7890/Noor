@@ -4,14 +4,18 @@
 
 A beautiful Flutter app for Muslims to maintain their daily Islamic practices.
 
-## ✨ Features Implemented
+## ✨ Features
 
-### ✅ Core Features (Working)
+### Core Feature Implementations
 1. **Quran Reader** - Complete Quran with Urdu translation
 2. **Tasbih Counter** - Digital Dhikr counter with multiple options
 3. **Schedule Builder** - Create custom Islamic routines with notifications
-4. **Ramadan Timer** - Sehri/Iftar countdown (auto-hides after Ramadan)
+4. **Ramadan Planner** - Local Fajr/Maghrib countdowns, available year-round
 5. **Dark/Light Theme** - Beautiful Islamic-themed UI
+6. **Prayer Tools** - Local prayer times and Qibla direction
+7. **Learning & Knowledge** - Hadith, Dua, Names of Allah, stories, and learning guides
+8. **Audio Quran** - Recitations with reciter selection and playback controls
+9. **Kids Zone** - Memory match, prayer quiz, Names puzzle, and Wudu quiz
 
 ## 🚀 Getting Started
 
@@ -66,7 +70,12 @@ flutter build ios --release
 - **Tasbih Counter** - Interactive counter
 - **Schedule List** - View all schedules
 - **Schedule Builder** - Create new schedules
-- **Ramadan Home** - Sehri/Iftar timers
+- **Ramadan Planner** - Local Fajr/Maghrib countdowns and Hijri date progress
+- **Prayer Times** - Location-based daily timings
+- **Qibla Direction** - Direction calculated from device location
+- **Audio Quran** - Surah playback with multiple reciters
+- **Islamic Learning** - Hadith, Dua, stories, and guided lessons
+- **Kids Zone** - Memory and quiz games
 
 ## 🎨 Theme
 
@@ -89,20 +98,20 @@ flutter build ios --release
 ### API Used
 - **Quran API**: https://api.alquran.cloud/v1
 - Free, unlimited, no API key required
+- **Account backend**: `API_BASE_URL` (defaults to `https://noor-api.onrender.com`)
+- The account backend URL must use HTTPS; local setup guidance is in [TERMUX_SETUP.md](./TERMUX_SETUP.md).
 
 ### Notifications
 - Requires permission on Android/iOS
 - Configured in NotificationService
 
-## 📝 TODO
+## 🧪 Validation and remaining work
 
-- [ ] Add Hadith collection
-- [ ] Add Dua collection
-- [ ] Add Qibla direction
-- [ ] Add audio Quran
-- [ ] Add prayer times
-- [ ] Add statistics dashboard
-- [ ] Add cloud backup
+- Prayer-time service unit tests have been added; broader widget and integration coverage is still needed.
+- Android/iOS builds and real-device behavior still need verification.
+- Prayer calculations currently use a fixed AlAdhan calculation method; add user-selectable calculation settings.
+- Cloud backup and a statistics dashboard are not implemented.
+- Review privacy policy and app-store release assets before publishing.
 
 ## 🤝 Contributing
 

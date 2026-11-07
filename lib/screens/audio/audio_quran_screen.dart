@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,12 +60,14 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
 
   Future<void> _loadReciter() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() => _selectedReciter = prefs.getString('reciter') ?? 'ar.alafasy');
   }
 
   Future<void> _saveReciter(String reciter) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('reciter', reciter);
+    if (!mounted) return;
     setState(() => _selectedReciter = reciter);
   }
 
@@ -87,16 +90,32 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
 
       final url = 'https://cdn.islamic.network/quran/audio/128/$_selectedReciter/$surahNumber.mp3';
       await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
-      await _player.play();
-      
+      if (!mounted) return;
       setState(() => _isLoading = false);
+      unawaited(_startPlayback());
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _currentSurah = null;
+        });
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
       }
+    }
+  }
+
+  Future<void> _startPlayback() async {
+    try {
+      await _player.play();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Playback failed: $e')),
+      );
     }
   }
 
@@ -163,17 +182,34 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                     title: Text(_surahNames[index], style: TextStyle(fontWeight: isPlaying ? FontWeight.bold : null)),
                     subtitle: Text('Surah $surahNumber'),
                     trailing: _isLoading && isPlaying
-                        ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-                        : IconButton(
-                            icon: Icon(isPlaying ? Icons.pause_circle : Icons.play_circle),
-                            color: Theme.of(context).primaryColor,
-                            iconSize: 32,
-                            onPressed: () {
-                              if (isPlaying) {
-                                _player.pause();
-                              } else {
-                                _playAudio(surahNumber);
-                              }
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : StreamBuilder<PlayerState>(
+                            stream: _player.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playing =
+                                  isPlaying && (snapshot.data?.playing ?? false);
+                              return IconButton(
+                                icon: Icon(
+                                  playing
+                                      ? Icons.pause_circle
+                                      : Icons.play_circle,
+                                ),
+                                color: Theme.of(context).primaryColor,
+                                iconSize: 32,
+                                onPressed: () {
+                                  if (playing) {
+                                    _player.pause();
+                                  } else if (isPlaying) {
+                                    unawaited(_startPlayback());
+                                  } else {
+                                    _playAudio(surahNumber);
+                                  }
+                                },
+                              );
                             },
                           ),
                   ),

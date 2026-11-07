@@ -1,8 +1,10 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../models/prayer_times_model.dart';
+import 'prayer_times_service.dart';
 
 class PrayerNotificationService {
+  static const int _firstPrayerNotificationId = 10000;
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
@@ -14,7 +16,7 @@ class PrayerNotificationService {
   }
 
   static Future<void> schedulePrayerNotifications(PrayerTimes times) async {
-    await cancelAll();
+    await cancelPrayerNotifications();
 
     final prayers = [
       {'name': 'Fajr', 'time': times.fajr},
@@ -26,11 +28,13 @@ class PrayerNotificationService {
 
     for (int i = 0; i < prayers.length; i++) {
       final prayer = prayers[i];
-      final scheduledTime = _parseTime(prayer['time'] as String);
+      final scheduledTime = PrayerTimesService.parseTimeToday(
+        prayer['time'] as String,
+      );
       
       if (scheduledTime.isAfter(DateTime.now())) {
         await _notifications.zonedSchedule(
-          i,
+          _firstPrayerNotificationId + i,
           '${prayer['name']} Time',
           'It\'s time for ${prayer['name']} prayer',
           tz.TZDateTime.from(scheduledTime, tz.local),
@@ -41,11 +45,8 @@ class PrayerNotificationService {
               channelDescription: 'Notifications for daily prayer times',
               importance: Importance.high,
               priority: Priority.high,
-              sound: RawResourceAndroidNotificationSound('adhan'),
             ),
-            iOS: DarwinNotificationDetails(
-              sound: 'adhan.mp3',
-            ),
+            iOS: DarwinNotificationDetails(),
           ),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
@@ -54,19 +55,9 @@ class PrayerNotificationService {
     }
   }
 
-  static Future<void> cancelAll() async {
-    await _notifications.cancelAll();
-  }
-
-  static DateTime _parseTime(String time) {
-    final parts = time.split(':');
-    final now = DateTime.now();
-    return DateTime(
-      now.year,
-      now.month,
-      now.day,
-      int.parse(parts[0]),
-      int.parse(parts[1]),
-    );
+  static Future<void> cancelPrayerNotifications() async {
+    for (var index = 0; index < 5; index++) {
+      await _notifications.cancel(_firstPrayerNotificationId + index);
+    }
   }
 }

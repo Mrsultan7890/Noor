@@ -17,16 +17,10 @@ import '../leaderboard/leaderboard_screen.dart';
 import '../tasks/daily_tasks_screen.dart';
 import '../auth/login_screen.dart';
 import '../stories/stories_home_screen.dart';
+import '../audio/audio_quran_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
-
-  bool _isRamadanActive() {
-    final now = DateTime.now();
-    final ramadanStart = DateTime(2025, 2, 28);
-    final eidDate = DateTime(2025, 3, 30);
-    return now.isAfter(ramadanStart) && now.isBefore(eidDate);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,20 +99,18 @@ class MoreScreen extends StatelessWidget {
             },
           ),
           
-          if (_isRamadanActive()) ...[
-            const _SectionHeader(title: 'Ramadan Special', icon: Icons.nightlight_round),
-            _FeatureTile(
-              title: 'Ramadan Features',
-              subtitle: 'Sehri/Iftar Timer & Roza Counter',
-              icon: Icons.nightlight_round,
-              color: Colors.purple,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RamadanHomeScreen()),
-              ),
+          const _SectionHeader(title: 'Ramadan Planner', icon: Icons.nightlight_round),
+          _FeatureTile(
+            title: 'Sehri & Iftar',
+            subtitle: 'Local Fajr and Maghrib times',
+            icon: Icons.nightlight_round,
+            color: Colors.purple,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RamadanHomeScreen()),
             ),
-            const SizedBox(height: 24),
-          ],
+          ),
+          const SizedBox(height: 24),
           
           const _SectionHeader(title: 'Daily Tools', icon: Icons.today),
           _FeatureTile(
@@ -159,6 +151,16 @@ class MoreScreen extends StatelessWidget {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const PrayerTimesScreen()),
+            ),
+          ),
+          _FeatureTile(
+            title: 'Audio Quran',
+            subtitle: 'Listen to recitations by different reciters',
+            icon: Icons.headphones,
+            color: Colors.deepPurple,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AudioQuranScreen()),
             ),
           ),
           _FeatureTile(
@@ -221,7 +223,7 @@ class MoreScreen extends StatelessWidget {
           const _SectionHeader(title: 'Kids Zone', icon: Icons.child_care),
           _FeatureTile(
             title: 'Islamic Games',
-            subtitle: '219+ Levels for Kids',
+            subtitle: '211 Levels across four games',
             icon: Icons.games,
             color: Colors.deepPurple,
             onTap: () => Navigator.push(
