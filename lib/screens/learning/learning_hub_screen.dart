@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/quran_model.dart';
+import '../../providers/theme_provider.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/arabic_text.dart';
 import '../quran/enhanced_quran_reader_screen.dart';
 import 'arabic_alphabet_screen.dart';
 
@@ -8,16 +12,19 @@ class LearningHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppTheme.palettes[
+      context.watch<ThemeProvider>().selectedTheme
+    ]!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Learn - سیکھیں'),
+        title: const ArabicLabel('Learn - سیکھیں'),
         automaticallyImplyLeading: false,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
-            color: Theme.of(context).primaryColor,
+            color: palette.gradientEnd,
             child: const Padding(
               padding: EdgeInsets.all(20),
               child: Column(
@@ -216,7 +223,7 @@ class LearningHubScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.amber.shade900,
+                            color: Color(0xFF1E293B),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -224,7 +231,7 @@ class LearningHubScreen extends StatelessWidget {
                           'Practice daily to improve your skills',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.amber.shade800,
+                            color: Color(0xFF334155),
                           ),
                         ),
                       ],

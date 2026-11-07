@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/stories_service.dart';
 import '../../models/story_model.dart';
 import 'story_list_screen.dart';
+import '../../widgets/arabic_text.dart';
 
 class StoriesHomeScreen extends StatefulWidget {
   const StoriesHomeScreen({super.key});
@@ -54,7 +55,7 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Islamic Stories - اسلامی کہانیاں'),
+        title: const ArabicLabel('Islamic Stories - اسلامی کہانیاں'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -138,7 +139,7 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
+                          ArabicText(
                             category.nameUrdu,
                             style: TextStyle(
                               fontSize: 16,

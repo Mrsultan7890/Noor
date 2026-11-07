@@ -108,7 +108,11 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.surah.name),
+        title: ArabicText(
+          widget.surah.name,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20),
+        ),
         actions: [
           IconButton(
             icon: Icon(_showTransliteration ? Icons.text_fields : Icons.text_fields_outlined),
@@ -299,19 +303,25 @@ class _WordByWordDialog extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.translate, color: Colors.white),
+                  Icon(
+                    Icons.translate,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'Word by Word - ${verseData.verseKey}',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],

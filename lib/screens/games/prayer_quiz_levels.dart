@@ -26,11 +26,8 @@ class _PrayerQuizLevelsState extends State<PrayerQuizLevels> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Prayer Quiz Levels'), backgroundColor: Colors.orange),
+      appBar: AppBar(title: const Text('Prayer Quiz Levels')),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.orange.shade50, Colors.red.shade50]),
-        ),
         child: ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: 50,

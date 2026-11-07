@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../providers/tasbih_provider.dart';
+import '../../widgets/arabic_text.dart';
 
 class TasbihScreen extends StatelessWidget {
   const TasbihScreen({super.key});
@@ -10,7 +11,7 @@ class TasbihScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasbih - تسبیح'),
+        title: const ArabicLabel('Tasbih - تسبیح'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

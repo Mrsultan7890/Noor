@@ -320,7 +320,6 @@ class _QuizTabState extends State<_QuizTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Quiz completed! +20 points'),
-            backgroundColor: Colors.green,
           ),
         );
       }
@@ -352,17 +351,17 @@ class _QuizTabState extends State<_QuizTab> {
                 children: [
                   Column(
                     children: [
-                      const Text(
+                      Text(
                         'Score',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 16,
                         ),
                       ),
                       Text(
                         '$_score / $_totalQuestions',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -371,10 +370,10 @@ class _QuizTabState extends State<_QuizTab> {
                   ),
                   Column(
                     children: [
-                      const Text(
+                      Text(
                         'Accuracy',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 16,
                         ),
                       ),
@@ -382,8 +381,8 @@ class _QuizTabState extends State<_QuizTab> {
                         _totalQuestions > 0
                             ? '${((_score / _totalQuestions) * 100).toStringAsFixed(0)}%'
                             : '0%',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -415,7 +414,7 @@ class _QuizTabState extends State<_QuizTab> {
               ),
             ),
             child: Center(
-              child: Text(
+              child: ArabicText(
                 _currentLetter!.arabic,
                 style: const TextStyle(
                   fontSize: 80,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../navigation/main_navigation_screen.dart';
 import 'onboarding/onboarding_screen.dart';
+import '../widgets/arabic_text.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -47,16 +48,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final foreground = theme.colorScheme.onSurface;
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-          ),
-        ),
-        child: FadeTransition(
+      backgroundColor: Colors.transparent,
+      body: FadeTransition(
           opacity: _fadeAnimation,
           child: Center(
             child: Column(
@@ -70,32 +66,54 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     shape: BoxShape.circle,
                     boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 20, spreadRadius: 5)],
                   ),
-                  child: const Center(
-                    child: Icon(Icons.mosque, size: 80, color: Color(0xFF2E7D32)),
-                  ),
+                  child: Center(
+                      child: Icon(
+                        Icons.mosque,
+                        size: 80,
+                        color: theme.brightness == Brightness.dark
+                            ? theme.colorScheme.onPrimary
+                            : theme.colorScheme.primary,
+                      ),
+                    ),
                 ),
                 const SizedBox(height: 30),
-                const Text(
+                ArabicLabel(
                   'نور',
-                  style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 2),
+                  style: TextStyle(
+                    fontSize: 60,
+                    fontWeight: FontWeight.bold,
+                    color: foreground,
+                    letterSpacing: 2,
+                  ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'NOOR',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w300, color: Colors.white70, letterSpacing: 8),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w300,
+                    color: foreground.withOpacity(0.75),
+                    letterSpacing: 8,
+                  ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Islamic Companion',
-                  style: TextStyle(fontSize: 16, color: Colors.white60, letterSpacing: 2),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: foreground.withOpacity(0.6),
+                    letterSpacing: 2,
+                  ),
                 ),
                 const SizedBox(height: 60),
-                const CircularProgressIndicator(color: Colors.white70, strokeWidth: 2),
+                CircularProgressIndicator(
+                  color: foreground.withOpacity(0.75),
+                  strokeWidth: 2,
+                ),
               ],
             ),
           ),
         ),
-      ),
     );
   }
 }

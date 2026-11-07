@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/update_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../screens/quran/quran_list_screen.dart';
@@ -11,6 +12,9 @@ import '../../screens/schedule/schedule_list_screen.dart';
 import '../../screens/prayer/prayer_times_screen.dart';
 import '../../screens/qibla/qibla_screen.dart';
 import '../../widgets/feature_card.dart';
+import '../../providers/theme_provider.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/arabic_text.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,9 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppTheme.palettes[
+      context.watch<ThemeProvider>().selectedTheme
+    ]!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: const ArabicLabel(
           'Noor - نور',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -93,8 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              color: Theme.of(context).primaryColor,
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: palette.gradientColors),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: const Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -105,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(Icons.wb_sunny, color: Colors.white, size: 32),
                         SizedBox(width: 12),
                         Expanded(
-                          child: Text(
+                          child: ArabicText(
                             'السلام علیکم',
                             style: TextStyle(
                               color: Colors.white,

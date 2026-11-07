@@ -67,9 +67,8 @@ class _PrayerQuizPlayState extends State<PrayerQuizPlay> {
   Widget build(BuildContext context) {
     final q = _questions[_currentQ];
     return Scaffold(
-      appBar: AppBar(title: Text('Level ${widget.level}'), backgroundColor: Colors.orange),
+      appBar: AppBar(title: Text('Level ${widget.level}')),
       body: Container(
-        decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.orange.shade50, Colors.red.shade50])),
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +83,6 @@ class _PrayerQuizPlayState extends State<PrayerQuizPlay> {
                 onPressed: () => _answer(opt),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 60),
-                  backgroundColor: Colors.orange,
                 ),
                 child: Text(opt, style: const TextStyle(fontSize: 20)),
               ),

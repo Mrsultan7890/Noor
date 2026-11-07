@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/quran_model.dart';
+import 'utf8_json.dart';
 
 class QuranService {
   static const String baseUrl = 'https://api.alquran.cloud/v1';
@@ -11,7 +11,7 @@ class QuranService {
       final response = await http.get(Uri.parse('$baseUrl/surah'));
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final List surahs = data['data'];
         return surahs.map((surah) => Surah.fromJson(surah)).toList();
       } else {
@@ -39,8 +39,8 @@ class QuranService {
       );
       
       if (arabicResponse.statusCode == 200 && translationResponse.statusCode == 200) {
-        final arabicData = json.decode(arabicResponse.body);
-        final translationData = json.decode(translationResponse.body);
+        final arabicData = decodeUtf8JsonResponse(arabicResponse);
+        final translationData = decodeUtf8JsonResponse(translationResponse);
         
         final List arabicAyahs = arabicData['data']['ayahs'];
         final List translationAyahs = translationData['data']['ayahs'];

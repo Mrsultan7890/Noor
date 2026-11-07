@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/arabic_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/story_model.dart';
 
@@ -40,7 +41,6 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Story completed! +15 points earned'),
-          backgroundColor: Colors.green,
           duration: Duration(seconds: 2),
         ),
       );
@@ -53,7 +53,9 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_showUrdu ? widget.story.titleUrdu : widget.story.title),
+        title: _showUrdu
+            ? ArabicText(widget.story.titleUrdu)
+            : Text(widget.story.title),
         actions: [
           IconButton(
             icon: Icon(_showUrdu ? Icons.translate : Icons.language),
@@ -87,15 +89,26 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 ),
               ),
             const SizedBox(height: 20),
-            Text(
-              _showUrdu ? widget.story.titleUrdu : widget.story.title,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+            if (_showUrdu)
+              ArabicText(
+                widget.story.titleUrdu,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              )
+            else
+              Text(
+                widget.story.title,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(20),
@@ -103,15 +116,25 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 color: isDark ? Colors.grey[800] : Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                _showUrdu ? widget.story.contentUrdu : widget.story.content,
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.8,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-                textAlign: _showUrdu ? TextAlign.right : TextAlign.left,
-              ),
+              child: _showUrdu
+                  ? ArabicText(
+                      widget.story.contentUrdu,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.8,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.right,
+                    )
+                  : Text(
+                      widget.story.content,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.8,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
             ),
             const SizedBox(height: 24),
             Container(
@@ -139,16 +162,28 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    _showUrdu ? widget.story.lessonUrdu : widget.story.lesson,
-                    style: TextStyle(
-                      fontSize: 15,
-                      height: 1.6,
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontStyle: FontStyle.italic,
+                  if (_showUrdu)
+                    ArabicText(
+                      widget.story.lessonUrdu,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: isDark ? Colors.white : Colors.black87,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.right,
+                    )
+                  else
+                    Text(
+                      widget.story.lesson,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: isDark ? Colors.white : Colors.black87,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                    textAlign: _showUrdu ? TextAlign.right : TextAlign.left,
-                  ),
                 ],
               ),
             ),
@@ -160,8 +195,6 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 label: const Text('Mark as Complete'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
                 ),
               ),
           ],

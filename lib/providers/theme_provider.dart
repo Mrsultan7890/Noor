@@ -4,8 +4,9 @@ import '../theme/app_theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
-  NoorTheme _selectedTheme = NoorTheme.emerald;
+  NoorTheme _selectedTheme = NoorTheme.emeraldArch;
   double _arabicFontScale = 1;
+  late final Future<void> _initialization;
 
   ThemeMode get themeMode => _themeMode;
   NoorTheme get selectedTheme => _selectedTheme;
@@ -24,7 +25,19 @@ class ThemeProvider extends ChangeNotifier {
       );
 
   ThemeProvider() {
-    _loadTheme();
+    _initialization = _loadTheme();
+  }
+
+  ThemeProvider._loaded() {
+    _initialization = Future<void>.value();
+  }
+
+  Future<void> get initialized => _initialization;
+
+  static Future<ThemeProvider> load() async {
+    final provider = ThemeProvider._loaded();
+    await provider._loadTheme();
+    return provider;
   }
 
   Future<void> _loadTheme() async {
@@ -32,10 +45,15 @@ class ThemeProvider extends ChangeNotifier {
     final isDark = prefs.getBool('isDarkMode') ?? false;
     final storedTheme = prefs.getString('colorTheme');
     final storedFontScale = prefs.getDouble('arabicFontScale') ?? 1;
-    _selectedTheme = NoorTheme.values.firstWhere(
-      (theme) => theme.name == storedTheme,
-      orElse: () => NoorTheme.emerald,
-    );
+    _selectedTheme = switch (storedTheme) {
+      'burgundy' => NoorTheme.roseMarble,
+      'emerald' => NoorTheme.emeraldArch,
+      'midnightVelvet' => NoorTheme.oliveBranch,
+      _ => NoorTheme.values.firstWhere(
+          (theme) => theme.name == storedTheme,
+          orElse: () => NoorTheme.emeraldArch,
+        ),
+    };
     _arabicFontScale = storedFontScale.clamp(0.8, 1.6).toDouble();
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();

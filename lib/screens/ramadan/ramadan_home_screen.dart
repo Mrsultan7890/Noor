@@ -135,21 +135,27 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _formatDuration(_timeUntilSehri),
                       style: const TextStyle(
-                        fontSize: 48,
+                        fontFamily: 'monospace',
+                        fontSize: 42,
                         fontWeight: FontWeight.bold,
-                        color: Colors.purple,
+                        letterSpacing: 1.5,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Sehri ends at ${_prayerTimesService.formatPrayerTime(times.fajr)}',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: const TextStyle(
+                        color: Color(0xFF334155),
+                        fontSize: 15,
+                      ),
                     ),
                   ],
                 ),
@@ -176,21 +182,27 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _formatDuration(_timeUntilIftar),
                       style: const TextStyle(
-                        fontSize: 48,
+                        fontFamily: 'monospace',
+                        fontSize: 42,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                        letterSpacing: 1.5,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Iftar at ${_prayerTimesService.formatPrayerTime(times.maghrib)}',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: const TextStyle(
+                        color: Color(0xFF334155),
+                        fontSize: 15,
+                      ),
                     ),
                   ],
                 ),
@@ -246,10 +258,14 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    const ArabicText(
                       'اے اللہ! میں نے تیرے لیے روزہ رکھا اور تجھ پر ایمان لایا اور تجھ پر بھروسہ کیا اور تیرے رزق سے افطار کیا',
                       textAlign: TextAlign.right,
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontFamily: 'Amiri',
+                        fontSize: 16,
+                        color: Color(0xFF1E293B),
+                      ),
                     ),
                   ],
                 ),

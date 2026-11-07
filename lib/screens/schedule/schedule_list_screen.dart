@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/schedule_provider.dart';
 import 'schedule_builder_screen.dart';
 import 'package:intl/intl.dart';
+import '../../widgets/arabic_text.dart';
 
 class ScheduleListScreen extends StatelessWidget {
   const ScheduleListScreen({super.key});
@@ -11,7 +12,7 @@ class ScheduleListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Schedule - میرا شیڈول'),
+        title: const ArabicLabel('My Schedule - میرا شیڈول'),
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),

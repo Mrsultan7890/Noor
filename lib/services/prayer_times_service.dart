@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import '../models/prayer_times_model.dart';
+import 'utf8_json.dart';
 
 class PrayerTimesService {
   static const String _baseUrl = 'https://api.aladhan.com/v1';
@@ -22,7 +22,7 @@ class PrayerTimesService {
         'Prayer-times service returned HTTP ${response.statusCode}.',
       );
     }
-    return PrayerTimes.fromJson(json.decode(response.body));
+    return PrayerTimes.fromJson(decodeUtf8JsonResponse(response));
   }
 
   Future<Position> getCurrentLocation() async {

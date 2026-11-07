@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../widgets/arabic_text.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
 import '../tasbih/tasbih_screen.dart';
@@ -28,7 +29,7 @@ class MoreScreen extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('More - مزید'),
+        title: const ArabicLabel('More - مزید'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -273,9 +274,10 @@ class MoreScreen extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Text(
+                ArabicLabel(
                   'Noor - نور',
                   style: TextStyle(
+                    fontFamily: 'Amiri',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).primaryColor,

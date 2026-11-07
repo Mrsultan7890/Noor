@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../navigation/main_navigation_screen.dart';
+import '../../widgets/arabic_text.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -54,15 +55,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.primaryColor;
+    final foreground = theme.colorScheme.onSurface;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-          ),
-        ),
         child: SafeArea(
           child: Column(
             children: [
@@ -76,27 +74,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.mosque, size: 50, color: Color(0xFF2E7D32)),
+                child: Icon(
+                  Icons.mosque,
+                  size: 50,
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.onPrimary
+                      : primary,
+                ),
               ),
               
               const SizedBox(height: 20),
               
-              const Text(
+              ArabicLabel(
                 'Noor - نور',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: foreground,
                 ),
               ),
               
               const SizedBox(height: 8),
               
-              const Text(
+              Text(
                 'Islamic Companion',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white70,
+                  color: foreground.withOpacity(0.75),
                 ),
               ),
               
@@ -104,16 +108,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               
               // Content
               Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                child: Theme(
+                  data: theme.copyWith(
+                    brightness: Brightness.light,
+                    colorScheme: theme.colorScheme.copyWith(
+                      brightness: Brightness.light,
+                      surface: Colors.white,
+                      onSurface: const Color(0xFF1E293B),
+                      onPrimary: theme.colorScheme.onPrimary,
+                    ),
+                    textTheme: ThemeData.light().textTheme.apply(
+                          bodyColor: const Color(0xFF1E293B),
+                          displayColor: const Color(0xFF1E293B),
+                        ),
+                    cardTheme: ThemeData.light().cardTheme,
                   ),
-                  child: _currentStep == 0 
-                      ? _buildLanguageStep() 
-                      : _currentStep == 1 
-                          ? _buildLevelStep() 
-                          : _buildCountryStep(),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(30)),
+                    ),
+                    child: _currentStep == 0
+                        ? _buildLanguageStep()
+                        : _currentStep == 1
+                            ? _buildLevelStep()
+                            : _buildCountryStep(),
+                  ),
                 ),
               ),
             ],
@@ -161,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: isSelected ? 4 : 1,
-                  color: isSelected ? const Color(0xFF2E7D32).withOpacity(0.1) : null,
+                  color: isSelected ? primary.withOpacity(0.1) : null,
                   child: ListTile(
                     onTap: () {
                       setState(() {
@@ -172,20 +193,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[200],
+                        color: isSelected ? primary : Colors.grey[200],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
                         child: Text(
                           lang['code']!.toUpperCase(),
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.grey[700],
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Colors.grey[700],
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    title: Text(
+                    title: ArabicLabel(
                       lang['native']!,
                       style: TextStyle(
                         fontSize: 18,
@@ -194,7 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     subtitle: Text(lang['name']!),
                     trailing: isSelected
-                        ? const Icon(Icons.check_circle, color: Color(0xFF2E7D32))
+                        ? Icon(Icons.check_circle, color: primary)
                         : null,
                   ),
                 );
@@ -213,7 +236,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
+                backgroundColor: primary,
                 padding: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -221,7 +244,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Next',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
           ),
@@ -281,7 +307,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: isSelected ? 4 : 1,
-                  color: isSelected ? const Color(0xFF2E7D32).withOpacity(0.1) : null,
+                  color: isSelected ? primary.withOpacity(0.1) : null,
                   child: ListTile(
                     onTap: () {
                       setState(() {
@@ -292,12 +318,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[200],
+                        color: isSelected ? primary : Colors.grey[200],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.location_on,
-                        color: isSelected ? Colors.white : Colors.grey[700],
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Colors.grey[700],
                       ),
                     ),
                     title: Text(
@@ -308,7 +336,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                     trailing: isSelected
-                        ? const Icon(Icons.check_circle, color: Color(0xFF2E7D32))
+                        ? Icon(Icons.check_circle, color: primary)
                         : null,
                   ),
                 );
@@ -323,7 +351,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: ElevatedButton(
               onPressed: _completeOnboarding,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
+                backgroundColor: primary,
                 padding: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -331,7 +359,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Get Started',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
           ),
@@ -522,7 +553,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
+                backgroundColor: Theme.of(context).primaryColor,
                 padding: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -530,7 +561,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Next',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
           ),

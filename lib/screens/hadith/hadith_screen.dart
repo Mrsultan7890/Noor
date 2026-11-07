@@ -53,7 +53,7 @@ class _HadithScreenState extends State<HadithScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hadith - حدیث'),
+        title: const ArabicLabel('Hadith - حدیث'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (book) {

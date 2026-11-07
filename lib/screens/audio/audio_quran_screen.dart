@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/arabic_text.dart';
 
 class AudioQuranScreen extends StatefulWidget {
   const AudioQuranScreen({super.key});
@@ -153,7 +154,7 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Audio Quran - آڈیو قرآن'),
+        title: const ArabicLabel('Audio Quran - آڈیو قرآن'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
@@ -177,7 +178,14 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: isPlaying ? Theme.of(context).primaryColor : null,
-                      child: Text('$surahNumber', style: TextStyle(color: isPlaying ? Colors.white : null)),
+                      child: Text(
+                        '$surahNumber',
+                        style: TextStyle(
+                          color: isPlaying
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : null,
+                        ),
+                      ),
                     ),
                     title: Text(_surahNames[index], style: TextStyle(fontWeight: isPlaying ? FontWeight.bold : null)),
                     subtitle: Text('Surah $surahNumber'),

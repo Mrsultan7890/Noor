@@ -19,16 +19,20 @@ class ShahadaScreen extends StatelessWidget {
           children: [
             Card(
               color: Theme.of(context).primaryColor,
-              child: const Padding(
-                padding: EdgeInsets.all(24),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    Icon(Icons.favorite, color: Colors.white, size: 48),
-                    SizedBox(height: 16),
+                    Icon(
+                      Icons.favorite,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
                     Text(
                       'The First Pillar of Islam',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -145,8 +149,6 @@ class ShahadaScreen extends StatelessWidget {
               label: const Text('Mark as Learned'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
               ),
             ),
           ],
@@ -167,7 +169,6 @@ class ShahadaScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Lesson completed! +20 points'),
-          backgroundColor: Colors.green,
         ),
       );
     }

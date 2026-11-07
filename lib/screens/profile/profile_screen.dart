@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -60,8 +62,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+                    gradient: LinearGradient(
+                      colors: AppTheme
+                          .palettes[context.watch<ThemeProvider>().selectedTheme]!
+                          .gradientColors,
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -235,7 +239,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(success ? 'Profile updated!' : 'Update failed'),
-                    backgroundColor: success ? Colors.green : Colors.red,
                   ),
                 );
               }

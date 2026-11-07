@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -65,7 +67,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(userProvider.error ?? 'Registration failed'),
-          backgroundColor: Colors.red,
         ),
       );
     }
@@ -80,11 +81,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+            colors: AppTheme
+                .palettes[context.watch<ThemeProvider>().selectedTheme]!
+                .gradientColors,
           ),
         ),
         child: SafeArea(

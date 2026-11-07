@@ -201,8 +201,6 @@ class IslamicEtiquettesScreen extends StatelessWidget {
             label: const Text('Mark as Learned'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
             ),
           ),
         ],
@@ -222,7 +220,6 @@ class IslamicEtiquettesScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Lesson completed! +20 points'),
-          backgroundColor: Colors.green,
         ),
       );
     }

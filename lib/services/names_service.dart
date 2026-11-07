@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'utf8_json.dart';
 
 class NamesService {
   static const String baseUrl = 'https://api.aladhan.com/v1';
@@ -9,7 +9,7 @@ class NamesService {
       final response = await http.get(Uri.parse('$baseUrl/asmaAlHusna'));
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final List names = data['data'];
         return names.map((n) => {
           'number': n['number'].toString(),

@@ -44,7 +44,9 @@ class _NamesScreenState extends State<NamesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('99 Names of Allah - اسماء الحسنیٰ')),
+      appBar: AppBar(
+        title: const ArabicLabel('99 Names of Allah - اسماء الحسنیٰ'),
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -70,7 +72,12 @@ class _NamesScreenState extends State<NamesScreen> {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Text(name['number']!, style: const TextStyle(color: Colors.white)),
+                          child: Text(
+                            name['number']!,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
                         ),
                         title: ArabicText(
                           name['name']!,

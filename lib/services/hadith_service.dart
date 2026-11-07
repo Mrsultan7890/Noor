@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/hadith_model.dart';
+import 'utf8_json.dart';
 
 class HadithService {
   static const String baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
@@ -12,7 +12,7 @@ class HadithService {
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final hadiths = data['hadiths'] as List;
         
         final start = (page - 1) * 10;

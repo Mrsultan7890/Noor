@@ -1,9 +1,10 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 import 'dart:math';
 import 'package:timezone/timezone.dart' as tz;
+import 'utf8_json.dart';
 
 class DailyReminderService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
@@ -67,7 +68,7 @@ class DailyReminderService {
     try {
       final response = await http.get(Uri.parse('https://hadis-api-id.vercel.app/hadith/bukhari?page=1&limit=1'));
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final items = data['items'] as List;
         if (items.isNotEmpty) {
           final hadith = items[0];

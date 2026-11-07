@@ -10,6 +10,7 @@ import '../learning/daily_adhkar_screen.dart';
 import '../learning/islamic_etiquettes_screen.dart';
 import '../learning/halal_haram_screen.dart';
 import '../../models/quran_model.dart';
+import '../../widgets/arabic_text.dart';
 
 class NewMuslimHomeScreen extends StatelessWidget {
   const NewMuslimHomeScreen({super.key});
@@ -27,24 +28,28 @@ class NewMuslimHomeScreen extends StatelessWidget {
           // Welcome Card
           Card(
             color: Theme.of(context).primaryColor,
-            child: const Padding(
-              padding: EdgeInsets.all(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  ArabicText(
                     'السلام علیکم',
+                    textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Welcome to Islam! Start your journey here.',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onPrimary
+                          .withOpacity(0.75),
                       fontSize: 16,
                     ),
                   ),
@@ -284,7 +289,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.amber.shade900,
+                            color: Color(0xFF1E293B),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -292,7 +297,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
                           'Learn at your own pace. May Allah guide you!',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.amber.shade800,
+                            color: Color(0xFF334155),
                           ),
                         ),
                       ],
@@ -322,7 +327,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4),
-              Text('بِسْمِ اللَّهِ', style: TextStyle(fontSize: 18)),
+              ArabicText('بِسْمِ اللَّهِ', style: TextStyle(fontSize: 18)),
               Text('Bismillah (In the name of Allah)'),
               SizedBox(height: 16),
               Text(
@@ -330,7 +335,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4),
-              Text('الْحَمْدُ لِلَّهِ', style: TextStyle(fontSize: 18)),
+              ArabicText('الْحَمْدُ لِلَّهِ', style: TextStyle(fontSize: 18)),
               Text('Alhamdulillah (Praise be to Allah)'),
               SizedBox(height: 16),
               Text(
@@ -338,7 +343,10 @@ class NewMuslimHomeScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4),
-              Text('بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', style: TextStyle(fontSize: 18)),
+              ArabicText(
+                'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+                style: TextStyle(fontSize: 18),
+              ),
               Text('Bismika Allahumma amutu wa ahya'),
               SizedBox(height: 16),
               Text(
@@ -346,7 +354,10 @@ class NewMuslimHomeScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4),
-              Text('الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا', style: TextStyle(fontSize: 18)),
+              ArabicText(
+                'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا',
+                style: TextStyle(fontSize: 18),
+              ),
               Text('Alhamdulillah alladhi ahyana'),
             ],
           ),
@@ -386,7 +397,10 @@ class NewMuslimHomeScreen extends StatelessWidget {
                   backgroundColor: Theme.of(context).primaryColor,
                   child: Text(
                     '${surah.number}',
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
                 title: Text(surah.englishName),

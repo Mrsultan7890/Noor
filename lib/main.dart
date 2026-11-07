@@ -15,6 +15,7 @@ import 'models/schedule_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final themeProvider = await ThemeProvider.load();
   
   tz.initializeTimeZones();
   
@@ -26,17 +27,19 @@ void main() async {
   await PrayerNotificationService.initialize();
   await DailyReminderService.scheduleDailyReminder();
   
-  runApp(const NoorApp());
+  runApp(NoorApp(themeProvider: themeProvider));
 }
 
 class NoorApp extends StatelessWidget {
-  const NoorApp({super.key});
+  const NoorApp({super.key, required this.themeProvider});
+
+  final ThemeProvider themeProvider;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider(create: (_) => QuranProvider()),
         ChangeNotifierProvider(create: (_) => TasbihProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),

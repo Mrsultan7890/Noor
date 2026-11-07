@@ -42,13 +42,7 @@ flutter pub get
 flutter run
 ```
 
-### Optional: Add Arabic Fonts
-```bash
-# Download Amiri fonts from:
-# https://github.com/alif-type/amiri/releases
-# Place in assets/fonts/ directory
-# Then uncomment fonts section in pubspec.yaml
-```
+Arabic text uses the bundled Amiri font configured in `pubspec.yaml`.
 
 ### Build Release
 ```bash
@@ -76,14 +70,16 @@ flutter build ios --release
 - **Audio Quran** - Surah playback with multiple reciters
 - **Islamic Learning** - Hadith, Dua, stories, and guided lessons
 - **Kids Zone** - Memory and quiz games
-- **App Settings** - Three selectable gradient themes, light appearance, Arabic text sizing, and daily/prayer reminders
+- **App Settings** - Five selectable gradient themes, light appearance, Arabic text sizing, and daily/prayer reminders
 
 ## 🎨 Theme
 
-- Primary Color: Green (#2E7D32)
-- Secondary Color: Gold (#FFD700)
-- Accent Color: Teal (#00897B)
-- Dark Mode: Supported
+- Sandalwood: `#2D1B14` → `#4A2E21`
+- Olive Branch: `#1A211B` → `#2C352D`
+- Emerald Arch: `#0B221B` → `#163D30`
+- Rose Marble: `#381F26` → `#542E38`
+- Rose Leaves: `#2E1E24` → `#422A33`
+- Theme selection is saved and applied to the app background, surfaces, dialogs, popups, and snackbars.
 
 ## 📦 Dependencies
 

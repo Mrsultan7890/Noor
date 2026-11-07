@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/word_by_word_model.dart';
+import 'utf8_json.dart';
 
 class EnhancedQuranService {
   static const String _baseUrl = 'https://api.alquran.cloud/v1';
@@ -14,7 +14,7 @@ class EnhancedQuranService {
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final ayahs = data['data']['ayahs'] as List;
         return ayahs.map((ayah) => ayah['text'] as String).toList();
       }
@@ -32,7 +32,7 @@ class EnhancedQuranService {
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         return VerseWithWords.fromJson(data);
       }
       return null;

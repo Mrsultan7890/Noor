@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/theme_provider.dart';
+import '../../theme/app_theme.dart';
 
 class DailyTasksScreen extends StatefulWidget {
   const DailyTasksScreen({super.key});
@@ -142,7 +145,9 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Theme.of(context).primaryColor, Colors.teal],
+                colors: AppTheme
+                    .palettes[context.watch<ThemeProvider>().selectedTheme]!
+                    .gradientColors,
               ),
             ),
             child: Column(

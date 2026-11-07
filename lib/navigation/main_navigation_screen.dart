@@ -49,8 +49,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
+        unselectedItemColor:
+            Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
         selectedFontSize: 12,
         unselectedFontSize: 12,
         items: const [

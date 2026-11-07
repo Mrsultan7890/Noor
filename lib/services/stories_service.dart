@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/story_model.dart';
+import 'utf8_json.dart';
 
 class StoriesService {
   static const String githubUrl = 
@@ -29,7 +30,7 @@ class StoriesService {
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
+        final data = decodeUtf8JsonResponse(response);
         await prefs.setString(cacheKey, json.encode(data));
         await prefs.setString(cacheTimeKey, DateTime.now().toIso8601String());
         return data;

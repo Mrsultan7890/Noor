@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../theme/app_theme.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../../models/prayer_times_model.dart';
@@ -138,7 +140,6 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$prayer logged! +5 points'),
-          backgroundColor: Colors.green,
         ),
       );
     }
@@ -215,8 +216,10 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+        gradient: LinearGradient(
+          colors: AppTheme
+              .palettes[context.watch<ThemeProvider>().selectedTheme]!
+              .gradientColors,
         ),
         borderRadius: BorderRadius.circular(20),
       ),

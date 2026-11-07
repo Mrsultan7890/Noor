@@ -37,16 +37,8 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Memory Match Levels'),
-        backgroundColor: Colors.pink,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.pink.shade50, Colors.purple.shade50],
-          ),
-        ),
         child: ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: 50,

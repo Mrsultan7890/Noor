@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../theme/app_theme.dart';
 import 'memory_game_levels.dart';
 import 'prayer_quiz_levels.dart';
 import 'names_puzzle_levels.dart';
@@ -15,7 +18,9 @@ class KidsZoneScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.purple.shade400, Colors.pink.shade300, Colors.orange.shade300],
+            colors: AppTheme
+                .palettes[context.watch<ThemeProvider>().selectedTheme]!
+                .gradientColors,
           ),
         ),
         child: SafeArea(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/story_model.dart';
+import '../../widgets/arabic_text.dart';
 import 'story_detail_screen.dart';
 
 class StoryListScreen extends StatelessWidget {
@@ -19,7 +20,7 @@ class StoryListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(category.nameUrdu),
+        title: ArabicText(category.nameUrdu),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
@@ -47,7 +48,7 @@ class StoryListScreen extends StatelessWidget {
               ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Text(
+                child: ArabicText(
                   story.titleUrdu,
                   style: TextStyle(
                     fontSize: 14,

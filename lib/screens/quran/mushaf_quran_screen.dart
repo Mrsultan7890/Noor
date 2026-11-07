@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/utf8_json.dart';
 import '../../widgets/arabic_text.dart';
 
 class MushafQuranScreen extends StatefulWidget {
@@ -19,15 +19,19 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _loadLastRead();
   }
 
   Future<void> _loadLastRead() async {
     final prefs = await SharedPreferences.getInstance();
-    final lastPage = prefs.getInt('mushaf_last_page') ?? 1;
-    _pageController = PageController(initialPage: lastPage - 1);
-    setState(() => _currentPage = lastPage);
-    _loadPage(lastPage);
+    if (!mounted) return;
+    final lastPage = (prefs.getInt('mushaf_last_page') ?? 1).clamp(1, 604);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _pageController.jumpToPage(lastPage - 1);
+      setState(() => _currentPage = lastPage);
+    });
   }
 
   Future<void> _saveLastRead(int page) async {
@@ -40,21 +44,19 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
       return _cachedPages[page]!;
     }
 
-    try {
-      final response = await http.get(
-        Uri.parse('https://api.alquran.cloud/v1/page/$page/quran-uthmani'),
+    final response = await http.get(
+      Uri.parse('https://api.alquran.cloud/v1/page/$page/quran-uthmani'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Failed to load Mushaf page $page (HTTP ${response.statusCode}).',
       );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final ayahs = data['data']['ayahs'] as List;
-        final lines = ayahs.map((a) => a['text'].toString()).toList();
-        _cachedPages[page] = lines;
-        return lines;
-      }
-    } catch (e) {
-      // Return empty on error
     }
-    return [];
+    final data = decodeUtf8JsonResponse(response);
+    final ayahs = data['data']['ayahs'] as List;
+    final lines = ayahs.map((a) => a['text'].toString()).toList();
+    _cachedPages[page] = lines;
+    return lines;
   }
 
   @override
@@ -83,7 +85,6 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
             final page = index + 1;
             setState(() => _currentPage = page);
             _saveLastRead(page);
-            _loadPage(page);
           },
           itemCount: 604,
           itemBuilder: (context, index) {
@@ -91,6 +92,15 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
             return FutureBuilder<List<String>>(
               future: _loadPage(page),
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Unable to load this Mushaf page: ${snapshot.error}',
+                      style: const TextStyle(color: Color(0xFF1E293B)),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -102,7 +112,10 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 30,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -125,6 +138,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                                   style: const TextStyle(
                                     fontSize: 20,
                                     height: 2.5,
+                                    color: Color(0xFF1E293B),
                                   ),
                                 ),
                               );
@@ -150,39 +164,54 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.first_page),
-              onPressed: _currentPage > 1 ? () => _pageController.jumpToPage(0) : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.chevron_left),
-              iconSize: 32,
-              onPressed: _currentPage > 1
-                  ? () => _pageController.previousPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      )
-                  : null,
-            ),
-            Text('$_currentPage / 604', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            IconButton(
-              icon: const Icon(Icons.chevron_right),
-              iconSize: 32,
-              onPressed: _currentPage < 604
-                  ? () => _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      )
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.last_page),
-              onPressed: _currentPage < 604 ? () => _pageController.jumpToPage(603) : null,
-            ),
-          ],
+        color: Colors.white,
+        child: IconTheme(
+          data: const IconThemeData(color: Color(0xFF1E293B)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.first_page),
+                onPressed: _currentPage > 1
+                    ? () => _pageController.jumpToPage(0)
+                    : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_left),
+                iconSize: 32,
+                onPressed: _currentPage > 1
+                    ? () => _pageController.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        )
+                    : null,
+              ),
+              Text(
+                '$_currentPage / 604',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right),
+                iconSize: 32,
+                onPressed: _currentPage < 604
+                    ? () => _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        )
+                    : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.last_page),
+                onPressed: _currentPage < 604
+                    ? () => _pageController.jumpToPage(603)
+                    : null,
+              ),
+            ],
+          ),
         ),
       ),
     );

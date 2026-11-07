@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 import 'register_screen.dart';
 
@@ -43,7 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(userProvider.error ?? 'Login failed'),
-          backgroundColor: Colors.red,
         ),
       );
     }
@@ -53,11 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+            colors: AppTheme
+                .palettes[context.watch<ThemeProvider>().selectedTheme]!
+                .gradientColors,
           ),
         ),
         child: SafeArea(

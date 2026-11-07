@@ -148,7 +148,6 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
     return Scaffold(
       appBar: AppBar(
         title: Text('Level ${widget.level}'),
-        backgroundColor: Colors.pink,
         actions: [
           Center(
             child: Padding(
@@ -159,11 +158,6 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.pink.shade50, Colors.purple.shade50],
-          ),
-        ),
         child: GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

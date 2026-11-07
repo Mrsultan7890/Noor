@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
-enum NoorTheme { burgundy, emerald, midnightVelvet }
+enum NoorTheme {
+  sandalwood,
+  oliveBranch,
+  emeraldArch,
+  roseMarble,
+  roseLeaves,
+}
 
 class NoorThemePalette {
   const NoorThemePalette({
@@ -9,6 +15,7 @@ class NoorThemePalette {
     required this.gradientStart,
     required this.gradientEnd,
     required this.accent,
+    required this.secondaryAccent,
   });
 
   final String name;
@@ -16,32 +23,52 @@ class NoorThemePalette {
   final Color gradientStart;
   final Color gradientEnd;
   final Color accent;
+  final Color secondaryAccent;
 
   List<Color> get gradientColors => [gradientStart, gradientEnd];
 }
 
 class AppTheme {
   static const Map<NoorTheme, NoorThemePalette> palettes = {
-    NoorTheme.burgundy: NoorThemePalette(
-      name: 'Burgundy',
-      description: 'Maroon & soft gold',
-      gradientStart: Color(0xFF1F0A12),
-      gradientEnd: Color(0xFF3D1424),
+    NoorTheme.sandalwood: NoorThemePalette(
+      name: 'Sandalwood',
+      description: 'Warm wood & golden accents',
+      gradientStart: Color(0xFF2D1B14),
+      gradientEnd: Color(0xFF4A2E21),
       accent: Color(0xFFE5C158),
+      secondaryAccent: Color(0xFFF4D98B),
     ),
-    NoorTheme.emerald: NoorThemePalette(
-      name: 'Emerald',
-      description: 'Deep green & champagne',
-      gradientStart: Color(0xFF0B1F17),
-      gradientEnd: Color(0xFF13382B),
-      accent: Color(0xFFD4AF37),
+    NoorTheme.oliveBranch: NoorThemePalette(
+      name: 'Olive Branch',
+      description: 'Deep olive & soft cream',
+      gradientStart: Color(0xFF1A211B),
+      gradientEnd: Color(0xFF2C352D),
+      accent: Color(0xFFE4D8B8),
+      secondaryAccent: Color(0xFFD4AF37),
     ),
-    NoorTheme.midnightVelvet: NoorThemePalette(
-      name: 'Midnight Velvet',
-      description: 'Navy & silver-rose',
-      gradientStart: Color(0xFF0E101C),
-      gradientEnd: Color(0xFF1C2036),
-      accent: Color(0xFFDFCFBE),
+    NoorTheme.emeraldArch: NoorThemePalette(
+      name: 'Emerald Arch',
+      description: 'Luxury green & pearl gold',
+      gradientStart: Color(0xFF0B221B),
+      gradientEnd: Color(0xFF163D30),
+      accent: Color(0xFFE9E2D0),
+      secondaryAccent: Color(0xFFD4AF37),
+    ),
+    NoorTheme.roseMarble: NoorThemePalette(
+      name: 'Rose Marble',
+      description: 'Dusky rose & quartz pink',
+      gradientStart: Color(0xFF381F26),
+      gradientEnd: Color(0xFF542E38),
+      accent: Color(0xFFF3A6B2),
+      secondaryAccent: Color(0xFFE7C1C7),
+    ),
+    NoorTheme.roseLeaves: NoorThemePalette(
+      name: 'Rose Leaves',
+      description: 'Botanical mauve & soft rose',
+      gradientStart: Color(0xFF2E1E24),
+      gradientEnd: Color(0xFF422A33),
+      accent: Color(0xFFD7B0BA),
+      secondaryAccent: Color(0xFFB9C1A9),
     ),
   };
 
@@ -52,9 +79,9 @@ class AppTheme {
     final palette = palettes[theme]!;
     final isDark = brightness == Brightness.dark;
     final accent = palette.accent;
-    final primary = isDark
-        ? accent
-        : Color.lerp(palette.gradientEnd, Colors.black, 0.2)!;
+    final primary = isDark ? palette.accent : palette.gradientEnd;
+    final onPrimary = isDark ? const Color(0xFF17120B) : Colors.white;
+    final secondary = isDark ? palette.secondaryAccent : palette.gradientEnd;
     final surface = isDark ? const Color(0xFF20222A) : const Color(0xFFFFFCF7);
     final foreground = isDark ? const Color(0xFFF7F1E8) : const Color(0xFF211B1C);
     final colorScheme = (isDark
@@ -62,14 +89,18 @@ class AppTheme {
             : const ColorScheme.light())
         .copyWith(
       primary: primary,
-      onPrimary: isDark ? const Color(0xFF17120B) : Colors.white,
-      secondary: accent,
+      onPrimary: onPrimary,
+      secondary: secondary,
       onSecondary: const Color(0xFF17120B),
       surface: surface,
       onSurface: foreground,
-      tertiary: accent,
+      tertiary: palette.secondaryAccent,
       error: isDark ? const Color(0xFFFF8A80) : const Color(0xFFB3261E),
     );
+    final textTheme = (isDark
+            ? ThemeData.dark().textTheme
+            : ThemeData.light().textTheme)
+        .apply(bodyColor: foreground, displayColor: foreground);
 
     return ThemeData(
       useMaterial3: true,
@@ -77,11 +108,17 @@ class AppTheme {
       primaryColor: primary,
       scaffoldBackgroundColor: Colors.transparent,
       colorScheme: colorScheme,
+      textTheme: textTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: isDark ? Colors.transparent : surface.withOpacity(0.92),
         foregroundColor: foreground,
         elevation: 0,
         centerTitle: true,
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: surface,
+        selectedItemColor: accent,
+        unselectedItemColor: foreground.withOpacity(0.65),
       ),
       cardTheme: CardTheme(
         color: isDark ? surface.withOpacity(0.94) : surface,
@@ -93,10 +130,55 @@ class AppTheme {
           ),
         ),
       ),
+      dialogTheme: DialogTheme(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: textTheme.titleLarge,
+        contentTextStyle: textTheme.bodyMedium,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        modalBackgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        dragHandleColor: accent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: surface,
+        textStyle: textTheme.bodyMedium,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark
+            ? const Color(0xFF303238)
+            : const Color(0xFF263238),
+        contentTextStyle: const TextStyle(color: Colors.white),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: surface,
+        labelStyle: TextStyle(color: foreground.withOpacity(0.75)),
+        hintStyle: TextStyle(color: foreground.withOpacity(0.55)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
-          foregroundColor: colorScheme.onPrimary,
+          foregroundColor: onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

@@ -49,7 +49,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.surah.name),
+        title: ArabicText(
+          widget.surah.name,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.check_circle),
@@ -156,7 +160,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Surah completed! +10 points'),
-            backgroundColor: Colors.green,
           ),
         );
       }
@@ -165,7 +168,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login to earn points!'),
-            backgroundColor: Colors.orange,
           ),
         );
       }

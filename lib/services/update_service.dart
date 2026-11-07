@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'utf8_json.dart';
 
 class UpdateService {
   static const String versionUrl = 'https://raw.githubusercontent.com/Mrsultan7890/Noor/main/version.json';
@@ -12,7 +12,7 @@ class UpdateService {
 
       final response = await http.get(Uri.parse(versionUrl));
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         final latestVersion = data['version'];
 
         if (_isNewerVersion(currentVersion, latestVersion)) {

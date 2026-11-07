@@ -48,7 +48,6 @@ class _DuaScreenState extends State<DuaScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Dua memorized! +15 points'),
-              backgroundColor: Colors.green,
             ),
           );
         }
@@ -127,7 +126,7 @@ class _DuaScreenState extends State<DuaScreen> {
       length: categories.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Duas - دعائیں'),
+          title: const ArabicLabel('Duas - دعائیں'),
           bottom: TabBar(
             isScrollable: true,
             tabs: categories.map((cat) => Tab(text: cat)).toList(),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'utf8_json.dart';
 
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
@@ -44,7 +45,7 @@ class ApiService {
   
   Map<String, String> _getHeaders() {
     final headers = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
     };
     if (_token != null) {
       headers['Authorization'] = 'Bearer $_token';
@@ -63,22 +64,22 @@ class ApiService {
     try {
       final response = await http.post(
         _endpoint('/auth/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: utf8.encode(json.encode({
           'email': email,
           'password': password,
           'username': username,
           'country': country,
           'level': level,
-        }),
+        })),
       );
       
       if (response.statusCode == 201) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
         return data;
       } else {
-        throw Exception(json.decode(response.body)['detail']);
+        throw Exception(decodeUtf8JsonResponse(response)['detail']);
       }
     } catch (e) {
       throw Exception('Registration failed: $e');
@@ -92,19 +93,19 @@ class ApiService {
     try {
       final response = await http.post(
         _endpoint('/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: utf8.encode(json.encode({
           'email': email,
           'password': password,
-        }),
+        })),
       );
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
         return data;
       } else {
-        throw Exception(json.decode(response.body)['detail']);
+        throw Exception(decodeUtf8JsonResponse(response)['detail']);
       }
     } catch (e) {
       throw Exception('Login failed: $e');
@@ -121,7 +122,7 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to load profile');
       }
@@ -147,11 +148,11 @@ class ApiService {
       final response = await http.put(
         _endpoint('/users/me'),
         headers: _getHeaders(),
-        body: json.encode(body),
+        body: utf8.encode(json.encode(body)),
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to update profile');
       }
@@ -172,16 +173,16 @@ class ApiService {
       final response = await http.post(
         _endpoint('/users/activity'),
         headers: _getHeaders(),
-        body: json.encode({
+        body: utf8.encode(json.encode({
           'user_id': userId,
           'activity_type': activityType,
           'points': points,
           'metadata': metadata,
-        }),
+        })),
       );
       
       if (response.statusCode == 201) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to log activity');
       }
@@ -199,7 +200,7 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to get rank');
       }
@@ -220,7 +221,7 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to load leaderboard');
       }
@@ -243,7 +244,7 @@ class ApiService {
       );
       
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return decodeUtf8JsonResponse(response);
       } else {
         throw Exception('Failed to load leaderboard');
       }

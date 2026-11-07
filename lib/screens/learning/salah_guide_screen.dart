@@ -182,12 +182,14 @@ class SalahGuideScreen extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: Color(0xFF1E293B),
                     ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Start by learning Surah Al-Fatihah and 3 short surahs (Al-Ikhlas, Al-Falaq, An-Nas). Practice the movements slowly.',
                     textAlign: TextAlign.center,
+                    style: TextStyle(color: Color(0xFF334155)),
                     style: TextStyle(fontSize: 14),
                   ),
                 ],
@@ -202,8 +204,6 @@ class SalahGuideScreen extends StatelessWidget {
               label: const Text('Mark as Learned'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
               ),
             ),
           ],
@@ -224,7 +224,6 @@ class SalahGuideScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Lesson completed! +20 points'),
-          backgroundColor: Colors.green,
         ),
       );
     }

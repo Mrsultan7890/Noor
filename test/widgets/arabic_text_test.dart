@@ -6,6 +6,23 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  testWidgets('bilingual UI labels render Arabic runs with Amiri', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ArabicLabel('Learn - سیکھیں'),
+        ),
+      ),
+    );
+
+    final richText = tester.widget<RichText>(find.byType(RichText));
+    final arabicSpan = richText.text.children!.last as TextSpan;
+    expect(arabicSpan.text, 'سیکھیں');
+    expect(arabicSpan.style?.fontFamily, 'Amiri');
+  });
+
   testWidgets('Arabic text uses Amiri, RTL, and the saved font scale', (
     tester,
   ) async {

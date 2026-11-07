@@ -396,13 +396,17 @@ class HalalHaramScreen extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: Color(0xFF1E293B),
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'When in doubt, ask a knowledgeable person or scholar. It\'s better to avoid doubtful things.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF334155),
+                  ),
                 ),
               ],
             ),
@@ -416,8 +420,6 @@ class HalalHaramScreen extends StatelessWidget {
             label: const Text('Mark as Learned'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
             ),
           ),
         ],
@@ -437,7 +439,6 @@ class HalalHaramScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Lesson completed! +20 points'),
-          backgroundColor: Colors.green,
         ),
       );
     }

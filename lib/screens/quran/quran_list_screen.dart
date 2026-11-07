@@ -24,7 +24,7 @@ class _QuranListScreenState extends State<QuranListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quran - قرآن مجید'),
+        title: const ArabicLabel('Quran - قرآن مجید'),
       ),
       body: Consumer<QuranProvider>(
         builder: (context, provider, child) {
