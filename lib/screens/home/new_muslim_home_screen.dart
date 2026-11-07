@@ -278,13 +278,17 @@ class NewMuslimHomeScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.lightbulb, color: Colors.amber.shade700, size: 40),
+                  const Icon(
+                    Icons.lightbulb,
+                    color: Color(0xFFFFB300),
+                    size: 40,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Take Your Time',
                           style: TextStyle(
                             fontSize: 16,
@@ -293,7 +297,7 @@ class NewMuslimHomeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Learn at your own pace. May Allah guide you!',
                           style: TextStyle(
                             fontSize: 14,

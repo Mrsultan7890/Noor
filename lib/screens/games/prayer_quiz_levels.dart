@@ -27,8 +27,7 @@ class _PrayerQuizLevelsState extends State<PrayerQuizLevels> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Prayer Quiz Levels')),
-      body: Container(
-        child: ListView.builder(
+      body: ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: 50,
           itemBuilder: (context, index) {
@@ -72,7 +71,6 @@ class _PrayerQuizLevelsState extends State<PrayerQuizLevels> {
             );
           },
         ),
-      ),
     );
   }
 }

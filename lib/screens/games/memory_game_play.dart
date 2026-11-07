@@ -157,8 +157,7 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
           ),
         ],
       ),
-      body: Container(
-        child: GridView.builder(
+      body: GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: _getPairsCount() <= 6 ? 3 : 4,
@@ -204,7 +203,6 @@ class _MemoryGamePlayState extends State<MemoryGamePlay> with TickerProviderStat
             );
           },
         ),
-      ),
     );
   }
 }

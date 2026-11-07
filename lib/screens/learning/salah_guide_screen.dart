@@ -189,8 +189,10 @@ class SalahGuideScreen extends StatelessWidget {
                   Text(
                     'Start by learning Surah Al-Fatihah and 3 short surahs (Al-Ikhlas, Al-Falaq, An-Nas). Practice the movements slowly.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF334155)),
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF334155),
+                    ),
                   ),
                 ],
               ),

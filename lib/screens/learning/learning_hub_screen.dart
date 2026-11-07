@@ -212,13 +212,17 @@ class LearningHubScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.emoji_events, color: Colors.amber.shade700, size: 40),
+                  const Icon(
+                    Icons.emoji_events,
+                    color: Color(0xFFFFB300),
+                    size: 40,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Keep Learning!',
                           style: TextStyle(
                             fontSize: 18,
@@ -227,7 +231,7 @@ class LearningHubScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Practice daily to improve your skills',
                           style: TextStyle(
                             fontSize: 14,

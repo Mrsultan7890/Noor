@@ -38,8 +38,7 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
       appBar: AppBar(
         title: const Text('Memory Match Levels'),
       ),
-      body: Container(
-        child: ListView.builder(
+      body: ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: 50,
           itemBuilder: (context, index) {
@@ -135,7 +134,6 @@ class _MemoryGameLevelsState extends State<MemoryGameLevels> {
             );
           },
         ),
-      ),
     );
   }
 

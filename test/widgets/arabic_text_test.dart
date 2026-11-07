@@ -18,7 +18,8 @@ void main() {
     );
 
     final richText = tester.widget<RichText>(find.byType(RichText));
-    final arabicSpan = richText.text.children!.last as TextSpan;
+    final rootSpan = richText.text as TextSpan;
+    final arabicSpan = rootSpan.children!.last as TextSpan;
     expect(arabicSpan.text, 'سیکھیں');
     expect(arabicSpan.style?.fontFamily, 'Amiri');
   });

@@ -60,8 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final foreground = theme.colorScheme.onSurface;
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        child: SafeArea(
+      body: SafeArea(
           child: Column(
             children: [
               const SizedBox(height: 40),
@@ -139,12 +138,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ],
           ),
-        ),
       ),
     );
   }
 
   Widget _buildLanguageStep() {
+    final primary = Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -244,10 +243,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Next',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -257,6 +253,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildCountryStep() {
+    final primary = Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -359,10 +356,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Get Started',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -561,10 +555,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               child: const Text(
                 'Next',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ),
