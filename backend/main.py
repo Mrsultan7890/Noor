@@ -75,8 +75,9 @@ async def root():
     }
 
 @app.get("/health")
+@app.get("/healthz")
 async def health_check():
-    """Health check endpoint"""
+    """Liveness endpoint for uptime monitors."""
     return {
         "status": "healthy",
         "database": "turso",

@@ -25,6 +25,10 @@ The API is available at `http://localhost:8000`; OpenAPI docs are at
 `http://localhost:8000/docs`. The backend creates its `users` and `activities`
 tables automatically at startup.
 
+For uptime monitoring, use `GET /healthz` (or the existing `GET /health`).
+Both return HTTP 200 with `{"status":"healthy","database":"turso"}` while the
+API is responding.
+
 ## Render deployment
 
 The Render blueprint is in `render.yaml`. Create a web service using the
