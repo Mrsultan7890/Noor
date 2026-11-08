@@ -74,8 +74,8 @@ async def root():
         "status": "operational"
     }
 
-@app.get("/health")
-@app.get("/healthz")
+@app.api_route("/health", methods=["GET", "HEAD"])
+@app.api_route("/healthz", methods=["GET", "HEAD"])
 async def health_check():
     """Liveness endpoint for uptime monitors."""
     return {
