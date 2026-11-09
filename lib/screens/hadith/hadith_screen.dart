@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/hadith_service.dart';
 import '../../models/hadith_model.dart';
 import '../../widgets/arabic_text.dart';
+import '../../utils/user_friendly_error.dart';
 
 class HadithScreen extends StatefulWidget {
   const HadithScreen({super.key});
@@ -75,10 +76,11 @@ class _HadithScreenState extends State<HadithScreen> {
         _hasNextPage = hadiths.length == HadithService.pageSize;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Could not load hadith: $e\n$stackTrace');
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = UserFriendlyError.content(e);
         _isLoading = false;
       });
     }

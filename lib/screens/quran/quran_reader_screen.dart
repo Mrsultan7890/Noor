@@ -9,7 +9,7 @@ import '../../widgets/arabic_text.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   final Surah surah;
-  
+
   const QuranReaderScreen({super.key, required this.surah});
 
   @override
@@ -18,7 +18,7 @@ class QuranReaderScreen extends StatefulWidget {
 
 class _QuranReaderScreenState extends State<QuranReaderScreen> {
   final ScrollController _scrollController = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,26 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
 
   Future<void> _loadScrollPosition() async {
     final prefs = await SharedPreferences.getInstance();
-    final position = prefs.getDouble('quran_scroll_${widget.surah.number}') ?? 0.0;
+    await prefs.setInt('quran_last_read_surah_number', widget.surah.number);
+    await prefs.setString('quran_last_read_surah_name', widget.surah.name);
+    await prefs.setString(
+      'quran_last_read_surah_english_name',
+      widget.surah.englishName,
+    );
+    await prefs.setString(
+      'quran_last_read_surah_translation',
+      widget.surah.englishNameTranslation,
+    );
+    await prefs.setInt(
+      'quran_last_read_surah_ayah_count',
+      widget.surah.numberOfAyahs,
+    );
+    await prefs.setString(
+      'quran_last_read_surah_revelation_type',
+      widget.surah.revelationType,
+    );
+    final position =
+        prefs.getDouble('quran_scroll_${widget.surah.number}') ?? 0.0;
     if (position > 0 && _scrollController.hasClients) {
       _scrollController.jumpTo(position);
     }
@@ -41,7 +60,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   void _saveScrollPosition() {
     if (_scrollController.hasClients) {
       SharedPreferences.getInstance().then((prefs) {
-        prefs.setDouble('quran_scroll_${widget.surah.number}', _scrollController.offset);
+        prefs.setDouble(
+            'quran_scroll_${widget.surah.number}', _scrollController.offset);
       });
     }
   }
@@ -68,11 +88,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (provider.error != null) {
             return Center(child: Text(provider.error!));
           }
-          
+
           return ListView.builder(
             controller: _scrollController,
             itemCount: provider.verses.length,
@@ -93,7 +113,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: ArabicText(
@@ -107,7 +128,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Arabic text
                       ArabicText(
                         verse.text,
@@ -116,9 +137,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                           height: 2,
                         ),
                       ),
-                      
+
                       const Divider(height: 32),
-                      
+
                       // Urdu translation
                       Text(
                         verse.translation,

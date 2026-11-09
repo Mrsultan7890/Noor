@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noor/models/prayer_times_model.dart';
 import 'package:noor/services/prayer_times_service.dart';
@@ -49,6 +50,18 @@ void main() {
         ),
         throwsArgumentError,
       );
+    });
+
+    test('uses Hanafi Asr calculation by default and persists the selection',
+        () async {
+      SharedPreferences.setMockInitialValues({});
+
+      expect(await service.getAsrSchool(), AsrSchool.hanafi);
+      expect(AsrSchool.hanafi.apiValue, 1);
+
+      await service.setAsrSchool(AsrSchool.shafi);
+      expect(await service.getAsrSchool(), AsrSchool.shafi);
+      expect(AsrSchool.shafi.apiValue, 0);
     });
 
     test('finds the next prayer and its countdown', () {

@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/api_service.dart';
+import '../utils/user_friendly_error.dart';
 
 class UserProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();
-  
+
   User? _currentUser;
   bool _isLoading = false;
   String? _error;
-  
+
   User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -37,8 +38,9 @@ class UserProvider extends ChangeNotifier {
     } on AuthSessionExpiredException {
       await _apiService.clearToken();
       _currentUser = null;
-    } catch (error) {
-      _error = error.toString();
+    } catch (error, stackTrace) {
+      debugPrint('Could not restore the account session: $error\n$stackTrace');
+      _error = UserFriendlyError.account(error, action: 'load your profile');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,13 +56,14 @@ class UserProvider extends ChangeNotifier {
       await _apiService.clearToken();
       _currentUser = null;
       notifyListeners();
-    } catch (error) {
+    } catch (error, stackTrace) {
       // Keep the cached profile when the API is temporarily unavailable.
-      _error = error.toString();
+      debugPrint('Could not refresh the cached profile: $error\n$stackTrace');
+      _error = UserFriendlyError.account(error, action: 'refresh your profile');
       notifyListeners();
     }
   }
-  
+
   Future<bool> register({
     required String email,
     required String password,
@@ -71,7 +74,7 @@ class UserProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     notifyListeners();
-    
+
     try {
       final response = await _apiService.register(
         email: email,
@@ -80,19 +83,20 @@ class UserProvider extends ChangeNotifier {
         country: country,
         level: level,
       );
-      
+
       _currentUser = User.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (e) {
-      _error = e.toString();
+    } catch (e, stackTrace) {
+      debugPrint('Could not create account: $e\n$stackTrace');
+      _error = UserFriendlyError.account(e, action: 'create your account');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
-  
+
   Future<bool> login({
     required String email,
     required String password,
@@ -100,29 +104,30 @@ class UserProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     notifyListeners();
-    
+
     try {
       final response = await _apiService.login(
         email: email,
         password: password,
       );
-      
+
       _currentUser = User.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (e) {
-      _error = e.toString();
+    } catch (e, stackTrace) {
+      debugPrint('Could not sign in: $e\n$stackTrace');
+      _error = UserFriendlyError.account(e, action: 'sign you in');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
-  
+
   Future<void> loadProfile() async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final response = await _apiService.getProfile();
       _currentUser = User.fromJson(response);
@@ -135,13 +140,14 @@ class UserProvider extends ChangeNotifier {
       _error = 'Your session expired. Please sign in again.';
       _isLoading = false;
       notifyListeners();
-    } catch (e) {
-      _error = e.toString();
+    } catch (e, stackTrace) {
+      debugPrint('Could not load profile: $e\n$stackTrace');
+      _error = UserFriendlyError.account(e, action: 'load your profile');
       _isLoading = false;
       notifyListeners();
     }
   }
-  
+
   Future<bool> updateProfile({
     String? username,
     String? country,
@@ -149,14 +155,14 @@ class UserProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final response = await _apiService.updateProfile(
         username: username,
         country: country,
         level: level,
       );
-      
+
       _currentUser = User.fromJson(response);
       _error = null;
       _isLoading = false;
@@ -169,14 +175,15 @@ class UserProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return false;
-    } catch (e) {
-      _error = e.toString();
+    } catch (e, stackTrace) {
+      debugPrint('Could not update profile: $e\n$stackTrace');
+      _error = UserFriendlyError.account(e, action: 'update your profile');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
-  
+
   Future<int?> logActivity({
     required String activityType,
     required int points,
@@ -187,7 +194,7 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
       return null;
     }
-    
+
     try {
       final result = await _apiService.logActivity(
         userId: _currentUser!.id,
@@ -209,13 +216,14 @@ class UserProvider extends ChangeNotifier {
       _error = 'Your session expired. Please sign in again.';
       notifyListeners();
       return null;
-    } catch (e) {
-      _error = e.toString();
+    } catch (e, stackTrace) {
+      debugPrint('Could not sync activity: $e\n$stackTrace');
+      _error = UserFriendlyError.account(e, action: 'sync your activity');
       notifyListeners();
       return null;
     }
   }
-  
+
   Future<void> logout() async {
     await _apiService.clearToken();
     _currentUser = null;

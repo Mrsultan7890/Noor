@@ -6,6 +6,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/arabic_text.dart';
+import '../../utils/user_friendly_error.dart';
 
 class QiblaScreen extends StatefulWidget {
   const QiblaScreen({super.key});
@@ -51,10 +52,12 @@ class _QiblaScreenState extends State<QiblaScreen> {
         });
       },
       onError: (Object error) {
+        debugPrint('Compass stream failed: $error');
         if (!mounted) return;
         setState(() {
           _compassAvailable = false;
-          _compassError = 'Unable to read the device compass: $error';
+          _compassError =
+              'The compass is unavailable. Try moving your phone in a figure-eight.';
         });
       },
     );
@@ -76,7 +79,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      
+
       final qibla = calculateQiblaBearing(
         position.latitude,
         position.longitude,
@@ -84,15 +87,15 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
       setState(() {
         _qiblaDirection = qibla;
-        _locationName =
-            '${position.latitude.toStringAsFixed(2)}°, '
+        _locationName = '${position.latitude.toStringAsFixed(2)}°, '
             '${position.longitude.toStringAsFixed(2)}°';
         _isLoading = false;
       });
     } catch (e) {
+      debugPrint('Could not calculate the Qibla direction: $e');
       if (!mounted) return;
       setState(() {
-        _error = 'Unable to get location: $e';
+        _error = UserFriendlyError.qiblaLocation(e);
         _isLoading = false;
       });
     }
@@ -132,7 +135,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.location_off, size: 80, color: Colors.red),
+                          const Icon(Icons.location_off,
+                              size: 80, color: Colors.red),
                           const SizedBox(height: 24),
                           Text(
                             _error!,
@@ -148,7 +152,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
                             icon: const Icon(Icons.refresh),
                             label: const Text('Try Again'),
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 32, vertical: 16),
                             ),
                           ),
                         ],
@@ -301,7 +306,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
                               _buildInfoCard(
                                 icon: Icons.straighten,
                                 title: 'Angle',
-                                value: '${_qiblaDirection?.toStringAsFixed(1)}°',
+                                value:
+                                    '${_qiblaDirection?.toStringAsFixed(1)}°',
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(height: 16),

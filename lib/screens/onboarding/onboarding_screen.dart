@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../navigation/main_navigation_screen.dart';
+import '../../providers/app_language_provider.dart';
+import '../../utils/user_friendly_error.dart';
 import '../../widgets/arabic_text.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -16,39 +19,66 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String _selectedCountry = 'Pakistan';
   String _selectedLevel = 'Beginner'; // New
 
-  final List<Map<String, String>> _languages = [
-    {'code': 'en', 'name': 'English', 'native': 'English', 'quran': 'en.sahih'},
-    {'code': 'ur', 'name': 'Urdu', 'native': 'اردو', 'quran': 'ur.jalandhry'},
-    {'code': 'ar', 'name': 'Arabic', 'native': 'العربية', 'quran': 'ar.muyassar'},
-    {'code': 'id', 'name': 'Indonesian', 'native': 'Bahasa Indonesia', 'quran': 'id.indonesian'},
-    {'code': 'tr', 'name': 'Turkish', 'native': 'Türkçe', 'quran': 'tr.diyanet'},
-    {'code': 'fr', 'name': 'French', 'native': 'Français', 'quran': 'fr.hamidullah'},
-  ];
+  List<Map<String, String>> get _languages => AppLanguageProvider.languages
+      .map(
+        (language) => {
+          'code': language.code,
+          'name': language.name,
+          'native': language.nativeName,
+          'quran': language.quranEdition,
+        },
+      )
+      .toList(growable: false);
 
   final List<String> _countries = [
-    'Pakistan', 'Saudi Arabia', 'UAE', 'USA', 'UK', 'Canada',
-    'Malaysia', 'Indonesia', 'Turkey', 'Egypt', 'India', 'Bangladesh'
+    'Pakistan',
+    'Saudi Arabia',
+    'UAE',
+    'USA',
+    'UK',
+    'Canada',
+    'Malaysia',
+    'Indonesia',
+    'Turkey',
+    'Egypt',
+    'India',
+    'Bangladesh'
   ];
 
   Future<void> _completeOnboarding() async {
+    final appLanguageProvider = context.read<AppLanguageProvider>();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
-    
+
     // Find selected language's Quran edition
     final selectedLang = _languages.firstWhere(
       (lang) => lang['name'] == _selectedLanguage,
       orElse: () => _languages[0],
     );
-    
+
     await prefs.setString('selected_language', _selectedLanguage);
     await prefs.setString('quran_edition', selectedLang['quran']!);
     await prefs.setString('selected_country', _selectedCountry);
     await prefs.setString('user_level', _selectedLevel);
-    
+    await appLanguageProvider.setLanguage(_selectedLanguage);
+
     if (mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
+      );
+    }
+  }
+
+  Future<void> _selectLanguage(String name) async {
+    try {
+      await context.read<AppLanguageProvider>().setLanguage(name);
+    } catch (error, stackTrace) {
+      debugPrint(
+          'Could not apply the onboarding language: $error\n$stackTrace');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(UserFriendlyError.settings(error))),
       );
     }
   }
@@ -61,83 +91,83 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              
-              // Logo
-              Container(
-                width: 100,
-                height: 100,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.mosque,
-                  size: 50,
-                  color: theme.brightness == Brightness.dark
-                      ? theme.colorScheme.onPrimary
-                      : primary,
-                ),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+
+            // Logo
+            Container(
+              width: 100,
+              height: 100,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
               ),
-              
-              const SizedBox(height: 20),
-              
-              ArabicLabel(
-                'Noor - نور',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: foreground,
-                ),
+              child: Icon(
+                Icons.mosque,
+                size: 50,
+                color: theme.brightness == Brightness.dark
+                    ? theme.colorScheme.onPrimary
+                    : primary,
               ),
-              
-              const SizedBox(height: 8),
-              
-              Text(
-                'Islamic Companion',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: foreground.withOpacity(0.75),
-                ),
+            ),
+
+            const SizedBox(height: 20),
+
+            ArabicLabel(
+              'Noor - نور',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: foreground,
               ),
-              
-              const SizedBox(height: 60),
-              
-              // Content
-              Expanded(
-                child: Theme(
-                  data: theme.copyWith(
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              context.tr('Islamic Companion'),
+              style: TextStyle(
+                fontSize: 16,
+                color: foreground.withOpacity(0.75),
+              ),
+            ),
+
+            const SizedBox(height: 60),
+
+            // Content
+            Expanded(
+              child: Theme(
+                data: theme.copyWith(
+                  brightness: Brightness.light,
+                  colorScheme: theme.colorScheme.copyWith(
                     brightness: Brightness.light,
-                    colorScheme: theme.colorScheme.copyWith(
-                      brightness: Brightness.light,
-                      surface: Colors.white,
-                      onSurface: const Color(0xFF1E293B),
-                      onPrimary: theme.colorScheme.onPrimary,
-                    ),
-                    textTheme: ThemeData.light().textTheme.apply(
-                          bodyColor: const Color(0xFF1E293B),
-                          displayColor: const Color(0xFF1E293B),
-                        ),
-                    cardTheme: ThemeData.light().cardTheme,
+                    surface: Colors.white,
+                    onSurface: const Color(0xFF1E293B),
+                    onPrimary: theme.colorScheme.onPrimary,
                   ),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(30)),
-                    ),
-                    child: _currentStep == 0
-                        ? _buildLanguageStep()
-                        : _currentStep == 1
-                            ? _buildLevelStep()
-                            : _buildCountryStep(),
+                  textTheme: ThemeData.light().textTheme.apply(
+                        bodyColor: const Color(0xFF1E293B),
+                        displayColor: const Color(0xFF1E293B),
+                      ),
+                  cardTheme: ThemeData.light().cardTheme,
+                ),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
                   ),
+                  child: _currentStep == 0
+                      ? _buildLanguageStep()
+                      : _currentStep == 1
+                          ? _buildLevelStep()
+                          : _buildCountryStep(),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -150,34 +180,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          
-          const Text(
-            'Choose Your Language',
-            style: TextStyle(
+          Text(
+            context.tr('Choose Your Language'),
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-          
           const SizedBox(height: 8),
-          
-          const Text(
-            'Select your preferred language for the app',
-            style: TextStyle(
+          Text(
+            context.tr('Select your preferred language for the app'),
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
           ),
-          
           const SizedBox(height: 30),
-          
           Expanded(
             child: ListView.builder(
               itemCount: _languages.length,
               itemBuilder: (context, index) {
                 final lang = _languages[index];
                 final isSelected = _selectedLanguage == lang['name'];
-                
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: isSelected ? 4 : 1,
@@ -187,6 +212,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       setState(() {
                         _selectedLanguage = lang['name']!;
                       });
+                      _selectLanguage(lang['name']!);
                     },
                     leading: Container(
                       width: 50,
@@ -211,10 +237,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       lang['native']!,
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    subtitle: Text(lang['name']!),
+                    subtitle: Text(context.tr(lang['name']!)),
                     trailing: isSelected
                         ? Icon(Icons.check_circle, color: primary)
                         : null,
@@ -223,9 +250,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
             ),
           ),
-          
           const SizedBox(height: 20),
-          
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -241,9 +266,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 16),
+              child: Text(
+                context.tr('Next'),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -260,7 +285,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          
           Row(
             children: [
               IconButton(
@@ -272,35 +296,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
               const SizedBox(width: 8),
-              const Text(
-                'Choose Your Country',
-                style: TextStyle(
+              Text(
+                context.tr('Choose Your Country'),
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          
           const SizedBox(height: 8),
-          
-          const Text(
-            'This helps us provide accurate prayer times',
-            style: TextStyle(
+          Text(
+            context.tr('This helps us provide accurate prayer times'),
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
           ),
-          
           const SizedBox(height: 30),
-          
           Expanded(
             child: ListView.builder(
               itemCount: _countries.length,
               itemBuilder: (context, index) {
                 final country = _countries[index];
                 final isSelected = _selectedCountry == country;
-                
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: isSelected ? 4 : 1,
@@ -329,7 +349,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       country,
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                     trailing: isSelected
@@ -340,9 +361,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
             ),
           ),
-          
           const SizedBox(height: 20),
-          
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -354,9 +373,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Get Started',
-                style: TextStyle(fontSize: 16),
+              child: Text(
+                context.tr('Get Started'),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -403,7 +422,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          
           Row(
             children: [
               IconButton(
@@ -424,9 +442,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ],
           ),
-          
           const SizedBox(height: 8),
-          
           const Text(
             'Help us personalize your experience',
             style: TextStyle(
@@ -434,20 +450,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: Colors.grey,
             ),
           ),
-          
           const SizedBox(height: 30),
-          
           Expanded(
             child: ListView.builder(
               itemCount: levels.length,
               itemBuilder: (context, index) {
                 final level = levels[index];
                 final isSelected = _selectedLevel == level['title'];
-                
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
                   elevation: isSelected ? 6 : 2,
-                  color: isSelected ? (level['color'] as Color).withOpacity(0.1) : null,
+                  color: isSelected
+                      ? (level['color'] as Color).withOpacity(0.1)
+                      : null,
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -463,14 +479,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: isSelected 
+                              color: isSelected
                                   ? level['color'] as Color
                                   : (level['color'] as Color).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
                               level['icon'] as IconData,
-                              color: isSelected ? Colors.white : level['color'] as Color,
+                              color: isSelected
+                                  ? Colors.white
+                                  : level['color'] as Color,
                               size: 30,
                             ),
                           ),
@@ -484,7 +502,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: isSelected ? level['color'] as Color : null,
+                                    color: isSelected
+                                        ? level['color'] as Color
+                                        : null,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -505,8 +525,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: (level['color'] as Color).withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: (level['color'] as Color)
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             child: Text(
                                               feature,
@@ -535,9 +557,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
             ),
           ),
-          
           const SizedBox(height: 20),
-          
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

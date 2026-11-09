@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/arabic_text.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/app_language_provider.dart';
 import '../../providers/user_provider.dart';
 import '../tasbih/tasbih_screen.dart';
 import '../schedule/schedule_list_screen.dart';
@@ -26,10 +27,10 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: const ArabicLabel('More - مزید'),
+        title: Text(context.tr('More')),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -59,7 +60,8 @@ class MoreScreen extends StatelessWidget {
                       color: Colors.blue,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const ProfileScreen()),
                       ),
                     ),
                     _FeatureTile(
@@ -69,7 +71,8 @@ class MoreScreen extends StatelessWidget {
                       color: Colors.amber,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LeaderboardScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const LeaderboardScreen()),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -85,14 +88,17 @@ class MoreScreen extends StatelessWidget {
                           Icons.login,
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                        title: const Text('Login to sync your progress'),
-                        subtitle: const Text('Track stats & compete on leaderboard'),
+                        title: Text(context.tr('Login to sync your progress')),
+                        subtitle: Text(
+                          context.tr('Track stats & compete on leaderboard'),
+                        ),
                         trailing: ElevatedButton(
                           onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()),
                           ),
-                          child: const Text('Login'),
+                          child: Text(context.tr('Login')),
                         ),
                       ),
                     ),
@@ -102,8 +108,9 @@ class MoreScreen extends StatelessWidget {
               }
             },
           ),
-          
-          const _SectionHeader(title: 'Ramadan Planner', icon: Icons.nightlight_round),
+
+          const _SectionHeader(
+              title: 'Ramadan Planner', icon: Icons.nightlight_round),
           _FeatureTile(
             title: 'Sehri & Iftar',
             subtitle: 'Local Fajr and Maghrib times',
@@ -111,11 +118,12 @@ class MoreScreen extends StatelessWidget {
             color: Colors.purple,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const RamadanHomeScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const RamadanHomeScreen()),
             ),
           ),
           const SizedBox(height: 24),
-          
+
           const _SectionHeader(title: 'Daily Tools', icon: Icons.today),
           _FeatureTile(
             title: 'Daily Tasks',
@@ -144,7 +152,8 @@ class MoreScreen extends StatelessWidget {
             color: Colors.orange,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ScheduleListScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const ScheduleListScreen()),
             ),
           ),
           _FeatureTile(
@@ -154,7 +163,8 @@ class MoreScreen extends StatelessWidget {
             color: Colors.blue,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const PrayerTimesScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const PrayerTimesScreen()),
             ),
           ),
           _FeatureTile(
@@ -177,9 +187,9 @@ class MoreScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const QiblaScreen()),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           const _SectionHeader(title: 'Islamic Knowledge', icon: Icons.book),
           _FeatureTile(
             title: 'Islamic Stories',
@@ -188,7 +198,8 @@ class MoreScreen extends StatelessWidget {
             color: Colors.deepOrange,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const StoriesHomeScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const StoriesHomeScreen()),
             ),
           ),
           _FeatureTile(
@@ -221,9 +232,9 @@ class MoreScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const NamesScreen()),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           const _SectionHeader(title: 'Kids Zone', icon: Icons.child_care),
           _FeatureTile(
             title: 'Islamic Games',
@@ -235,9 +246,9 @@ class MoreScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const KidsZoneScreen()),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           const _SectionHeader(title: 'Settings', icon: Icons.settings),
           _FeatureTile(
             title: 'App Settings',
@@ -249,7 +260,7 @@ class MoreScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const SettingsScreen()),
             ),
           ),
-          
+
           Consumer<UserProvider>(
             builder: (context, userProvider, child) {
               if (userProvider.isAuthenticated) {
@@ -262,7 +273,9 @@ class MoreScreen extends StatelessWidget {
                     await userProvider.logout();
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Logged out successfully')),
+                        SnackBar(
+                          content: Text(context.tr('Logged out successfully')),
+                        ),
                       );
                     }
                   },
@@ -271,9 +284,9 @@ class MoreScreen extends StatelessWidget {
               return const SizedBox.shrink();
             },
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Center(
             child: Column(
               children: [
@@ -288,7 +301,7 @@ class MoreScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Islamic Companion App',
+                  context.tr('Islamic Companion App'),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
@@ -326,10 +339,10 @@ class _SectionHeader extends StatelessWidget {
           Icon(icon, size: 20, color: Theme.of(context).primaryColor),
           const SizedBox(width: 8),
           Text(
-            title,
+            context.tr(title),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),
@@ -367,10 +380,10 @@ class _FeatureTile extends StatelessWidget {
           child: Icon(icon, color: color, size: 24),
         ),
         title: Text(
-          title,
+          context.tr(title),
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Text(subtitle),
+        subtitle: Text(context.tr(subtitle)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
       ),

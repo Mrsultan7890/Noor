@@ -16,6 +16,7 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
   List<StoryCategory> _categories = [];
   List<IslamicStory> _stories = [];
   bool _isLoading = true;
+  bool _isOffline = false;
   String? _error;
 
   @override
@@ -24,24 +25,26 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
     _loadStories();
   }
 
-  Future<void> _loadStories() async {
+  Future<void> _loadStories({bool forceRefresh = false}) async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      final data = await _service.getStories();
+      final data = await _service.getStories(forceRefresh: forceRefresh);
       final categories = _service.parseCategories(data['categories'] as List);
       final stories = _service.parseStories(data['stories'] as List);
+      final isOffline = data['isOffline'] as bool? ?? false;
       if (!mounted) return;
       setState(() {
         _categories = categories;
         _stories = stories;
+        _isOffline = isOffline;
         _isLoading = false;
       });
     } catch (error) {
-      debugPrint('Failed to load bundled Islamic stories: $error');
+      debugPrint('Failed to load Islamic stories: $error');
       if (!mounted) return;
       setState(() {
         _error = 'Stories could not be loaded. Tap retry to try again.';
@@ -57,14 +60,14 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const ArabicLabel('Islamic Stories - اسلامی کہانیاں'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadStories,
+            onPressed: () => _loadStories(forceRefresh: true),
             tooltip: 'Refresh stories',
           ),
         ],
@@ -76,12 +79,13 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const Icon(Icons.error_outline,
+                          size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(_error!),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: _loadStories,
+                        onPressed: () => _loadStories(forceRefresh: true),
                         child: const Text('Retry'),
                       ),
                     ],
@@ -89,87 +93,104 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: _categories.length,
+                  itemCount: _categories.length + (_isOffline ? 1 : 0),
                   itemBuilder: (context, index) {
-                    final category = _categories[index];
+                    if (_isOffline && index == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          'Offline: showing saved stories and built-in content.',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      );
+                    }
+                    final category = _categories[index - (_isOffline ? 1 : 0)];
                     final color = Color(
                       int.parse(category.color.substring(2), radix: 16),
                     );
                     final stories = _getStoriesByCategory(category.id);
-          
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StoryListScreen(
-                      category: category,
-                      stories: stories,
-                    ),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          category.icon,
-                          style: const TextStyle(fontSize: 32),
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StoryListScreen(
+                                category: category,
+                                stories: stories,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    category.icon,
+                                    style: const TextStyle(fontSize: 32),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      category.name,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    ArabicText(
+                                      category.nameUrdu,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: isDark
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '${stories.length} Stories',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: color,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.arrow_forward_ios,
+                                  color: color, size: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            category.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          ArabicText(
-                            category.nameUrdu,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${stories.length} Stories',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: color,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.arrow_forward_ios, color: color, size: 20),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

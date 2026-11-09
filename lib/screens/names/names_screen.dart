@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/names_service.dart';
 import '../../widgets/arabic_text.dart';
+import '../../utils/user_friendly_error.dart';
 
 class NamesScreen extends StatefulWidget {
   const NamesScreen({super.key});
@@ -33,9 +34,11 @@ class _NamesScreenState extends State<NamesScreen> {
         _names = names;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Could not load the 99 Names: $e\n$stackTrace');
+      if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = UserFriendlyError.content(e);
         _isLoading = false;
       });
     }
@@ -58,7 +61,8 @@ class _NamesScreenState extends State<NamesScreen> {
                       const SizedBox(height: 16),
                       Text(_error!),
                       const SizedBox(height: 16),
-                      ElevatedButton(onPressed: _loadNames, child: const Text('Retry')),
+                      ElevatedButton(
+                          onPressed: _loadNames, child: const Text('Retry')),
                     ],
                   ),
                 )
@@ -82,7 +86,8 @@ class _NamesScreenState extends State<NamesScreen> {
                         title: ArabicText(
                           name['name']!,
                           textAlign: TextAlign.right,
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +95,8 @@ class _NamesScreenState extends State<NamesScreen> {
                             const SizedBox(height: 4),
                             Text(
                               name['transliteration']!,
-                              style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                              style: const TextStyle(
+                                  fontSize: 16, fontStyle: FontStyle.italic),
                             ),
                             const SizedBox(height: 4),
                             Text(

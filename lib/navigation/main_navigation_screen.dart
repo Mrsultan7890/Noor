@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/app_language_provider.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/new_muslim_home_screen.dart';
 import '../screens/quran/quran_list_screen.dart';
@@ -31,11 +32,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   List<Widget> get _screens => [
-    _userLevel == 'New Muslim' ? const NewMuslimHomeScreen() : const HomeScreen(),
-    const QuranListScreen(),
-    const LearningHubScreen(),
-    const MoreScreen(),
-  ];
+        _userLevel == 'New Muslim'
+            ? const NewMuslimHomeScreen()
+            : const HomeScreen(),
+        const QuranListScreen(),
+        const LearningHubScreen(),
+        const MoreScreen(),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,22 +58,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
         selectedFontSize: 12,
         unselectedFontSize: 12,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: context.tr('Home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: 'Quran',
+            icon: const Icon(Icons.menu_book),
+            label: context.tr('Quran'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Learn',
+            icon: const Icon(Icons.school),
+            label: context.tr('Learn'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz),
-            label: 'More',
+            icon: const Icon(Icons.more_horiz),
+            label: context.tr('More'),
           ),
         ],
       ),

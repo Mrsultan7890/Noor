@@ -9,6 +9,8 @@ import '../../services/prayer_times_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/activity_feedback.dart';
+import '../../utils/user_friendly_error.dart';
+import '../../providers/app_language_provider.dart';
 
 class PrayerTimesScreen extends StatefulWidget {
   const PrayerTimesScreen({super.key});
@@ -29,14 +31,18 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   String? _notificationError;
   List<PrayerLog> _todayLogs = [];
   bool _isFetchingPrayerTimes = false;
+  bool _reloadPrayerTimesWhenIdle = false;
+  AsrSchool _asrSchool = AsrSchool.hanafi;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadPrayerTimes();
+    _loadAsrSchool();
     _loadTodayLogs();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateCountdown());
+    _timer =
+        Timer.periodic(const Duration(seconds: 1), (_) => _updateCountdown());
   }
 
   @override
@@ -54,7 +60,10 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   }
 
   Future<void> _loadPrayerTimes() async {
-    if (_isFetchingPrayerTimes) return;
+    if (_isFetchingPrayerTimes) {
+      _reloadPrayerTimesWhenIdle = true;
+      return;
+    }
     _isFetchingPrayerTimes = true;
     setState(() {
       _isLoading = true;
@@ -83,8 +92,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
             longitude: position.longitude,
           );
         } catch (e) {
-          _notificationError =
-              'Prayer times loaded, but reminders could not be scheduled: $e';
+          debugPrint('Could not schedule prayer reminders: $e');
+          _notificationError = UserFriendlyError.notification(e);
         }
       }
 
@@ -96,13 +105,83 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
         _isLoading = false;
       });
     } catch (e) {
+      debugPrint('Could not load prayer times: $e');
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Unable to load prayer times: $e';
+        _errorMessage = UserFriendlyError.prayerTimes(e);
         _isLoading = false;
       });
     } finally {
       _isFetchingPrayerTimes = false;
+      if (_reloadPrayerTimesWhenIdle && mounted) {
+        _reloadPrayerTimesWhenIdle = false;
+        unawaited(_loadPrayerTimes());
+      }
+    }
+  }
+
+  Future<void> _loadAsrSchool() async {
+    try {
+      final school = await _service.getAsrSchool();
+      if (mounted) setState(() => _asrSchool = school);
+    } catch (error, stackTrace) {
+      debugPrint(
+          'Could not load the Asr calculation setting: $error\n$stackTrace');
+    }
+  }
+
+  Future<void> _showAsrSchoolPicker() async {
+    final selectedSchool = await showModalBottomSheet<AsrSchool>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+              child: Text(
+                'Asr calculation',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            for (final school in AsrSchool.values)
+              RadioListTile<AsrSchool>(
+                value: school,
+                groupValue: _asrSchool,
+                title: Text('${school.label} method'),
+                subtitle: Text(
+                  school == AsrSchool.hanafi
+                      ? 'Asr begins when an object’s shadow is twice its height.'
+                      : 'Asr begins when an object’s shadow equals its height.',
+                ),
+                onChanged: (value) => Navigator.pop(context, value),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (selectedSchool == null || selectedSchool == _asrSchool || !mounted) {
+      return;
+    }
+
+    try {
+      await _service.setAsrSchool(selectedSchool);
+      if (!mounted) return;
+      setState(() => _asrSchool = selectedSchool);
+      await _loadPrayerTimes();
+    } catch (error, stackTrace) {
+      debugPrint(
+          'Could not update the Asr calculation setting: $error\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Could not update the Asr setting. Please try again.'),
+          ),
+        );
+      }
     }
   }
 
@@ -116,37 +195,59 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   }
 
   Future<void> _loadTodayLogs() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    final logsJson = prefs.getString('prayer_logs_$today');
-    
-    if (logsJson != null) {
-      final List<dynamic> decoded = json.decode(logsJson);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted) return;
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final logsJson = prefs.getString('prayer_logs_$today');
+      if (logsJson == null) return;
+      final decoded = json.decode(logsJson) as List<dynamic>;
       setState(() {
         _todayLogs = decoded.map((e) => PrayerLog.fromJson(e)).toList();
       });
+    } catch (error, stackTrace) {
+      debugPrint('Could not load today\'s prayer log: $error\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Today’s prayer log could not be loaded.'),
+          ),
+        );
+      }
     }
   }
 
   Future<void> _logPrayer(String prayer) async {
+    if (_isPrayerLogged(prayer)) return;
     final log = PrayerLog(
       prayer: prayer,
       timestamp: DateTime.now(),
       onTime: true,
     );
-    
-    _todayLogs.add(log);
-    
-    final prefs = await SharedPreferences.getInstance();
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    await prefs.setString(
-      'prayer_logs_$today',
-      json.encode(_todayLogs.map((e) => e.toJson()).toList()),
-    );
+
+    final updatedLogs = [..._todayLogs, log];
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      await prefs.setString(
+        'prayer_logs_$today',
+        json.encode(updatedLogs.map((e) => e.toJson()).toList()),
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Could not save prayer log: $error\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Could not save this prayer log. Please try again.')),
+        );
+      }
+      return;
+    }
     if (!mounted) return;
+    _todayLogs = updatedLogs;
     setState(() {});
-    
+
     if (!mounted) return;
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.isAuthenticated) {
@@ -160,7 +261,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$prayer logged. Sign in to sync profile points.')),
+        SnackBar(
+            content: Text('$prayer logged. Sign in to sync profile points.')),
       );
     }
   }
@@ -173,8 +275,13 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Prayer Times'),
+        title: Text(context.tr('Prayer Times')),
         actions: [
+          IconButton(
+            tooltip: context.tr('Asr calculation method'),
+            icon: const Icon(Icons.tune),
+            onPressed: _showAsrSchoolPicker,
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadPrayerTimes,
@@ -197,9 +304,12 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
                               _notificationError!,
-                              style: TextStyle(color: Theme.of(context).colorScheme.error),
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error),
                             ),
                           ),
+                        _buildAsrMethodInfo(),
+                        const SizedBox(height: 12),
                         _buildNextPrayerCard(),
                         const SizedBox(height: 24),
                         _buildPrayersList(),
@@ -210,6 +320,19 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
     );
   }
 
+  Widget _buildAsrMethodInfo() {
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.calculate_outlined),
+        title: Text(context.tr('Asr calculation')),
+        subtitle:
+            Text('${context.tr(_asrSchool.label)} ${context.tr('method')}'),
+        trailing: const Icon(Icons.tune),
+        onTap: _showAsrSchoolPicker,
+      ),
+    );
+  }
+
   Widget _buildErrorState() {
     return Center(
       child: Column(
@@ -217,11 +340,11 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
         children: [
           const Icon(Icons.location_off, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
-          Text(_errorMessage ?? 'Prayer times are unavailable.'),
+          Text(_errorMessage ?? context.tr('Prayer times are unavailable.')),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadPrayerTimes,
-            child: const Text('Try again'),
+            child: Text(context.tr('Try again')),
           ),
         ],
       ),
@@ -249,7 +372,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
       child: Column(
         children: [
           Text(
-            'Next Prayer',
+            context.tr('Next Prayer'),
             style: TextStyle(
               color: foreground.withOpacity(0.75),
               fontSize: 16,
@@ -270,7 +393,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
             children: [
               _TimeBox(
                 value: hours,
-                label: 'Hours',
+                label: context.tr('Hours'),
                 foreground: foreground,
                 background: timeBoxBackground,
               ),
@@ -279,7 +402,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
               const SizedBox(width: 8),
               _TimeBox(
                 value: minutes,
-                label: 'Min',
+                label: context.tr('Min'),
                 foreground: foreground,
                 background: timeBoxBackground,
               ),
@@ -288,7 +411,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
               const SizedBox(width: 8),
               _TimeBox(
                 value: seconds,
-                label: 'Sec',
+                label: context.tr('Sec'),
                 foreground: foreground,
                 background: timeBoxBackground,
               ),
@@ -302,10 +425,19 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   Widget _buildPrayersList() {
     final prayers = [
       {'name': 'Fajr', 'time': _prayerTimes!.fajr, 'icon': Icons.wb_twilight},
-      {'name': 'Sunrise', 'time': _prayerTimes!.sunrise, 'icon': Icons.wb_sunny, 'noLog': true},
+      {
+        'name': 'Sunrise',
+        'time': _prayerTimes!.sunrise,
+        'icon': Icons.wb_sunny,
+        'noLog': true
+      },
       {'name': 'Dhuhr', 'time': _prayerTimes!.dhuhr, 'icon': Icons.wb_sunny},
       {'name': 'Asr', 'time': _prayerTimes!.asr, 'icon': Icons.wb_cloudy},
-      {'name': 'Maghrib', 'time': _prayerTimes!.maghrib, 'icon': Icons.nights_stay},
+      {
+        'name': 'Maghrib',
+        'time': _prayerTimes!.maghrib,
+        'icon': Icons.nights_stay
+      },
       {'name': 'Isha', 'time': _prayerTimes!.isha, 'icon': Icons.bedtime},
     ];
 
@@ -321,7 +453,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: isLogged ? Colors.green.withOpacity(0.2) : Colors.grey[200],
+                color:
+                    isLogged ? Colors.green.withOpacity(0.2) : Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -330,7 +463,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
               ),
             ),
             title: Text(
-              prayer['name'] as String,
+              context.tr(prayer['name'] as String),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

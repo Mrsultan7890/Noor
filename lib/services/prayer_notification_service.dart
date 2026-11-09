@@ -10,10 +10,10 @@ class PrayerNotificationService {
   static Future<void>? _initialization;
   static const _latitudeKey = 'prayer_notification_latitude';
   static const _longitudeKey = 'prayer_notification_longitude';
-  static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
 
-  static Future<void> initialize() =>
-      _initialization ??= _initialize();
+  static Future<void> initialize() => _initialization ??= _initialize();
 
   static Future<void> _initialize() async {
     try {
@@ -101,6 +101,15 @@ class PrayerNotificationService {
     await preferences.setDouble(_longitudeKey, longitude);
   }
 
+  static Future<({double latitude, double longitude})?>
+      getSavedLocation() async {
+    final preferences = await SharedPreferences.getInstance();
+    final latitude = preferences.getDouble(_latitudeKey);
+    final longitude = preferences.getDouble(_longitudeKey);
+    if (latitude == null || longitude == null) return null;
+    return (latitude: latitude, longitude: longitude);
+  }
+
   static Future<void> refreshFromSavedLocation() async {
     await initialize();
     final preferences = await SharedPreferences.getInstance();
@@ -134,9 +143,5 @@ class PrayerNotificationService {
   }
 
   static int _notificationId(DateTime day, int prayerIndex) =>
-      10000 +
-      day.year * 100000 +
-      day.month * 1000 +
-      day.day * 10 +
-      prayerIndex;
+      10000 + day.year * 100000 + day.month * 1000 + day.day * 10 + prayerIndex;
 }

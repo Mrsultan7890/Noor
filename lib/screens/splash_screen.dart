@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../navigation/main_navigation_screen.dart';
 import '../providers/theme_provider.dart';
+import '../providers/app_language_provider.dart';
 import '../providers/user_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_noor_logo.dart';
@@ -51,7 +52,8 @@ class _SplashScreenState extends State<SplashScreen>
             .restoreSession()
             .timeout(const Duration(seconds: 5));
       } catch (error, stackTrace) {
-        debugPrint('Could not restore the user session at startup: $error\n$stackTrace');
+        debugPrint(
+            'Could not restore the user session at startup: $error\n$stackTrace');
       }
     }
 
@@ -116,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen>
               ),
               const SizedBox(height: 5),
               Text(
-                'Islamic Companion',
+                context.tr('Islamic Companion'),
                 style: TextStyle(
                   fontSize: 16,
                   color: foreground.withOpacity(0.6),

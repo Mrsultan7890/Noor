@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../models/user_model.dart';
+import '../../utils/user_friendly_error.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -9,10 +10,11 @@ class LeaderboardScreen extends StatefulWidget {
   State<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
-class _LeaderboardScreenState extends State<LeaderboardScreen> with SingleTickerProviderStateMixin {
+class _LeaderboardScreenState extends State<LeaderboardScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ApiService _apiService = ApiService();
-  
+
   List<LeaderboardEntry> _globalLeaderboard = [];
   List<LeaderboardEntry> _countryLeaderboard = [];
   bool _isLoading = true;
@@ -32,27 +34,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> with SingleTicker
   }
 
   Future<void> _loadLeaderboards() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
-    
+
     try {
       final global = await _apiService.getGlobalLeaderboard(limit: 100);
       final country = await _apiService.getCountryLeaderboard(
         country: _selectedCountry,
         limit: 100,
       );
-      
+
+      if (!mounted) return;
       setState(() {
-        _globalLeaderboard = global.map((e) => LeaderboardEntry.fromJson(e)).toList();
-        _countryLeaderboard = country.map((e) => LeaderboardEntry.fromJson(e)).toList();
+        _globalLeaderboard =
+            global.map((e) => LeaderboardEntry.fromJson(e)).toList();
+        _countryLeaderboard =
+            country.map((e) => LeaderboardEntry.fromJson(e)).toList();
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Could not load leaderboards: $e\n$stackTrace');
+      if (!mounted) return;
       setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(UserFriendlyError.content(e))),
+      );
     }
   }
 

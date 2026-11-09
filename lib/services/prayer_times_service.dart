@@ -1,13 +1,43 @@
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/prayer_times_model.dart';
 import 'utf8_json.dart';
 
+enum AsrSchool {
+  shafi(0, 'Shafi'),
+  hanafi(1, 'Hanafi');
+
+  const AsrSchool(this.apiValue, this.label);
+
+  final int apiValue;
+  final String label;
+
+  static AsrSchool fromApiValue(int value) =>
+      value == shafi.apiValue ? shafi : hanafi;
+}
+
 class PrayerTimesService {
+  static const _asrSchoolPreferenceKey = 'prayer_asr_school';
+
+  Future<AsrSchool> getAsrSchool() async {
+    final preferences = await SharedPreferences.getInstance();
+    return AsrSchool.fromApiValue(
+      preferences.getInt(_asrSchoolPreferenceKey) ?? AsrSchool.hanafi.apiValue,
+    );
+  }
+
+  Future<void> setAsrSchool(AsrSchool school) async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setInt(_asrSchoolPreferenceKey, school.apiValue);
+  }
+
   Future<PrayerTimes> getPrayerTimes({
     required double latitude,
     required double longitude,
+    AsrSchool? school,
   }) async {
+    final selectedSchool = school ?? await getAsrSchool();
     final response = await http
         .get(
           Uri.https(
@@ -17,7 +47,7 @@ class PrayerTimesService {
               'latitude': '$latitude',
               'longitude': '$longitude',
               'method': '2',
-              'school': '1',
+              'school': '${selectedSchool.apiValue}',
             },
           ),
         )
@@ -35,6 +65,7 @@ class PrayerTimesService {
     required double longitude,
     required DateTime startDate,
     required int days,
+    AsrSchool? school,
   }) async {
     if (days < 1) {
       throw ArgumentError.value(days, 'days', 'Must be greater than zero.');
@@ -53,6 +84,7 @@ class PrayerTimesService {
         .toSet()
         .toList();
 
+    final selectedSchool = school ?? await getAsrSchool();
     final monthResponses = await Future.wait(
       months.map((month) async {
         final response = await http
@@ -64,7 +96,7 @@ class PrayerTimesService {
                   'latitude': '$latitude',
                   'longitude': '$longitude',
                   'method': '2',
-                  'school': '1',
+                  'school': '${selectedSchool.apiValue}',
                 },
               ),
             )
@@ -83,13 +115,10 @@ class PrayerTimesService {
     final requestedKeys = requestedDates.map(_dateKey).toSet();
     final results = <DateTime, PrayerTimes>{};
     for (final entry in monthResponses.expand((entries) => entries)) {
-      final dateData =
-          (entry['date'] as Map<String, dynamic>)['gregorian']
-              as Map<String, dynamic>;
-      final dateParts = (dateData['date'] as String)
-          .split('-')
-          .map(int.parse)
-          .toList();
+      final dateData = (entry['date'] as Map<String, dynamic>)['gregorian']
+          as Map<String, dynamic>;
+      final dateParts =
+          (dateData['date'] as String).split('-').map(int.parse).toList();
       final date = DateTime(dateParts[2], dateParts[1], dateParts[0]);
       if (requestedKeys.contains(_dateKey(date))) {
         results[date] = PrayerTimes.fromJson({'data': entry});
@@ -149,8 +178,8 @@ class PrayerTimesService {
         return prayerTime.difference(now);
       }
     }
-    final tomorrowFajr = parseTimeToday(times.fajr, reference: now)
-        .add(const Duration(days: 1));
+    final tomorrowFajr =
+        parseTimeToday(times.fajr, reference: now).add(const Duration(days: 1));
     return tomorrowFajr.difference(now);
   }
 

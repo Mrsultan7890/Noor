@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'screens/splash_screen.dart';
 import 'providers/theme_provider.dart';
+import 'providers/app_language_provider.dart';
 import 'providers/quran_provider.dart';
 import 'providers/tasbih_provider.dart';
 import 'providers/schedule_provider.dart';
@@ -16,16 +18,23 @@ import 'models/schedule_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeProvider = await ThemeProvider.load();
-  
+  final appLanguageProvider = await AppLanguageProvider.load();
+
   await Hive.initFlutter();
   Hive.registerAdapter(ScheduleAdapter());
-  
-  runApp(NoorApp(themeProvider: themeProvider));
+
+  runApp(
+    NoorApp(
+      themeProvider: themeProvider,
+      appLanguageProvider: appLanguageProvider,
+    ),
+  );
   WidgetsBinding.instance.addPostFrameCallback((_) {
     unawaited(
       AppIconService.setForTheme(themeProvider.selectedTheme).catchError(
         (Object error, StackTrace stackTrace) {
-          debugPrint('Could not apply the selected launcher icon: $error\n$stackTrace');
+          debugPrint(
+              'Could not apply the selected launcher icon: $error\n$stackTrace');
         },
       ),
     );
@@ -40,9 +49,14 @@ void main() async {
 }
 
 class NoorApp extends StatefulWidget {
-  const NoorApp({super.key, required this.themeProvider});
+  const NoorApp({
+    super.key,
+    required this.themeProvider,
+    required this.appLanguageProvider,
+  });
 
   final ThemeProvider themeProvider;
+  final AppLanguageProvider appLanguageProvider;
 
   @override
   State<NoorApp> createState() => _NoorAppState();
@@ -81,25 +95,39 @@ class _NoorAppState extends State<NoorApp> with WidgetsBindingObserver {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: widget.themeProvider),
+        ChangeNotifierProvider.value(value: widget.appLanguageProvider),
         ChangeNotifierProvider(create: (_) => QuranProvider()),
         ChangeNotifierProvider(create: (_) => TasbihProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, AppLanguageProvider>(
+        builder: (context, themeProvider, languageProvider, child) {
           return MaterialApp(
             title: 'Noor - نور',
+            locale: Locale(languageProvider.languageCode),
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ur'),
+              Locale('ar'),
+              Locale('id'),
+              Locale('tr'),
+              Locale('fr'),
+            ],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
             debugShowCheckedModeBanner: false,
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
             themeMode: themeProvider.themeMode,
             home: const SplashScreen(),
-            builder: (context, child) => DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: themeProvider.backgroundGradient,
+            builder: (context, child) => Directionality(
+              textDirection: languageProvider.textDirection,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: themeProvider.backgroundGradient,
+                ),
+                child: child ?? const SizedBox.shrink(),
               ),
-              child: child ?? const SizedBox.shrink(),
             ),
           );
         },

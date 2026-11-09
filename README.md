@@ -98,6 +98,14 @@ flutter build ios --release
 - **Account backend**: `API_BASE_URL` (defaults to `https://noor-api-cse6.onrender.com`)
 - The account backend URL must use HTTPS; local setup guidance is in [TERMUX_SETUP.md](./TERMUX_SETUP.md).
 
+### GitHub-hosted Content Updates
+
+New duas and stories can be published without an app release by editing
+[`data/duas.json`](./data/duas.json) or [`data/stories.json`](./data/stories.json)
+on GitHub. The app fetches these public JSON files when their screens open,
+caches content for offline use, and keeps bundled content as a fallback. See
+[`data/README.md`](./data/README.md) for formats and source-review guidance.
+
 ### Notifications
 - Requires permission on Android/iOS
 - Configured in NotificationService

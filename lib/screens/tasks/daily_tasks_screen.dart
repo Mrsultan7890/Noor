@@ -59,14 +59,19 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
   ];
 
   final Map<String, bool> _completedTasks = {};
+  final Map<String, int> _claimedPoints = {};
   String _todayDate = '';
 
   @override
   void initState() {
     super.initState();
-    _todayDate = DateTime.now().toString().split(' ')[0];
+    _todayDate = _dateKey(DateTime.now());
     _loadTasks();
   }
+
+  String _dateKey(DateTime date) => '${date.year.toString().padLeft(4, '0')}-'
+      '${date.month.toString().padLeft(2, '0')}-'
+      '${date.day.toString().padLeft(2, '0')}';
 
   Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
@@ -86,6 +91,15 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
       final legacyValue =
           savedDate == _todayDate ? prefs.getBool(taskId) : null;
       completedTasks[taskId] = storedValue ?? legacyValue ?? false;
+      final task = _categories
+          .expand((category) => category.tasks)
+          .firstWhere((task) => task.id == taskId);
+      final storedPoints = prefs.getInt(_rewardPreferenceKey(taskId));
+      if (storedPoints != null) {
+        _claimedPoints[taskId] = storedPoints;
+      } else if (completedTasks[taskId] == true) {
+        _claimedPoints[taskId] = task.points;
+      }
       if (storedValue == null && legacyValue != null) {
         await prefs.setBool(_taskPreferenceKey(taskId), legacyValue);
       }
@@ -104,9 +118,12 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
   String _taskPreferenceKey(String taskId) =>
       'daily_task_${_todayDate}_$taskId';
 
+  String _rewardPreferenceKey(String taskId) =>
+      'daily_task_reward_${_todayDate}_$taskId';
+
   Future<void> _resetTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    _todayDate = DateTime.now().toIso8601String().split(' ')[0];
+    _todayDate = _dateKey(DateTime.now());
     await prefs.setString('tasks_date', _todayDate);
     for (final category in _categories) {
       for (final task in category.tasks) {
@@ -150,11 +167,18 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
           }
           return;
         }
+        _claimedPoints[task.id] = pointsEarned;
+      } else {
+        _claimedPoints[task.id] = task.points;
       }
     }
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_taskPreferenceKey(taskId), value);
+    final claimedPoints = _claimedPoints[taskId];
+    if (claimedPoints != null) {
+      await prefs.setInt(_rewardPreferenceKey(taskId), claimedPoints);
+    }
     if (!mounted) return;
     setState(() {
       _completedTasks[taskId] = value;
@@ -162,22 +186,17 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
     if (value && !context.read<UserProvider>().isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Task saved locally. Sign in to sync points to your profile.'),
+          content: Text(
+              'Task saved locally. Sign in to sync points to your profile.'),
         ),
       );
     }
   }
 
   int _getTotalPoints() {
-    int total = 0;
-    for (var category in _categories) {
-      for (var task in category.tasks) {
-        if (_completedTasks[task.id] == true) {
-          total += task.points;
-        }
-      }
-    }
-    return total;
+    return _claimedPoints.entries
+        .where((entry) => _completedTasks[entry.key] == true)
+        .fold(0, (total, entry) => total + entry.value);
   }
 
   int _getCompletedCount() {
@@ -243,7 +262,8 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -272,7 +292,8 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
                     value: progress,
                     minHeight: 8,
                     backgroundColor: Colors.white.withOpacity(0.3),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 ),
               ],
@@ -284,8 +305,10 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
               itemCount: _categories.length,
               itemBuilder: (context, index) {
                 final category = _categories[index];
-                final completed = category.tasks.where((t) => _completedTasks[t.id] == true).length;
-                
+                final completed = category.tasks
+                    .where((t) => _completedTasks[t.id] == true)
+                    .length;
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
                   child: ExpansionTile(
@@ -295,27 +318,34 @@ class _DailyTasksScreenState extends State<DailyTasksScreen> {
                         color: category.color.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(category.icon, color: category.color, size: 28),
+                      child:
+                          Icon(category.icon, color: category.color, size: 28),
                     ),
                     title: Text(
                       category.name,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text('$completed / ${category.tasks.length} completed'),
+                    subtitle:
+                        Text('$completed / ${category.tasks.length} completed'),
                     children: category.tasks.map((task) {
                       final isCompleted = _completedTasks[task.id] ?? false;
                       return CheckboxListTile(
                         value: isCompleted,
-                        onChanged: (value) => _toggleTask(task.id, value ?? false),
+                        onChanged: (value) =>
+                            _toggleTask(task.id, value ?? false),
                         title: Text(
                           task.name,
                           style: TextStyle(
-                            decoration: isCompleted ? TextDecoration.lineThrough : null,
+                            decoration:
+                                isCompleted ? TextDecoration.lineThrough : null,
                           ),
                         ),
                         subtitle: Text('+${task.points} points'),
                         secondary: Icon(
-                          isCompleted ? Icons.check_circle : Icons.circle_outlined,
+                          isCompleted
+                              ? Icons.check_circle
+                              : Icons.circle_outlined,
                           color: isCompleted ? Colors.green : Colors.grey,
                         ),
                       );

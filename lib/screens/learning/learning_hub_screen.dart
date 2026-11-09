@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/quran_model.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/app_language_provider.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/arabic_text.dart';
 import '../quran/enhanced_quran_reader_screen.dart';
 import 'arabic_alphabet_screen.dart';
 
@@ -12,12 +12,11 @@ class LearningHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppTheme.palettes[
-      context.watch<ThemeProvider>().selectedTheme
-    ]!;
+    final palette =
+        AppTheme.palettes[context.watch<ThemeProvider>().selectedTheme]!;
     return Scaffold(
       appBar: AppBar(
-        title: const ArabicLabel('Learn - سیکھیں'),
+        title: Text(context.tr('Learn')),
         automaticallyImplyLeading: false,
       ),
       body: ListView(
@@ -25,19 +24,19 @@ class LearningHubScreen extends StatelessWidget {
         children: [
           Card(
             color: palette.gradientEnd,
-            child: const Padding(
-              padding: EdgeInsets.all(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.school, color: Colors.white, size: 32),
-                      SizedBox(width: 12),
+                      const Icon(Icons.school, color: Colors.white, size: 32),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Islamic Learning Center',
-                          style: TextStyle(
+                          context.tr('Islamic Learning Center'),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -46,10 +45,10 @@ class LearningHubScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Learn Quran, Arabic & Islamic Knowledge',
-                    style: TextStyle(
+                    context.tr('Learn Quran, Arabic & Islamic Knowledge'),
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
                     ),
@@ -58,17 +57,14 @@ class LearningHubScreen extends StatelessWidget {
               ),
             ),
           ),
-          
           const SizedBox(height: 24),
-          
           Text(
-            'Quran Learning',
+            context.tr('Quran Learning'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Learn with Audio',
             subtitle: 'Listen & follow along with recitation',
@@ -92,9 +88,7 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Transliteration',
             subtitle: 'Read Arabic in Roman script',
@@ -118,9 +112,7 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Word by Word',
             subtitle: 'Understand each Arabic word meaning',
@@ -144,17 +136,14 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 24),
-          
           Text(
             'Arabic Language',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Arabic Alphabet',
             subtitle: 'Learn 28 letters with pronunciation',
@@ -169,9 +158,7 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Harakat (Zabar, Zer, Pesh)',
             subtitle: 'Master Arabic vowel marks',
@@ -186,9 +173,7 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 12),
-          
           _LearningCard(
             title: 'Interactive Quiz',
             subtitle: 'Test your Arabic knowledge',
@@ -203,9 +188,7 @@ class LearningHubScreen extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 24),
-          
           Card(
             color: Colors.amber.shade50,
             child: const Padding(
@@ -292,7 +275,7 @@ class _LearningCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      context.tr(title),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -300,7 +283,7 @@ class _LearningCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      subtitle,
+                      context.tr(subtitle),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],

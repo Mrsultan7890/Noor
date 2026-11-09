@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../utils/user_friendly_error.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/arabic_text.dart';
@@ -29,29 +30,120 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   };
 
   final List<String> _surahNames = [
-    'Al-Fatihah', 'Al-Baqarah', 'Aal-E-Imran', 'An-Nisa', 'Al-Maidah',
-    'Al-Anam', 'Al-Araf', 'Al-Anfal', 'At-Tawbah', 'Yunus',
-    'Hud', 'Yusuf', 'Ar-Rad', 'Ibrahim', 'Al-Hijr',
-    'An-Nahl', 'Al-Isra', 'Al-Kahf', 'Maryam', 'Ta-Ha',
-    'Al-Anbiya', 'Al-Hajj', 'Al-Muminun', 'An-Nur', 'Al-Furqan',
-    'Ash-Shuara', 'An-Naml', 'Al-Qasas', 'Al-Ankabut', 'Ar-Rum',
-    'Luqman', 'As-Sajdah', 'Al-Ahzab', 'Saba', 'Fatir',
-    'Ya-Sin', 'As-Saffat', 'Sad', 'Az-Zumar', 'Ghafir',
-    'Fussilat', 'Ash-Shura', 'Az-Zukhruf', 'Ad-Dukhan', 'Al-Jathiyah',
-    'Al-Ahqaf', 'Muhammad', 'Al-Fath', 'Al-Hujurat', 'Qaf',
-    'Adh-Dhariyat', 'At-Tur', 'An-Najm', 'Al-Qamar', 'Ar-Rahman',
-    'Al-Waqiah', 'Al-Hadid', 'Al-Mujadila', 'Al-Hashr', 'Al-Mumtahanah',
-    'As-Saff', 'Al-Jumuah', 'Al-Munafiqun', 'At-Taghabun', 'At-Talaq',
-    'At-Tahrim', 'Al-Mulk', 'Al-Qalam', 'Al-Haqqah', 'Al-Maarij',
-    'Nuh', 'Al-Jinn', 'Al-Muzzammil', 'Al-Muddaththir', 'Al-Qiyamah',
-    'Al-Insan', 'Al-Mursalat', 'An-Naba', 'An-Naziat', 'Abasa',
-    'At-Takwir', 'Al-Infitar', 'Al-Mutaffifin', 'Al-Inshiqaq', 'Al-Buruj',
-    'At-Tariq', 'Al-Ala', 'Al-Ghashiyah', 'Al-Fajr', 'Al-Balad',
-    'Ash-Shams', 'Al-Lail', 'Ad-Duha', 'Ash-Sharh', 'At-Tin',
-    'Al-Alaq', 'Al-Qadr', 'Al-Bayyinah', 'Az-Zalzalah', 'Al-Adiyat',
-    'Al-Qariah', 'At-Takathur', 'Al-Asr', 'Al-Humazah', 'Al-Fil',
-    'Quraish', 'Al-Maun', 'Al-Kawthar', 'Al-Kafirun', 'An-Nasr',
-    'Al-Masad', 'Al-Ikhlas', 'Al-Falaq', 'An-Nas'
+    'Al-Fatihah',
+    'Al-Baqarah',
+    'Aal-E-Imran',
+    'An-Nisa',
+    'Al-Maidah',
+    'Al-Anam',
+    'Al-Araf',
+    'Al-Anfal',
+    'At-Tawbah',
+    'Yunus',
+    'Hud',
+    'Yusuf',
+    'Ar-Rad',
+    'Ibrahim',
+    'Al-Hijr',
+    'An-Nahl',
+    'Al-Isra',
+    'Al-Kahf',
+    'Maryam',
+    'Ta-Ha',
+    'Al-Anbiya',
+    'Al-Hajj',
+    'Al-Muminun',
+    'An-Nur',
+    'Al-Furqan',
+    'Ash-Shuara',
+    'An-Naml',
+    'Al-Qasas',
+    'Al-Ankabut',
+    'Ar-Rum',
+    'Luqman',
+    'As-Sajdah',
+    'Al-Ahzab',
+    'Saba',
+    'Fatir',
+    'Ya-Sin',
+    'As-Saffat',
+    'Sad',
+    'Az-Zumar',
+    'Ghafir',
+    'Fussilat',
+    'Ash-Shura',
+    'Az-Zukhruf',
+    'Ad-Dukhan',
+    'Al-Jathiyah',
+    'Al-Ahqaf',
+    'Muhammad',
+    'Al-Fath',
+    'Al-Hujurat',
+    'Qaf',
+    'Adh-Dhariyat',
+    'At-Tur',
+    'An-Najm',
+    'Al-Qamar',
+    'Ar-Rahman',
+    'Al-Waqiah',
+    'Al-Hadid',
+    'Al-Mujadila',
+    'Al-Hashr',
+    'Al-Mumtahanah',
+    'As-Saff',
+    'Al-Jumuah',
+    'Al-Munafiqun',
+    'At-Taghabun',
+    'At-Talaq',
+    'At-Tahrim',
+    'Al-Mulk',
+    'Al-Qalam',
+    'Al-Haqqah',
+    'Al-Maarij',
+    'Nuh',
+    'Al-Jinn',
+    'Al-Muzzammil',
+    'Al-Muddaththir',
+    'Al-Qiyamah',
+    'Al-Insan',
+    'Al-Mursalat',
+    'An-Naba',
+    'An-Naziat',
+    'Abasa',
+    'At-Takwir',
+    'Al-Infitar',
+    'Al-Mutaffifin',
+    'Al-Inshiqaq',
+    'Al-Buruj',
+    'At-Tariq',
+    'Al-Ala',
+    'Al-Ghashiyah',
+    'Al-Fajr',
+    'Al-Balad',
+    'Ash-Shams',
+    'Al-Lail',
+    'Ad-Duha',
+    'Ash-Sharh',
+    'At-Tin',
+    'Al-Alaq',
+    'Al-Qadr',
+    'Al-Bayyinah',
+    'Az-Zalzalah',
+    'Al-Adiyat',
+    'Al-Qariah',
+    'At-Takathur',
+    'Al-Asr',
+    'Al-Humazah',
+    'Al-Fil',
+    'Quraish',
+    'Al-Maun',
+    'Al-Kawthar',
+    'Al-Kafirun',
+    'An-Nasr',
+    'Al-Masad',
+    'Al-Ikhlas',
+    'Al-Falaq',
+    'An-Nas'
   ];
 
   @override
@@ -66,9 +158,8 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
     if (!mounted) return;
     final savedReciter = prefs.getString('reciter');
     setState(() {
-      _selectedReciter = _reciters.containsKey(savedReciter)
-          ? savedReciter!
-          : 'ar.alafasy';
+      _selectedReciter =
+          _reciters.containsKey(savedReciter) ? savedReciter! : 'ar.alafasy';
     });
   }
 
@@ -91,11 +182,11 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
 
   Future<void> _playAudio(int surahNumber) async {
     if (!mounted) return;
-    
+
     try {
       await _player.stop();
       if (!mounted) return;
-      
+
       setState(() {
         _isLoading = true;
         _currentSurah = surahNumber;
@@ -113,7 +204,8 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       unawaited(_startPlayback());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Could not load Quran recitation: $e\n$stackTrace');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -122,7 +214,7 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(UserFriendlyError.audio(e))),
         );
       }
     }
@@ -131,10 +223,11 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
   Future<void> _startPlayback() async {
     try {
       await _player.play();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Quran audio playback failed: $e\n$stackTrace');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Playback failed: $e')),
+        SnackBar(content: Text(UserFriendlyError.audio(e))),
       );
     }
   }
@@ -153,17 +246,19 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
         title: const Text('Select Reciter'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: _reciters.entries.map((e) => RadioListTile<String>(
-            title: Text(e.value),
-            value: e.key,
-            groupValue: _selectedReciter,
-            onChanged: (val) {
-              if (val != null) {
-                unawaited(_saveReciter(val));
-                Navigator.pop(context);
-              }
-            },
-          )).toList(),
+          children: _reciters.entries
+              .map((e) => RadioListTile<String>(
+                    title: Text(e.value),
+                    value: e.key,
+                    groupValue: _selectedReciter,
+                    onChanged: (val) {
+                      if (val != null) {
+                        unawaited(_saveReciter(val));
+                        Navigator.pop(context);
+                      }
+                    },
+                  ))
+              .toList(),
         ),
       ),
     );
@@ -191,12 +286,15 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
               itemBuilder: (context, index) {
                 final surahNumber = index + 1;
                 final isPlaying = _currentSurah == surahNumber;
-                
+
                 return Card(
-                  color: isPlaying ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+                  color: isPlaying
+                      ? Theme.of(context).primaryColor.withOpacity(0.1)
+                      : null,
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: isPlaying ? Theme.of(context).primaryColor : null,
+                      backgroundColor:
+                          isPlaying ? Theme.of(context).primaryColor : null,
                       child: Text(
                         '$surahNumber',
                         style: TextStyle(
@@ -206,7 +304,9 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                         ),
                       ),
                     ),
-                    title: Text(_surahNames[index], style: TextStyle(fontWeight: isPlaying ? FontWeight.bold : null)),
+                    title: Text(_surahNames[index],
+                        style: TextStyle(
+                            fontWeight: isPlaying ? FontWeight.bold : null)),
                     subtitle: Text('Surah $surahNumber'),
                     trailing: _isLoading && isPlaying
                         ? const SizedBox(
@@ -217,8 +317,8 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                         : StreamBuilder<PlayerState>(
                             stream: _player.playerStateStream,
                             builder: (context, snapshot) {
-                              final playing =
-                                  isPlaying && (snapshot.data?.playing ?? false);
+                              final playing = isPlaying &&
+                                  (snapshot.data?.playing ?? false);
                               return IconButton(
                                 icon: Icon(
                                   playing
@@ -249,13 +349,19 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
+                boxShadow: const [
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, -2))
+                ],
               ),
               child: Column(
                 children: [
                   Text(
                     _surahNames[_currentSurah! - 1],
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   StreamBuilder<Duration>(
@@ -300,7 +406,9 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                       IconButton(
                         icon: const Icon(Icons.skip_previous),
                         iconSize: 36,
-                        onPressed: _currentSurah! > 1 ? () => _playAudio(_currentSurah! - 1) : null,
+                        onPressed: _currentSurah! > 1
+                            ? () => _playAudio(_currentSurah! - 1)
+                            : null,
                       ),
                       StreamBuilder<PlayerState>(
                         stream: _player.playerStateStream,
@@ -308,7 +416,9 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                           final playerState = snapshot.data;
                           final playing = playerState?.playing ?? false;
                           return IconButton(
-                            icon: Icon(playing ? Icons.pause_circle_filled : Icons.play_circle_filled),
+                            icon: Icon(playing
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_filled),
                             iconSize: 64,
                             color: Theme.of(context).primaryColor,
                             onPressed: () {
@@ -324,7 +434,9 @@ class _AudioQuranScreenState extends State<AudioQuranScreen> {
                       IconButton(
                         icon: const Icon(Icons.skip_next),
                         iconSize: 36,
-                        onPressed: _currentSurah! < 114 ? () => _playAudio(_currentSurah! + 1) : null,
+                        onPressed: _currentSurah! < 114
+                            ? () => _playAudio(_currentSurah! + 1)
+                            : null,
                       ),
                     ],
                   ),

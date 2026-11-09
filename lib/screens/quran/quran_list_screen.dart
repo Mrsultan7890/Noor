@@ -4,6 +4,7 @@ import '../../providers/quran_provider.dart';
 import 'quran_reader_screen.dart';
 import 'enhanced_quran_reader_screen.dart';
 import '../../widgets/arabic_text.dart';
+import '../../providers/app_language_provider.dart';
 
 class QuranListScreen extends StatefulWidget {
   const QuranListScreen({super.key});
@@ -16,22 +17,22 @@ class _QuranListScreenState extends State<QuranListScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<QuranProvider>(context, listen: false).loadSurahs());
+    Future.microtask(
+        () => Provider.of<QuranProvider>(context, listen: false).loadSurahs());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const ArabicLabel('Quran - قرآن مجید'),
+        title: Text(context.tr('Quran')),
       ),
       body: Consumer<QuranProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (provider.error != null) {
             return Center(
               child: Column(
@@ -43,13 +44,13 @@ class _QuranListScreenState extends State<QuranListScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => provider.loadSurahs(),
-                    child: const Text('Retry'),
+                    child: Text(context.tr('Try again')),
                   ),
                 ],
               ),
             );
           }
-          
+
           return ListView.builder(
             itemCount: provider.surahs.length,
             padding: const EdgeInsets.all(8),
@@ -83,7 +84,7 @@ class _QuranListScreenState extends State<QuranListScreen> {
                     ),
                   ),
                   subtitle: Text(
-                    '${surah.englishName} - ${surah.numberOfAyahs} Ayahs',
+                    '${surah.englishName} - ${surah.numberOfAyahs} ${context.tr('Ayahs')}',
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -95,11 +96,12 @@ class _QuranListScreenState extends State<QuranListScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EnhancedQuranReaderScreen(surah: surah),
+                              builder: (context) =>
+                                  EnhancedQuranReaderScreen(surah: surah),
                             ),
                           );
                         },
-                        tooltip: 'Learn Mode',
+                        tooltip: context.tr('Learn Mode'),
                       ),
                       const Icon(Icons.arrow_forward_ios, size: 16),
                     ],

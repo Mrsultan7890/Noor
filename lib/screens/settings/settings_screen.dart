@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/app_language_provider.dart';
 import '../../services/daily_reminder_service.dart';
 import '../../services/app_icon_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/arabic_text.dart';
+import '../../utils/user_friendly_error.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -42,10 +44,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _reminderTime = TimeOfDay(hour: hour, minute: minute);
         _isLoading = false;
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('Could not load settings: $error\n$stackTrace');
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showError('Could not load settings: $error');
+      _showError('Settings could not be loaded. Please try again.');
     }
   }
 
@@ -65,10 +68,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _reminderEnabled = enabled;
         _isSavingReminder = false;
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('Could not update daily reminder: $error\n$stackTrace');
       if (!mounted) return;
       setState(() => _isSavingReminder = false);
-      _showError('Could not update the daily reminder: $error');
+      _showError(UserFriendlyError.settings(error));
     }
   }
 
@@ -88,8 +92,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
       if (!mounted) return;
       setState(() => _reminderTime = time);
-    } catch (error) {
-      if (mounted) _showError('Could not save the reminder time: $error');
+    } catch (error, stackTrace) {
+      debugPrint('Could not save reminder time: $error\n$stackTrace');
+      if (mounted) _showError(UserFriendlyError.settings(error));
     }
   }
 
@@ -108,9 +113,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
       if (!mounted) return;
       setState(() => _prayerNotificationsEnabled = enabled);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('Could not update prayer notifications: $error\n$stackTrace');
       if (mounted) {
-        _showError('Could not update prayer notifications: $error');
+        _showError(UserFriendlyError.notification(error));
       }
     }
   }
@@ -123,8 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLanguage = context.watch<AppLanguageProvider>();
     return Scaffold(
-      appBar: AppBar(title: const ArabicLabel('Settings - ترتیبات')),
+      appBar: AppBar(title: Text(context.tr('Settings'))),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -132,13 +139,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 _sectionTitle(context, 'Appearance', Icons.palette_outlined),
                 Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.language),
+                    title: Text(context.tr('App language')),
+                    trailing: DropdownButton<AppLanguage>(
+                      value: appLanguage.language,
+                      onChanged: (language) async {
+                        if (language == null) return;
+                        try {
+                          await appLanguage.setLanguage(language.name);
+                        } catch (error, stackTrace) {
+                          debugPrint(
+                            'Could not change app language: $error\n$stackTrace',
+                          );
+                          if (context.mounted) {
+                            _showError(UserFriendlyError.settings(error));
+                          }
+                        }
+                      },
+                      items: AppLanguageProvider.languages
+                          .map(
+                            (language) => DropdownMenuItem(
+                              value: language,
+                              child: Text(language.nativeName),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+                Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Choose a color theme',
+                          context.tr('Choose a color theme'),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 12),
@@ -147,11 +184,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             theme: theme,
                             onSelected: () async {
                               try {
-                                await context.read<ThemeProvider>().setTheme(theme);
+                                await context
+                                    .read<ThemeProvider>()
+                                    .setTheme(theme);
                                 await AppIconService.setForTheme(theme);
-                              } catch (error) {
+                              } catch (error, stackTrace) {
+                                debugPrint(
+                                    'Could not save theme: $error\n$stackTrace');
                                 if (context.mounted) {
-                                  _showError('Could not save theme: $error');
+                                  _showError(UserFriendlyError.settings(error));
                                 }
                               }
                             },
@@ -163,18 +204,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Card(
                   child: Consumer<ThemeProvider>(
                     builder: (context, themeProvider, child) => SwitchListTile(
-                      title: const Text('Dark appearance'),
-                      subtitle: const Text(
-                        'Switch between the palette gradient and its light variant',
+                      title: Text(context.tr('Dark appearance')),
+                      subtitle: Text(
+                        context.tr(
+                          'Switch between the palette gradient and its light variant',
+                        ),
                       ),
                       secondary: const Icon(Icons.dark_mode_outlined),
                       value: themeProvider.themeMode == ThemeMode.dark,
                       onChanged: (_) async {
                         try {
                           await themeProvider.toggleTheme();
-                        } catch (error) {
+                        } catch (error, stackTrace) {
+                          debugPrint(
+                              'Could not save appearance: $error\n$stackTrace');
                           if (context.mounted) {
-                            _showError('Could not save appearance: $error');
+                            _showError(UserFriendlyError.settings(error));
                           }
                         }
                       },
@@ -194,11 +239,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'Arabic text size',
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  context.tr('Arabic text size'),
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ),
-                              Text('${(themeProvider.arabicFontScale * 100).round()}%'),
+                              Text(
+                                  '${(themeProvider.arabicFontScale * 100).round()}%'),
                             ],
                           ),
                           Slider(
@@ -211,9 +258,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onChanged: (value) async {
                               try {
                                 await themeProvider.setArabicFontScale(value);
-                              } catch (error) {
+                              } catch (error, stackTrace) {
+                                debugPrint(
+                                    'Could not save Arabic text size: $error\n$stackTrace');
                                 if (context.mounted) {
-                                  _showError('Could not save Arabic text size: $error');
+                                  _showError(UserFriendlyError.settings(error));
                                 }
                               }
                             },
@@ -228,32 +277,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _sectionTitle(context, 'Notifications', Icons.notifications_outlined),
+                _sectionTitle(
+                    context, 'Notifications', Icons.notifications_outlined),
                 Card(
                   child: Column(
                     children: [
                       SwitchListTile(
-                        title: const Text('Daily Reminder'),
-                        subtitle:
-                            const Text('Get daily hadith/dua notifications'),
+                        title: Text(context.tr('Daily Reminder')),
+                        subtitle: Text(
+                          context.tr('Get daily hadith/dua notifications'),
+                        ),
                         value: _reminderEnabled,
                         secondary: const Icon(Icons.notifications_active),
-                        onChanged: _isSavingReminder ? null : _setReminderEnabled,
+                        onChanged:
+                            _isSavingReminder ? null : _setReminderEnabled,
                       ),
-                      if (_isSavingReminder)
-                        const LinearProgressIndicator(),
+                      if (_isSavingReminder) const LinearProgressIndicator(),
                       ListTile(
                         leading: const Icon(Icons.access_time),
-                        title: const Text('Reminder Time'),
+                        title: Text(context.tr('Reminder Time')),
                         subtitle: Text(_reminderTime.format(context)),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: _selectReminderTime,
                       ),
                       const Divider(height: 1),
                       SwitchListTile(
-                        title: const Text('Prayer time reminders'),
-                        subtitle: const Text(
-                          'Schedule after loading Prayer Times',
+                        title: Text(context.tr('Prayer time reminders')),
+                        subtitle: Text(
+                          context.tr('Schedule after loading Prayer Times'),
                         ),
                         secondary: const Icon(Icons.access_time),
                         value: _prayerNotificationsEnabled,
@@ -274,7 +325,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.secondary),
           const SizedBox(width: 8),
-          Text(title, style: Theme.of(context).textTheme.titleLarge),
+          Text(context.tr(title),
+              style: Theme.of(context).textTheme.titleLarge),
         ],
       ),
     );

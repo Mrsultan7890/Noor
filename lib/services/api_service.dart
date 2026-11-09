@@ -27,7 +27,7 @@ class ApiService {
     }
     return baseUri.resolve(path).replace(queryParameters: queryParameters);
   }
-  
+
   String? _token;
 
   Future<bool> hasStoredToken() async {
@@ -52,25 +52,25 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('cached_profile', json.encode(profile));
   }
-  
+
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('auth_token');
   }
-  
+
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', token);
     _token = token;
   }
-  
+
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
     await prefs.remove('cached_profile');
     _token = null;
   }
-  
+
   Map<String, String> _getHeaders() {
     final headers = {
       'Content-Type': 'application/json; charset=utf-8',
@@ -80,7 +80,7 @@ class ApiService {
     }
     return headers;
   }
-  
+
   // Authentication
   Future<Map<String, dynamic>> register({
     required String email,
@@ -101,7 +101,7 @@ class ApiService {
           'level': level,
         })),
       );
-      
+
       if (response.statusCode == 201) {
         final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
@@ -114,7 +114,7 @@ class ApiService {
       throw Exception('Registration failed: $e');
     }
   }
-  
+
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -128,7 +128,7 @@ class ApiService {
           'password': password,
         })),
       );
-      
+
       if (response.statusCode == 200) {
         final data = decodeUtf8JsonResponse(response);
         await _saveToken(data['access_token']);
@@ -141,7 +141,7 @@ class ApiService {
       throw Exception('Login failed: $e');
     }
   }
-  
+
   // User Profile
   Future<Map<String, dynamic>> getProfile() async {
     await _loadToken();
@@ -150,7 +150,7 @@ class ApiService {
         _endpoint('/users/me'),
         headers: _getHeaders(),
       ).timeout(const Duration(seconds: 15));
-      
+
       if (response.statusCode == 200) {
         final profile = decodeUtf8JsonResponse(response);
         await _saveProfile(profile);
@@ -167,7 +167,7 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
-  
+
   Future<Map<String, dynamic>> updateProfile({
     String? username,
     String? country,
@@ -181,13 +181,13 @@ class ApiService {
       if (country != null) body['country'] = country;
       if (level != null) body['level'] = level;
       if (avatar != null) body['avatar'] = avatar;
-      
+
       final response = await http.put(
         _endpoint('/users/me'),
         headers: _getHeaders(),
         body: utf8.encode(json.encode(body)),
       );
-      
+
       if (response.statusCode == 200) {
         final profile = decodeUtf8JsonResponse(response);
         await _saveProfile(profile);
@@ -205,7 +205,7 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
-  
+
   // Activity Logging
   Future<Map<String, dynamic>> logActivity({
     required String userId,
@@ -226,7 +226,7 @@ class ApiService {
           'activity_date': DateTime.now().toIso8601String().split('T').first,
         })),
       );
-      
+
       if (response.statusCode == 201) {
         final result = decodeUtf8JsonResponse(response);
         final profile = result['user'];
@@ -250,7 +250,7 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
-  
+
   Future<Map<String, dynamic>> getUserRank() async {
     await _loadToken();
     try {
@@ -258,7 +258,7 @@ class ApiService {
         _endpoint('/users/rank'),
         headers: _getHeaders(),
       ).timeout(const Duration(seconds: 15));
-      
+
       if (response.statusCode == 200) {
         return decodeUtf8JsonResponse(response);
       } else {
@@ -268,7 +268,7 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
-  
+
   // Leaderboard
   Future<List<dynamic>> getGlobalLeaderboard({int limit = 100}) async {
     try {
@@ -279,7 +279,7 @@ class ApiService {
         ),
         headers: _getHeaders(),
       );
-      
+
       if (response.statusCode == 200) {
         return decodeUtf8JsonResponse(response);
       } else {
@@ -289,7 +289,7 @@ class ApiService {
       throw Exception('Error: $e');
     }
   }
-  
+
   Future<List<dynamic>> getCountryLeaderboard({
     required String country,
     int limit = 100,
@@ -302,7 +302,7 @@ class ApiService {
         ),
         headers: _getHeaders(),
       );
-      
+
       if (response.statusCode == 200) {
         return decodeUtf8JsonResponse(response);
       } else {

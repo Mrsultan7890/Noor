@@ -6,6 +6,7 @@ import '../../services/names_service.dart';
 import '../../utils/activity_feedback.dart';
 import '../../widgets/arabic_text.dart';
 import 'game_widgets.dart';
+import '../../utils/user_friendly_error.dart';
 
 class NamesPuzzleLevels extends StatefulWidget {
   const NamesPuzzleLevels({super.key});
@@ -44,10 +45,11 @@ class _NamesPuzzleLevelsState extends State<NamesPuzzleLevels> {
         _unlockedLevel = prefs.getInt('names_puzzle_unlocked_level') ?? 1;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Could not load the Names Puzzle: $e\n$stackTrace');
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Could not load the Names Puzzle: $e';
+        _errorMessage = UserFriendlyError.content(e);
         _isLoading = false;
       });
     }
