@@ -2,12 +2,14 @@ package com.noor.app
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
+import android.hardware.GeomagneticField
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
     private val iconChannel = "com.noor.app/launcher_icon"
+    private val geomagneticChannel = "com.noor.app/geomagnetic"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -16,6 +18,40 @@ class MainActivity: FlutterActivity() {
                 if (call.method != "setThemeIcon") {
                     result.notImplemented()
                     return@setMethodCallHandler
+                }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, geomagneticChannel)
+                .setMethodCallHandler { call, result ->
+                    if (call.method != "getDeclination") {
+                        result.notImplemented()
+                        return@setMethodCallHandler
+                    }
+
+                    val latitude = call.argument<Double>("latitude")
+                    val longitude = call.argument<Double>("longitude")
+                    val altitude = call.argument<Double>("altitude")
+                    if (latitude == null || longitude == null || altitude == null ||
+                        latitude !in -90.0..90.0 || longitude !in -180.0..180.0
+                    ) {
+                        result.error(
+                            "invalid_coordinates",
+                            "Valid coordinates and altitude are required.",
+                            null,
+                        )
+                        return@setMethodCallHandler
+                    }
+
+                    try {
+                        val field = GeomagneticField(
+                            latitude.toFloat(),
+                            longitude.toFloat(),
+                            altitude.toFloat(),
+                            System.currentTimeMillis(),
+                        )
+                        result.success(field.declination.toDouble())
+                    } catch (error: Exception) {
+                        result.error("declination_failed", error.message, null)
+                    }
                 }
 
                 val selectedTheme = call.argument<String>("theme")

@@ -4,8 +4,9 @@ import '../../models/quran_model.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/app_language_provider.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/arabic_course_localizations.dart';
 import '../quran/enhanced_quran_reader_screen.dart';
-import 'arabic_alphabet_screen.dart';
+import 'arabic_course_road_screen.dart';
 
 class LearningHubScreen extends StatelessWidget {
   const LearningHubScreen({super.key});
@@ -145,45 +146,18 @@ class LearningHubScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _LearningCard(
-            title: 'Arabic Alphabet',
-            subtitle: 'Learn 28 letters with pronunciation',
-            icon: Icons.abc,
-            color: Colors.purple,
+            title: arabicCourseText(context, 'Arabic Course'),
+            subtitle: arabicCourseText(
+              context,
+              'Guided lessons, audio & quizzes',
+            ),
+            icon: Icons.route_rounded,
+            color: palette.accent,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ArabicAlphabetScreen(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-          _LearningCard(
-            title: 'Harakat (Zabar, Zer, Pesh)',
-            subtitle: 'Master Arabic vowel marks',
-            icon: Icons.format_size,
-            color: Colors.teal,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ArabicAlphabetScreen(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-          _LearningCard(
-            title: 'Interactive Quiz',
-            subtitle: 'Test your Arabic knowledge',
-            icon: Icons.quiz,
-            color: Colors.red,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ArabicAlphabetScreen(),
+                  builder: (context) => const ArabicCourseRoadScreen(),
                 ),
               );
             },

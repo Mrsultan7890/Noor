@@ -17,4 +17,23 @@ void main() {
     expect(calculateRelativeQiblaBearing(120, 45), closeTo(75, 0.001));
     expect(calculateRelativeQiblaBearing(1, 359), closeTo(2, 0.001));
   });
+
+  test('compass heading smoothing follows the shortest path across north', () {
+    expect(smoothCompassHeading(359, 1), closeTo(0.3, 0.001));
+    expect(smoothCompassHeading(1, 359), closeTo(359.7, 0.001));
+  });
+
+  test('compass heading smoothing quickly follows sensor updates', () {
+    expect(smoothCompassHeading(0, 100), closeTo(65, 0.001));
+  });
+
+  test('compass heading normalization handles values outside one rotation', () {
+    expect(normalizeCompassHeading(361), closeTo(1, 0.001));
+    expect(normalizeCompassHeading(-1), closeTo(359, 0.001));
+  });
+
+  test('magnetic Qibla bearing accounts for east and west declination', () {
+    expect(calculateMagneticQiblaBearing(120, 10), closeTo(110, 0.001));
+    expect(calculateMagneticQiblaBearing(120, -10), closeTo(130, 0.001));
+  });
 }

@@ -54,7 +54,7 @@ flutter run
 Production ke liye:
 
 ```dart
-static const String baseUrl = 'https://noor-api-cse6.onrender.com'; // Production
+static const String baseUrl = 'https://noor.bot-keep.xyz'; // Production
 ```
 
 ## Troubleshooting

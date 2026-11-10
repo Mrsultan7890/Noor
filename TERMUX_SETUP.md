@@ -61,7 +61,7 @@ host="127.0.0.1"  # Localhost only
 ```dart
 static const String baseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://noor-api-cse6.onrender.com',
+  defaultValue: 'https://noor.bot-keep.xyz',
 );
 ```
 
@@ -95,16 +95,15 @@ flutter doctor
 
 Production ke liye:
 
-**Backend**: Render pe deploy karo
+**Backend**: `https://noor.bot-keep.xyz`
 **Frontend**: Set an HTTPS API endpoint using `--dart-define=API_BASE_URL=...`
 
 ```dart
-flutter run --dart-define=API_BASE_URL=https://noor-api-cse6.onrender.com
+flutter run --dart-define=API_BASE_URL=https://noor.bot-keep.xyz
 ```
 
 ## Notes
 
 - ✅ Backend can be tested locally from the phone browser
 - ✅ App login testing uses HTTPS to protect account traffic
-- - ✅ Account and activity data are persisted in Turso.
-- ✅ Production ke liye Turso + Render use karo
+- ✅ Account and activity data are persisted in Turso.

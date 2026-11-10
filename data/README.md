@@ -66,3 +66,12 @@ top-level format as `{ "version": 1, "items": [...] }`.
 Hadith content already comes from a hadith API, while prayer times, schedules,
 accounts, and progress are user-specific or calculated; those should not be
 moved to a public GitHub JSON file.
+
+## Quran text
+
+The app bundles the Tanzil Project Uthmani 1.1 Arabic Quran text in
+`assets/data/quran-uthmani.json` for the Mushaf reader's offline pages. Surah
+readers continue to load Arabic text, translations, and transliteration online.
+The ayah text is included verbatim; do not edit it. Tanzil requires attribution
+and a link to <https://tanzil.net/>. The text is licensed under CC BY 3.0; see
+<https://tanzil.net/docs/Text_License>.

@@ -33,7 +33,7 @@ void main() {
       expect(data.colorScheme.primary, AppTheme.palettes[theme]!.accent);
       expect(
         data.bottomNavigationBarTheme.selectedItemColor,
-        AppTheme.palettes[theme]!.accent,
+        data.colorScheme.primary,
       );
       expect(
         data.elevatedButtonTheme.style?.foregroundColor?.resolve({}),
@@ -41,7 +41,14 @@ void main() {
       );
       expect(data.dialogTheme.backgroundColor, data.colorScheme.surface);
       final cardShape = data.cardTheme.shape! as RoundedRectangleBorder;
-      expect(cardShape.side.color, data.colorScheme.primary.withOpacity(0.42));
+      expect(cardShape.side.color, data.colorScheme.primary.withOpacity(0.34));
+      expect(data.cardTheme.elevation, 1);
+      expect(
+        data.filledButtonTheme.style?.backgroundColor?.resolve({}),
+        data.colorScheme.primary,
+      );
+      expect(data.progressIndicatorTheme.color, data.colorScheme.primary);
+      expect(data.colorScheme.surfaceTint, Colors.transparent);
       expect(
         data.inputDecorationTheme.focusedBorder,
         isA<OutlineInputBorder>(),
@@ -60,15 +67,19 @@ void main() {
       AppTheme.palettes[NoorTheme.emeraldArch]!.gradientEnd,
     );
     expect(lightData.colorScheme.onPrimary, Colors.white);
-    final lightCardShape =
-        lightData.cardTheme.shape! as RoundedRectangleBorder;
+    expect(
+      lightData.bottomNavigationBarTheme.selectedItemColor,
+      lightData.colorScheme.primary,
+    );
+    final lightCardShape = lightData.cardTheme.shape! as RoundedRectangleBorder;
     expect(
       lightCardShape.side.color,
-      lightData.colorScheme.primary.withOpacity(0.32),
+      lightData.colorScheme.primary.withOpacity(0.2),
     );
   });
 
-  test('selecting the already-selected palette activates its dark gradient', () async {
+  test('selecting the already-selected palette activates its dark gradient',
+      () async {
     SharedPreferences.setMockInitialValues({
       'colorTheme': 'emerald',
       'isDarkMode': false,

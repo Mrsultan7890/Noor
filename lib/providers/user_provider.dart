@@ -224,6 +224,41 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> syncArabicCourseProgress(
+    Map<String, dynamic> progress,
+  ) async {
+    if (_currentUser == null) {
+      throw StateError('Sign in before syncing Arabic course progress.');
+    }
+
+    try {
+      final result = await _apiService.syncArabicCourseProgress(
+        progress: progress,
+      );
+      final profile = result['user'];
+      if (profile is Map<String, dynamic>) {
+        _currentUser = User.fromJson(profile);
+      }
+      _error = null;
+      notifyListeners();
+      return result;
+    } on AuthSessionExpiredException {
+      await _apiService.clearToken();
+      _currentUser = null;
+      _error = 'Your session expired. Please sign in again.';
+      notifyListeners();
+      rethrow;
+    } catch (error, stackTrace) {
+      debugPrint('Could not sync Arabic course progress: $error\n$stackTrace');
+      _error = UserFriendlyError.account(
+        error,
+        action: 'sync Arabic course progress',
+      );
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     await _apiService.clearToken();
     _currentUser = null;

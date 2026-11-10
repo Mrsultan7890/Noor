@@ -10,7 +10,7 @@ class AuthSessionExpiredException implements Exception {
 class ApiService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://noor-api-cse6.onrender.com',
+    defaultValue: 'https://noor.bot-keep.xyz',
   );
 
   static Uri _endpoint(
@@ -146,10 +146,12 @@ class ApiService {
   Future<Map<String, dynamic>> getProfile() async {
     await _loadToken();
     try {
-      final response = await http.get(
-        _endpoint('/users/me'),
-        headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .get(
+            _endpoint('/users/me'),
+            headers: _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final profile = decodeUtf8JsonResponse(response);
@@ -251,13 +253,76 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getArabicCourseProgress() async {
+    await _loadToken();
+    try {
+      final response = await http
+          .get(
+            _endpoint('/users/arabic-course-progress'),
+            headers: _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final result = decodeUtf8JsonResponse(response);
+        final profile = result['user'];
+        if (profile is Map<String, dynamic>) await _saveProfile(profile);
+        return result;
+      }
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw const AuthSessionExpiredException();
+      }
+      throw Exception(
+        'Failed to load Arabic course progress (HTTP ${response.statusCode}).',
+      );
+    } on AuthSessionExpiredException {
+      rethrow;
+    } catch (error) {
+      throw Exception('Error loading Arabic course progress: $error');
+    }
+  }
+
+  Future<Map<String, dynamic>> syncArabicCourseProgress({
+    required Map<String, dynamic> progress,
+  }) async {
+    await _loadToken();
+    try {
+      final response = await http
+          .put(
+            _endpoint('/users/arabic-course-progress'),
+            headers: _getHeaders(),
+            body: utf8.encode(json.encode(progress)),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final result = decodeUtf8JsonResponse(response);
+        final profile = result['user'];
+        if (profile is Map<String, dynamic>) await _saveProfile(profile);
+        return result;
+      }
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw const AuthSessionExpiredException();
+      }
+      throw Exception(
+        'Failed to sync Arabic course progress (HTTP ${response.statusCode}).',
+      );
+    } on AuthSessionExpiredException {
+      rethrow;
+    } catch (error) {
+      throw Exception('Error syncing Arabic course progress: $error');
+    }
+  }
+
   Future<Map<String, dynamic>> getUserRank() async {
     await _loadToken();
     try {
-      final response = await http.get(
-        _endpoint('/users/rank'),
-        headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .get(
+            _endpoint('/users/rank'),
+            headers: _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         return decodeUtf8JsonResponse(response);

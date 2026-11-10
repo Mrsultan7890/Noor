@@ -9,6 +9,7 @@ import '../../services/notification_service.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/quran_text_attribution.dart';
 import '../../utils/user_friendly_error.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -313,6 +314,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ),
                 ),
+                const Align(
+                  alignment: Alignment.center,
+                  child: QuranTextAttribution(),
+                ),
               ],
             ),
     );
@@ -346,6 +351,15 @@ class _ThemeChoice extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(top: 8),
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: selected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.outlineVariant,
+          width: selected ? 2 : 1,
+        ),
+      ),
       child: InkWell(
         onTap: onSelected,
         child: Padding(
@@ -371,7 +385,27 @@ class _ThemeChoice extends StatelessWidget {
                       palette.name,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    Text(palette.description),
+                    Text(
+                      palette.description,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 6,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            palette.accent,
+                            palette.secondaryAccent,
+                            palette.gradientEnd,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -95,7 +95,7 @@ flutter build ios --release
 ### API Used
 - **Quran API**: https://api.alquran.cloud/v1
 - Free, unlimited, no API key required
-- **Account backend**: `API_BASE_URL` (defaults to `https://noor-api-cse6.onrender.com`)
+- **Account backend**: `API_BASE_URL` (defaults to `https://noor.bot-keep.xyz`)
 - The account backend URL must use HTTPS; local setup guidance is in [TERMUX_SETUP.md](./TERMUX_SETUP.md).
 
 ### GitHub-hosted Content Updates
@@ -105,6 +105,11 @@ New duas and stories can be published without an app release by editing
 on GitHub. The app fetches these public JSON files when their screens open,
 caches content for offline use, and keeps bundled content as a fallback. See
 [`data/README.md`](./data/README.md) for formats and source-review guidance.
+
+Arabic course JSON and audio are served from jsDelivr at a pinned content
+revision, with GitHub Raw as a fallback. Lesson audio is cached on-device after
+the first play for faster repeat playback and offline use. Signed-in accounts
+sync Arabic lesson completion, points, and daily hearts through Noor's backend.
 
 ### Notifications
 - Requires permission on Android/iOS

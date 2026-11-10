@@ -80,28 +80,35 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
     final accent = palette.accent;
     final primary = isDark ? palette.accent : palette.gradientEnd;
-    final borderColor = primary.withOpacity(isDark ? 0.42 : 0.32);
+    final borderColor = primary.withOpacity(isDark ? 0.34 : 0.2);
     final onPrimary = isDark ? const Color(0xFF17120B) : Colors.white;
     final secondary = isDark ? palette.secondaryAccent : palette.gradientEnd;
-    final surface = isDark ? const Color(0xFF20222A) : const Color(0xFFFFFCF7);
-    final foreground = isDark ? const Color(0xFFF7F1E8) : const Color(0xFF211B1C);
-    final colorScheme = (isDark
-            ? const ColorScheme.dark()
-            : const ColorScheme.light())
-        .copyWith(
+    final surface = isDark
+        ? Color.lerp(const Color(0xFF20222A), palette.gradientEnd, 0.12)!
+        : Color.lerp(const Color(0xFFFFFCF7), palette.gradientEnd, 0.025)!;
+    final foreground =
+        isDark ? const Color(0xFFF7F1E8) : const Color(0xFF211B1C);
+    final colorScheme =
+        (isDark ? const ColorScheme.dark() : const ColorScheme.light())
+            .copyWith(
       primary: primary,
       onPrimary: onPrimary,
       secondary: secondary,
-      onSecondary: const Color(0xFF17120B),
+      onSecondary: isDark ? const Color(0xFF17120B) : Colors.white,
       surface: surface,
+      surfaceTint: Colors.transparent,
       onSurface: foreground,
-      tertiary: palette.secondaryAccent,
+      onSurfaceVariant:
+          isDark ? const Color(0xFFD0C9C0) : const Color(0xFF5F5753),
+      primaryContainer: Color.lerp(surface, primary, isDark ? 0.2 : 0.12)!,
+      onPrimaryContainer: foreground,
+      tertiary: isDark ? palette.secondaryAccent : palette.gradientEnd,
+      onTertiary: isDark ? const Color(0xFF17120B) : Colors.white,
       error: isDark ? const Color(0xFFFF8A80) : const Color(0xFFB3261E),
     );
-    final textTheme = (isDark
-            ? ThemeData.dark().textTheme
-            : ThemeData.light().textTheme)
-        .apply(bodyColor: foreground, displayColor: foreground);
+    final textTheme =
+        (isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme)
+            .apply(bodyColor: foreground, displayColor: foreground);
 
     return ThemeData(
       useMaterial3: true,
@@ -111,19 +118,22 @@ class AppTheme {
       colorScheme: colorScheme,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: isDark ? Colors.transparent : surface.withOpacity(0.92),
+        backgroundColor:
+            isDark ? Colors.transparent : surface.withOpacity(0.92),
         foregroundColor: foreground,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surface,
-        selectedItemColor: accent,
+        selectedItemColor: primary,
         unselectedItemColor: foreground.withOpacity(0.65),
       ),
       cardTheme: CardTheme(
         color: isDark ? surface.withOpacity(0.94) : surface,
-        elevation: 2,
+        surfaceTintColor: Colors.transparent,
+        elevation: 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
@@ -162,9 +172,8 @@ class AppTheme {
         ),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: isDark
-            ? const Color(0xFF303238)
-            : const Color(0xFF263238),
+        backgroundColor:
+            isDark ? const Color(0xFF303238) : const Color(0xFF263238),
         contentTextStyle: const TextStyle(color: Colors.white),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -207,15 +216,52 @@ class AppTheme {
           ),
         ),
       ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: onPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primary,
+          side: BorderSide(color: primary.withOpacity(0.48)),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: surface.withOpacity(isDark ? 0.84 : 0.72),
+        selectedColor: primary.withOpacity(isDark ? 0.24 : 0.12),
+        disabledColor: surface.withOpacity(0.45),
+        secondarySelectedColor: primary.withOpacity(0.18),
+        labelStyle: TextStyle(color: foreground),
+        secondaryLabelStyle: TextStyle(color: foreground),
+        side: BorderSide(color: borderColor),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: primary,
+        linearTrackColor: primary.withOpacity(0.16),
+        circularTrackColor: primary.withOpacity(0.16),
+      ),
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith(
-          (states) => states.contains(MaterialState.selected) ? accent : null,
+          (states) => states.contains(MaterialState.selected) ? primary : null,
         ),
       ),
       sliderTheme: SliderThemeData(
-        activeTrackColor: accent,
-        thumbColor: accent,
-        inactiveTrackColor: accent.withOpacity(0.25),
+        activeTrackColor: primary,
+        thumbColor: primary,
+        inactiveTrackColor: primary.withOpacity(0.25),
       ),
       dividerTheme: DividerThemeData(
         color: accent.withOpacity(0.22),

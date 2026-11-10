@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../services/utf8_json.dart';
+import '../../services/quran_service.dart';
 import '../../widgets/arabic_text.dart';
 
 class MushafQuranScreen extends StatefulWidget {
@@ -13,7 +12,8 @@ class MushafQuranScreen extends StatefulWidget {
 
 class _MushafQuranScreenState extends State<MushafQuranScreen> {
   int _currentPage = 1;
-  final Map<int, List<String>> _cachedPages = {};
+  final Map<int, List<QuranPageAyah>> _cachedPages = {};
+  final _quranService = QuranService();
   late PageController _pageController;
 
   @override
@@ -39,24 +39,14 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
     await prefs.setInt('mushaf_last_page', page);
   }
 
-  Future<List<String>> _loadPage(int page) async {
+  Future<List<QuranPageAyah>> _loadPage(int page) async {
     if (_cachedPages.containsKey(page)) {
       return _cachedPages[page]!;
     }
 
-    final response = await http.get(
-      Uri.parse('https://api.alquran.cloud/v1/page/$page/quran-uthmani'),
-    );
-    if (response.statusCode != 200) {
-      throw Exception(
-        'Failed to load Mushaf page $page (HTTP ${response.statusCode}).',
-      );
-    }
-    final data = decodeUtf8JsonResponse(response);
-    final ayahs = data['data']['ayahs'] as List;
-    final lines = ayahs.map((a) => a['text'].toString()).toList();
-    _cachedPages[page] = lines;
-    return lines;
+    final ayahs = await _quranService.getPageAyahs(page);
+    _cachedPages[page] = ayahs;
+    return ayahs;
   }
 
   @override
@@ -64,7 +54,7 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mushaf - Page $_currentPage/604'),
+        title: Text('Uthmani Quran - Page $_currentPage/604'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -73,87 +63,127 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
         ],
       ),
       body: PageView.builder(
-          controller: _pageController,
-          onPageChanged: (index) {
-            final page = index + 1;
-            setState(() => _currentPage = page);
-            _saveLastRead(page);
-          },
-          itemCount: 604,
-          itemBuilder: (context, index) {
-            final page = index + 1;
-            return FutureBuilder<List<String>>(
-              future: _loadPage(page),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Unable to load this Mushaf page: ${snapshot.error}',
-                      style: TextStyle(color: colorScheme.onSurface),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final lines = snapshot.data!;
-                return Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 30,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: ListView.builder(
-                            itemCount: lines.length,
-                            itemBuilder: (context, i) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: ArabicText(
-                                  lines[i],
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    height: 2.5,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Text(
-                        'Page $page',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+        controller: _pageController,
+        onPageChanged: (index) {
+          final page = index + 1;
+          setState(() => _currentPage = page);
+          _saveLastRead(page);
+        },
+        itemCount: 604,
+        itemBuilder: (context, index) {
+          final page = index + 1;
+          return FutureBuilder<List<QuranPageAyah>>(
+            future: _loadPage(page),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Unable to load this Mushaf page: ${snapshot.error}',
+                    style: TextStyle(color: colorScheme.onSurface),
+                    textAlign: TextAlign.center,
                   ),
                 );
-              },
-            );
-          },
+              }
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final ayahs = snapshot.data!;
+              return Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 30,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: ListView.builder(
+                          itemCount: ayahs.length,
+                          itemBuilder: (context, i) {
+                            final ayah = ayahs[i];
+                            final startsSurah = ayah.verseNumber == 1;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                children: [
+                                  if (startsSurah) ...[
+                                    ArabicText(
+                                      ayah.surahName,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorScheme.secondary,
+                                      ),
+                                    ),
+                                    if (ayah.surahNumber != 1 &&
+                                        ayah.surahNumber != 9 &&
+                                        ayah.bismillah != null) ...[
+                                      const SizedBox(height: 8),
+                                      ArabicText(
+                                        ayah.bismillah!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          height: 2,
+                                          color: colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 8),
+                                  ],
+                                  ArabicText(
+                                    ayah.text,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      height: 2.5,
+                                      color: colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '﴿${ayah.verseNumber}﴾',
+                                    style: TextStyle(
+                                      color: colorScheme.secondary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      'Page $page',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: BottomAppBar(
         color: colorScheme.surface,
@@ -224,7 +254,9 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               final page = int.tryParse(controller.text);

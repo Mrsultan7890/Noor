@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/arabic_text.dart';
 import '../../utils/user_friendly_error.dart';
+
+const _geomagneticChannel = MethodChannel('com.noor.app/geomagnetic');
 
 class QiblaScreen extends StatefulWidget {
   const QiblaScreen({super.key});
@@ -21,14 +24,30 @@ class _QiblaScreenState extends State<QiblaScreen> {
   bool _compassAvailable = true;
   String? _error;
   String? _compassError;
+  String? _bearingWarning;
   String? _locationName;
   double? _heading;
+  double? _compassAccuracy;
+  DateTime? _lastCompassUpdate;
+  bool _compassStale = true;
   StreamSubscription<CompassEvent>? _compassSubscription;
+  Timer? _compassFreshnessTimer;
 
   @override
   void initState() {
     super.initState();
     _listenToCompass();
+    _compassFreshnessTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        final stale = _lastCompassUpdate == null ||
+            DateTime.now().difference(_lastCompassUpdate!) >
+                const Duration(seconds: 3);
+        if (stale != _compassStale && mounted) {
+          setState(() => _compassStale = stale);
+        }
+      },
+    );
     _calculateQibla();
   }
 
@@ -43,10 +62,22 @@ class _QiblaScreenState extends State<QiblaScreen> {
     _compassSubscription = events.listen(
       (event) {
         if (!mounted) return;
+        final heading = event.heading;
         setState(() {
-          _heading = event.heading;
-          _compassAvailable = event.heading != null;
-          _compassError = event.heading == null
+          if (heading != null && heading.isFinite) {
+            _heading = _heading == null
+                ? normalizeCompassHeading(heading)
+                : smoothCompassHeading(
+                    _heading!,
+                    heading,
+                    smoothingFactor: 0.65,
+                  );
+            _lastCompassUpdate = DateTime.now();
+            _compassStale = false;
+          }
+          _compassAccuracy = event.accuracy;
+          _compassAvailable = heading != null && heading.isFinite;
+          _compassError = !_compassAvailable
               ? 'Compass heading is unavailable on this device.'
               : null;
         });
@@ -80,13 +111,44 @@ class _QiblaScreenState extends State<QiblaScreen> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      final qibla = calculateQiblaBearing(
+      final trueBearing = calculateQiblaBearing(
         position.latitude,
         position.longitude,
       );
+      var declination = 0.0;
+      String? bearingWarning;
+      try {
+        declination = await _geomagneticChannel.invokeMethod<double>(
+              'getDeclination',
+              {
+                'latitude': position.latitude,
+                'longitude': position.longitude,
+                'altitude': position.altitude,
+              },
+            ) ??
+            (throw StateError('Magnetic declination was unavailable.'));
+        if (!declination.isFinite) {
+          throw StateError('Magnetic declination was invalid.');
+        }
+      } on PlatformException catch (error) {
+        debugPrint('Could not calculate magnetic declination: $error');
+        bearingWarning =
+            'Magnetic north correction is unavailable; the compass direction may be slightly off.';
+      } on MissingPluginException catch (error) {
+        debugPrint(
+            'Magnetic declination is not supported on this platform: $error');
+        bearingWarning =
+            'Magnetic north correction is unavailable; the compass direction may be slightly off.';
+      } on StateError catch (error) {
+        debugPrint('Could not calculate magnetic declination: $error');
+        bearingWarning =
+            'Magnetic north correction is unavailable; the compass direction may be slightly off.';
+      }
+      final qibla = calculateMagneticQiblaBearing(trueBearing, declination);
 
       setState(() {
         _qiblaDirection = qibla;
+        _bearingWarning = bearingWarning;
         _locationName = '${position.latitude.toStringAsFixed(2)}°, '
             '${position.longitude.toStringAsFixed(2)}°';
         _isLoading = false;
@@ -135,16 +197,16 @@ class _QiblaScreenState extends State<QiblaScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.location_off,
-                              size: 80, color: Colors.red),
+                          Icon(
+                            Icons.location_off,
+                            size: 80,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                           const SizedBox(height: 24),
                           Text(
                             _error!,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF1E293B),
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 24),
                           ElevatedButton.icon(
@@ -163,138 +225,145 @@ class _QiblaScreenState extends State<QiblaScreen> {
                 : SingleChildScrollView(
                     child: Column(
                       children: [
-                        const SizedBox(height: 40),
-                        // Compass
-                        Container(
-                          width: 280,
-                          height: 280,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 20,
-                                spreadRadius: 5,
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Transform.rotate(
-                                angle: -(_heading ?? 0) * pi / 180,
-                                child: SizedBox(
-                                  width: 260,
-                                  height: 260,
+                        const SizedBox(height: 20),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final dialSize = min(
+                              320.0,
+                              max(1.0, constraints.maxWidth - 32),
+                            );
+                            final relativeBearing =
+                                _qiblaDirection == null || _heading == null
+                                    ? 0.0
+                                    : calculateRelativeQiblaBearing(
+                                        _qiblaDirection!,
+                                        _heading!,
+                                      );
+                            final aligned = !_compassStale &&
+                                _compassAvailable &&
+                                _heading != null &&
+                                _qiblaDirection != null &&
+                                (relativeBearing < 5 || relativeBearing > 355);
+                            return Column(
+                              children: [
+                                _CompassStatus(
+                                  isLive: !_compassStale &&
+                                      _compassAvailable &&
+                                      _heading != null,
+                                  isAligned: aligned,
+                                  heading: _heading,
+                                ),
+                                const SizedBox(height: 18),
+                                Container(
+                                  width: dialSize,
+                                  height: dialSize,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .shadow
+                                            .withOpacity(0.16),
+                                        blurRadius: 28,
+                                        offset: const Offset(0, 12),
+                                      ),
+                                    ],
+                                  ),
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
+                                      Transform.rotate(
+                                        angle: -(_heading ?? 0) * pi / 180,
+                                        child: CustomPaint(
+                                          size: Size.square(dialSize - 20),
+                                          painter: _CompassDialPainter(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                            accent: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        ),
+                                      ),
+                                      Transform.rotate(
+                                        angle: relativeBearing * pi / 180,
+                                        child: Icon(
+                                          Icons.navigation_rounded,
+                                          size: dialSize * 0.39,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
                                       Container(
+                                        width: 16,
+                                        height: 16,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
                                           border: Border.all(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .primary,
-                                            width: 4,
-                                          ),
-                                        ),
-                                      ),
-                                      const Positioned(
-                                        top: 10,
-                                        child: Text(
-                                          'N',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF1E293B),
-                                          ),
-                                        ),
-                                      ),
-                                      const Positioned(
-                                        bottom: 10,
-                                        child: Text(
-                                          'S',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF1E293B),
-                                          ),
-                                        ),
-                                      ),
-                                      const Positioned(
-                                        left: 10,
-                                        child: Text(
-                                          'W',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF1E293B),
-                                          ),
-                                        ),
-                                      ),
-                                      const Positioned(
-                                        right: 10,
-                                        child: Text(
-                                          'E',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF1E293B),
+                                                .surface,
+                                            width: 3,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                              Transform.rotate(
-                                angle: calculateRelativeQiblaBearing(
-                                      _qiblaDirection ?? 0,
-                                      _heading ?? 0,
-                                    ) *
-                                    pi /
-                                    180,
-                                child: Icon(
-                                  Icons.navigation,
-                                  size: 120,
-                                  color: Theme.of(context).colorScheme.primary,
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Qibla ${_qiblaDirection?.toStringAsFixed(1) ?? '--'}°'
+                                  '  ·  ${_getDirectionText(_qiblaDirection)}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                              Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 24),
                         // Info cards
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
-                              if (!_compassAvailable || _heading == null)
-                                Container(
-                                  width: double.infinity,
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  padding: const EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.amber.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    _compassError ??
-                                        'Waiting for the device compass sensor…',
-                                    style: const TextStyle(
-                                      color: Color(0xFF1E293B),
-                                    ),
-                                  ),
+                              if (_compassAccuracy != null &&
+                                  _compassAccuracy! > 15)
+                                const _CompassNotice(
+                                  message:
+                                      'Compass may be inaccurate. Move away from metal or electronics, then slowly move your phone in a figure-eight to calibrate it.',
+                                  isWarning: true,
+                                ),
+                              if (!_compassAvailable ||
+                                  _heading == null ||
+                                  _compassStale)
+                                _CompassNotice(
+                                  message: _compassError ??
+                                      (_heading == null
+                                          ? 'Waiting for the device compass sensor…'
+                                          : 'No live compass updates. Check that the device has a compass sensor.'),
+                                  isWarning: true,
+                                ),
+                              if (_bearingWarning != null)
+                                _CompassNotice(
+                                  message: _bearingWarning!,
+                                  isWarning: true,
                                 ),
                               _buildInfoCard(
                                 icon: Icons.explore,
@@ -316,7 +385,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                                 title: 'Device heading',
                                 value: _heading == null
                                     ? 'Unavailable'
-                                    : '${_heading!.toStringAsFixed(1)}°',
+                                    : '${normalizeCompassHeading(_heading!).toStringAsFixed(1)}°',
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(height: 16),
@@ -334,25 +403,27 @@ class _QiblaScreenState extends State<QiblaScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 24),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(12),
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
                               ),
                               const SizedBox(width: 12),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
                                   'Face the arrow shown to pray towards the Kaaba',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Color(0xFF1E293B),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
                                   ),
                                 ),
                               ),
@@ -376,15 +447,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -403,19 +468,16 @@ class _QiblaScreenState extends State<QiblaScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1E293B),
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -427,9 +489,160 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
   @override
   void dispose() {
+    _compassFreshnessTimer?.cancel();
     unawaited(_compassSubscription?.cancel());
     super.dispose();
   }
+}
+
+class _CompassStatus extends StatelessWidget {
+  const _CompassStatus({
+    required this.isLive,
+    required this.isAligned,
+    required this.heading,
+  });
+
+  final bool isLive;
+  final bool isAligned;
+  final double? heading;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = isAligned
+        ? theme.colorScheme.tertiary
+        : isLive
+            ? theme.colorScheme.primary
+            : theme.colorScheme.error;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: color.withOpacity(0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isAligned
+                ? Icons.check_circle_rounded
+                : isLive
+                    ? Icons.explore_rounded
+                    : Icons.sensors_off_rounded,
+            size: 18,
+            color: color,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            isAligned
+                ? 'Facing Qibla'
+                : isLive
+                    ? 'Live compass · ${normalizeCompassHeading(heading!).toStringAsFixed(0)}°'
+                    : 'Compass not updating',
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompassNotice extends StatelessWidget {
+  const _CompassNotice({
+    required this.message,
+    required this.isWarning,
+  });
+
+  final String message;
+  final bool isWarning;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final color = isWarning ? scheme.tertiary : scheme.primary;
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withOpacity(0.25)),
+      ),
+      child: Text(
+        message,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      ),
+    );
+  }
+}
+
+class _CompassDialPainter extends CustomPainter {
+  const _CompassDialPainter({required this.color, required this.accent});
+
+  final Color color;
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.shortestSide / 2;
+    final tickPaint = Paint()
+      ..color = color.withOpacity(0.35)
+      ..strokeWidth = 1.4
+      ..strokeCap = StrokeCap.round;
+    for (var index = 0; index < 60; index++) {
+      final angle = index * 2 * pi / 60;
+      final major = index % 5 == 0;
+      final innerRadius = radius - (major ? 16 : 9);
+      canvas.drawLine(
+        Offset(
+          center.dx + radius * sin(angle),
+          center.dy - radius * cos(angle),
+        ),
+        Offset(
+          center.dx + innerRadius * sin(angle),
+          center.dy - innerRadius * cos(angle),
+        ),
+        tickPaint..strokeWidth = major ? 2 : 1,
+      );
+    }
+
+    final labelStyle = TextStyle(
+      color: color,
+      fontSize: radius * 0.12,
+      fontWeight: FontWeight.w700,
+    );
+    for (final entry in const [
+      ('N', 0.0),
+      ('E', pi / 2),
+      ('S', pi),
+      ('W', 3 * pi / 2),
+    ]) {
+      final text = TextPainter(
+        text: TextSpan(
+          text: entry.$1,
+          style: labelStyle.copyWith(
+            color: entry.$1 == 'N' ? accent : color,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final point = Offset(
+        center.dx + (radius - 32) * sin(entry.$2),
+        center.dy - (radius - 32) * cos(entry.$2),
+      );
+      text.paint(canvas, point - Offset(text.width / 2, text.height / 2));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CompassDialPainter oldDelegate) =>
+      color != oldDelegate.color || accent != oldDelegate.accent;
 }
 
 double calculateQiblaBearing(double latitude, double longitude) {
@@ -449,4 +662,30 @@ double calculateQiblaBearing(double latitude, double longitude) {
 
 double calculateRelativeQiblaBearing(double qiblaBearing, double heading) {
   return (qiblaBearing - heading + 360) % 360;
+}
+
+double calculateMagneticQiblaBearing(
+  double trueBearing,
+  double magneticDeclination,
+) =>
+    normalizeCompassHeading(trueBearing - magneticDeclination);
+
+double normalizeCompassHeading(double heading) => (heading % 360 + 360) % 360;
+
+double smoothCompassHeading(
+  double currentHeading,
+  double nextHeading, {
+  double smoothingFactor = 0.65,
+}) {
+  final normalizedCurrent = normalizeCompassHeading(currentHeading);
+  final normalizedNext = normalizeCompassHeading(nextHeading);
+  var difference = normalizedNext - normalizedCurrent;
+  if (difference > 180) {
+    difference -= 360;
+  } else if (difference < -180) {
+    difference += 360;
+  }
+  return normalizeCompassHeading(
+    currentHeading + difference * smoothingFactor,
+  );
 }

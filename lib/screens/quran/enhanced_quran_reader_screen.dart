@@ -9,23 +9,24 @@ import '../../widgets/arabic_text.dart';
 
 class EnhancedQuranReaderScreen extends StatefulWidget {
   final Surah surah;
-  
+
   const EnhancedQuranReaderScreen({super.key, required this.surah});
 
   @override
-  State<EnhancedQuranReaderScreen> createState() => _EnhancedQuranReaderScreenState();
+  State<EnhancedQuranReaderScreen> createState() =>
+      _EnhancedQuranReaderScreenState();
 }
 
 class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
   final EnhancedQuranService _service = EnhancedQuranService();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  
+
   List<String> _transliterations = [];
   bool _showTransliteration = true;
   bool _isSlowMode = false;
   int? _playingVerse;
   int? _highlightedVerse;
-  
+
   @override
   void initState() {
     super.initState();
@@ -36,31 +37,32 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
       }
     });
   }
-  
+
   Future<void> _loadData() async {
     await Provider.of<QuranProvider>(context, listen: false)
         .loadVerses(widget.surah.number);
-    
-    final transliterations = await _service.getTransliteration(widget.surah.number);
+
+    final transliterations =
+        await _service.getTransliteration(widget.surah.number);
     setState(() {
       _transliterations = transliterations;
     });
   }
-  
+
   Future<void> _playVerse(int verseNumber) async {
-    final audioUrl = _isSlowMode 
+    final audioUrl = _isSlowMode
         ? _service.getSlowAudioUrl(widget.surah.number, verseNumber)
         : _service.getAudioUrl(widget.surah.number, verseNumber);
-    
+
     await _audioPlayer.stop();
     await _audioPlayer.play(UrlSource(audioUrl));
-    
+
     setState(() {
       _playingVerse = verseNumber;
       _highlightedVerse = verseNumber;
     });
   }
-  
+
   Future<void> _playNextVerse() async {
     final provider = Provider.of<QuranProvider>(context, listen: false);
     if (_playingVerse != null && _playingVerse! < provider.verses.length) {
@@ -72,7 +74,7 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
       });
     }
   }
-  
+
   Future<void> _stopAudio() async {
     await _audioPlayer.stop();
     setState(() {
@@ -80,22 +82,22 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
       _highlightedVerse = null;
     });
   }
-  
+
   void _showWordByWordDialog(int verseNumber) async {
     showDialog(
       context: context,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
-    
+
     final verseData = await _service.getWordByWord(
       widget.surah.number,
       verseNumber,
     );
-    
+
     if (mounted) {
       Navigator.pop(context);
     }
-    
+
     if (verseData != null && mounted) {
       showDialog(
         context: context,
@@ -115,7 +117,9 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(_showTransliteration ? Icons.text_fields : Icons.text_fields_outlined),
+            icon: Icon(_showTransliteration
+                ? Icons.text_fields
+                : Icons.text_fields_outlined),
             onPressed: () {
               setState(() {
                 _showTransliteration = !_showTransliteration;
@@ -145,24 +149,24 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (provider.error != null) {
             return Center(child: Text(provider.error!));
           }
-          
+
           return ListView.builder(
             itemCount: provider.verses.length,
             padding: const EdgeInsets.all(16),
             itemBuilder: (context, index) {
               final verse = provider.verses[index];
               final isHighlighted = _highlightedVerse == verse.number;
-              final transliteration = index < _transliterations.length 
-                  ? _transliterations[index] 
+              final transliteration = index < _transliterations.length
+                  ? _transliterations[index]
                   : '';
-              
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
-                color: isHighlighted 
+                color: isHighlighted
                     ? Theme.of(context).primaryColor.withOpacity(0.1)
                     : null,
                 child: Padding(
@@ -179,7 +183,9 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor.withOpacity(0.1),
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: ArabicText(
@@ -194,8 +200,8 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                           const Spacer(),
                           IconButton(
                             icon: Icon(
-                              _playingVerse == verse.number 
-                                  ? Icons.pause_circle 
+                              _playingVerse == verse.number
+                                  ? Icons.pause_circle
                                   : Icons.play_circle,
                               color: Theme.of(context).primaryColor,
                             ),
@@ -212,13 +218,14 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                               Icons.translate,
                               color: Theme.of(context).primaryColor,
                             ),
-                            onPressed: () => _showWordByWordDialog(verse.number),
+                            onPressed: () =>
+                                _showWordByWordDialog(verse.number),
                             tooltip: 'Word by Word',
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Arabic text
                       ArabicText(
                         verse.text,
@@ -227,9 +234,10 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                           height: 2,
                         ),
                       ),
-                      
+
                       // Transliteration
-                      if (_showTransliteration && transliteration.isNotEmpty) ...[
+                      if (_showTransliteration &&
+                          transliteration.isNotEmpty) ...[
                         const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -249,9 +257,9 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
                           ),
                         ),
                       ],
-                      
+
                       const Divider(height: 32),
-                      
+
                       // Urdu translation
                       Text(
                         verse.translation,
@@ -281,7 +289,7 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
 
 class _WordByWordDialog extends StatelessWidget {
   final VerseWithWords verseData;
-  
+
   const _WordByWordDialog({required this.verseData});
 
   @override
@@ -327,7 +335,7 @@ class _WordByWordDialog extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Words list
             Flexible(
               child: ListView.builder(
@@ -353,7 +361,7 @@ class _WordByWordDialog extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          
+
                           // Transliteration
                           Text(
                             word.transliteration,
@@ -365,12 +373,14 @@ class _WordByWordDialog extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          
+
                           // Translation
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor.withOpacity(0.1),
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
