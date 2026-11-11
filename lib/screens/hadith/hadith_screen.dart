@@ -4,6 +4,7 @@ import '../../services/hadith_service.dart';
 import '../../models/hadith_model.dart';
 import '../../widgets/arabic_text.dart';
 import '../../utils/user_friendly_error.dart';
+import '../../widgets/service_loading_view.dart';
 
 class HadithScreen extends StatefulWidget {
   const HadithScreen({super.key});
@@ -121,7 +122,10 @@ class _HadithScreenState extends State<HadithScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Hadith',
+              icon: Icons.menu_book_outlined,
+            )
           : _error != null
               ? Center(
                   child: Column(

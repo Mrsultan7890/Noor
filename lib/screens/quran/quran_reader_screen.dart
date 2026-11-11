@@ -6,6 +6,7 @@ import '../../utils/activity_feedback.dart';
 import '../../models/quran_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   final Surah surah;
@@ -86,7 +87,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       body: Consumer<QuranProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ServiceLoadingView(
+              serviceName: 'Quran',
+              icon: Icons.menu_book_outlined,
+            );
           }
 
           if (provider.error != null) {

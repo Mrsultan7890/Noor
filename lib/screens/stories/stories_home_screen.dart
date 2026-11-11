@@ -3,6 +3,7 @@ import '../../services/stories_service.dart';
 import '../../models/story_model.dart';
 import 'story_list_screen.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 
 class StoriesHomeScreen extends StatefulWidget {
   const StoriesHomeScreen({super.key});
@@ -73,7 +74,10 @@ class _StoriesHomeScreenState extends State<StoriesHomeScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Islamic Stories',
+              icon: Icons.auto_stories_outlined,
+            )
           : _error != null
               ? Center(
                   child: Column(

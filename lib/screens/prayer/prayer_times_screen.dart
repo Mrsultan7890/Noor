@@ -11,6 +11,7 @@ import '../../providers/user_provider.dart';
 import '../../utils/activity_feedback.dart';
 import '../../utils/user_friendly_error.dart';
 import '../../providers/app_language_provider.dart';
+import '../../widgets/service_loading_view.dart';
 
 class PrayerTimesScreen extends StatefulWidget {
   const PrayerTimesScreen({super.key});
@@ -289,7 +290,10 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Prayer Times',
+              icon: Icons.access_time,
+            )
           : _errorMessage != null || _prayerTimes == null
               ? _buildErrorState()
               : RefreshIndicator(

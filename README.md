@@ -110,6 +110,8 @@ Arabic course JSON and audio are served from jsDelivr at a pinned content
 revision, with GitHub Raw as a fallback. Lesson audio is cached on-device after
 the first play for faster repeat playback and offline use. Signed-in accounts
 sync Arabic lesson completion, points, and daily hearts through Noor's backend.
+The pinned course snapshot includes Levels 1–15 and loads through the existing
+manifest-driven course screen without requiring bundled lesson assets.
 
 ### Notifications
 - Requires permission on Android/iOS

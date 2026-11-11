@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../models/user_model.dart';
 import '../../utils/user_friendly_error.dart';
+import '../../widgets/service_loading_view.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -82,7 +83,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Leaderboard',
+              icon: Icons.emoji_events_outlined,
+            )
           : TabBarView(
               controller: _tabController,
               children: [

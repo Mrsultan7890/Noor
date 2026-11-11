@@ -67,6 +67,54 @@ Hadith content already comes from a hadith API, while prayer times, schedules,
 accounts, and progress are user-specific or calculated; those should not be
 moved to a public GitHub JSON file.
 
+## Islamiyat
+
+The Islamiyat section fetches the complete published catalog from
+`data/islamiyat.json` each time the section opens. The latest successful
+response is cached on the device and shown if GitHub is unavailable.
+
+Keep the top-level structure as `{ "version": 1, "items": [...] }`. Add each
+article with a unique ID, localized title/question/answer, searchable tags,
+and at least one source with a precise reference:
+
+```json
+{
+  "id": "example-question",
+  "title": {
+    "en": "Example topic",
+    "ur": "مثالی موضوع"
+  },
+  "question": {
+    "en": "A question about the topic",
+    "ur": "موضوع کے بارے میں سوال"
+  },
+  "answer": {
+    "en": "The answer, with enough context to understand the claim.",
+    "ur": "جواب، دعوے کو سمجھنے کے لیے کافی سیاق و سباق کے ساتھ۔"
+  },
+  "tags": ["topic", "search term"],
+  "sources": [
+    {
+      "type": "Book",
+      "title": "Source title",
+      "author": "Author or organization",
+      "reference": "Edition, chapter, page, or verse",
+      "quote": "Optional short quotation",
+      "url": "https://example.org/source"
+    }
+  ]
+}
+```
+
+Only `id`, `title`, `question`, `answer`, `tags`, and `sources` are used for
+articles; each source requires `type`, `title`, and `reference`. Localized text
+can be a string or a language-code map. The app displays the selected language,
+then English, then the first supplied translation. Search covers article text,
+tags, and source metadata. Include edition and location details that let
+readers find the cited material, and verify quotations and their surrounding
+context before publishing. The app displays references as provided; it does
+not independently verify their accuracy.
+
 ## Quran text
 
 The app bundles the Tanzil Project Uthmani 1.1 Arabic Quran text in

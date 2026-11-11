@@ -18,7 +18,7 @@ class ArabicCourseService {
         _cacheDirectoryProvider =
             cacheDirectoryProvider ?? getApplicationSupportDirectory;
 
-  static const contentRevision = 'd9f0ab5';
+  static const contentRevision = '27a3277616bc1e6d0682ffca6b0a9d950736ed0f';
   static const _cacheKey = 'arabic_course_$contentRevision';
   static const _legacyCacheKey =
       'arabic_basic_course_4a461f940c740fc22f99c605c59a1713db3d0500';

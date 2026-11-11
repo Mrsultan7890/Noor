@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "stipulated-loan-interest",
+      "title": {
+        "en": "Interest on loans",
+        "ur": "قرض پر سود",
+        "ar": "الفائدة على القروض",
+        "id": "Bunga pinjaman",
+        "tr": "Borç faizi",
+        "fr": "Intérêts sur les prêts"
+      },
+      "question": {
+        "en": "Is stipulated interest on a loan permissible?",
+        "ur": "قرض پر پہلے سے طے شدہ سود کا کیا حکم ہے؟",
+        "ar": "ما حكم الفائدة المشروطة على القرض؟",
+        "id": "Bagaimana hukum bunga yang disyaratkan atas pinjaman?",
+        "tr": "Bir borç için önceden şart koşulan faizin hükmü nedir?",
+        "fr": "Quel est le statut d’un intérêt fixé à l’avance sur un prêt ?"
+      },
+      "answer": {
+        "en": "In the mainstream Hanafi-Deobandi understanding, a stipulated increase on a loan is riba and is prohibited. The Qur’an distinguishes lawful trade from riba (2:275) and commands believers to give up outstanding riba (2:278–279). This is a general educational summary; ask a qualified mufti about a specific account or circumstance.",
+        "ur": "عام حنفی-دیوبندی فہم کے مطابق قرض پر پہلے سے مشروط اضافہ ربا اور ممنوع ہے۔ قرآن تجارت کو حلال اور ربا کو حرام قرار دیتا ہے (2:275)، اور باقی ماندہ ربا چھوڑنے کا حکم دیتا ہے (2:278–279)۔ یہ عمومی تعلیمی خلاصہ ہے؛ کسی مخصوص بینک اکاؤنٹ یا صورتِ حال کے لیے مستند مفتی سے پوچھیں۔",
+        "ar": "وفق الفهم الحنفي الديوبندي السائد، فالزيادة المشروطة على القرض من الربا المحرّم. يميّز القرآن بين البيع الحلال والربا (2:275)، ويأمر المؤمنين بترك ما بقي من الربا (2:278–279). هذا ملخص تعليمي عام؛ اسأل مفتياً مؤهلاً عن حساب أو حالة بعينها.",
+        "id": "Menurut pemahaman Hanafi-Deobandi arus utama, tambahan yang disyaratkan atas pinjaman termasuk riba dan dilarang. Al-Qur’an membedakan jual beli yang halal dari riba (2:275) dan memerintahkan orang beriman meninggalkan sisa riba (2:278–279). Ini ringkasan edukatif umum; tanyakan kepada mufti yang kompeten mengenai rekening atau keadaan tertentu.",
+        "tr": "Yaygın Hanefi-Deobandi anlayışına göre borç için önceden şart koşulan fazlalık ribadır ve haramdır. Kur’an helal alışveriş ile ribayı ayırır (2:275) ve müminlere kalan ribayı bırakmalarını emreder (2:278–279). Bu genel bir bilgilendirme özetidir; belirli bir hesap veya durum için yetkin bir müftüye danışın.",
+        "fr": "Selon la compréhension hanafite-déobandie dominante, tout surplus convenu à l’avance sur un prêt relève du riba et est interdit. Le Coran distingue le commerce licite du riba (2:275) et demande aux croyants d’abandonner le riba restant (2:278–279). Ce résumé est général ; consultez un mufti qualifié pour un compte ou une situation précise."
+      },
+      "tags": ["riba", "interest", "loans", "banking", "سود", "ربا"],
+      "sources": [
+        {
+          "type": "Qur'an",
+          "title": "The Qur'an",
+          "reference": "Surah Al-Baqarah 2:275, 2:278–279",
+          "url": "https://quran.com/2/275-279"
+        }
+      ]
+    },
+    {
+      "id": "no-compulsion-in-religion",
+      "title": {
+        "en": "Freedom of belief",
+        "ur": "عقیدے میں آزادی",
+        "ar": "حرية الاعتقاد",
+        "id": "Kebebasan beragama",
+        "tr": "İnanç özgürlüğü",
+        "fr": "Liberté de croyance"
+      },
+      "question": {
+        "en": "Can anyone be forced to accept Islam?",
+        "ur": "کیا کسی کو اسلام قبول کرنے پر مجبور کیا جا سکتا ہے؟",
+        "ar": "هل يجوز إكراه أحد على اعتناق الإسلام؟",
+        "id": "Bolehkah seseorang dipaksa memeluk Islam?",
+        "tr": "Bir kimse İslam'ı kabul etmeye zorlanabilir mi?",
+        "fr": "Peut-on obliger quelqu’un à embrasser l’islam ?"
+      },
+      "answer": {
+        "en": "No. The Qur’an states, “There is no compulsion in religion” (2:256). Muslims may explain and invite others to Islam, but coercing someone to profess faith is not the same as sincere belief. Questions about applying religious law in a particular historical or legal context require qualified scholarly guidance.",
+        "ur": "نہیں۔ قرآن کہتا ہے: “دین میں کوئی جبر نہیں” (2:256)۔ مسلمان اسلام کی وضاحت اور دعوت دے سکتے ہیں، لیکن کسی کو زبردستی ایمان کا اقرار کرانا سچے عقیدے کے برابر نہیں۔ کسی خاص تاریخی یا قانونی صورت میں دینی احکام کے اطلاق کے لیے مستند عالم سے رہنمائی لیں۔",
+        "ar": "لا. يقول القرآن: «لا إكراه في الدين» (2:256). يجوز للمسلمين بيان الإسلام والدعوة إليه، لكن إكراه شخص على إعلان الإيمان لا يساوي الاعتقاد الصادق. أما تنزيل الأحكام في سياق تاريخي أو قانوني معين فيحتاج إلى توجيه أهل العلم.",
+        "id": "Tidak. Al-Qur’an menyatakan, “Tidak ada paksaan dalam agama” (2:256). Muslim boleh menjelaskan dan mengajak kepada Islam, tetapi memaksa seseorang menyatakan iman tidak sama dengan keyakinan yang tulus. Penerapan hukum agama dalam konteks sejarah atau hukum tertentu perlu bimbingan ulama yang kompeten.",
+        "tr": "Hayır. Kur’an, “Dinde zorlama yoktur” der (2:256). Müslümanlar İslam’ı açıklayıp davette bulunabilir; ancak birini iman ettiğini söylemeye zorlamak samimi inançla aynı değildir. Dini hükümlerin belirli tarihî veya hukuki şartlarda uygulanması için ehil âlimlere danışılmalıdır.",
+        "fr": "Non. Le Coran affirme : « Nulle contrainte en religion » (2:256). Les musulmans peuvent expliquer l’islam et y inviter, mais contraindre quelqu’un à professer la foi ne revient pas à une croyance sincère. L’application des règles religieuses à un contexte historique ou juridique précis demande l’avis de savants qualifiés."
+      },
+      "tags": ["belief", "freedom", "coercion", "religion", "عقیدہ", "آزادی"],
+      "sources": [
+        {
+          "type": "Qur'an",
+          "title": "The Qur'an",
+          "reference": "Surah Al-Baqarah 2:256",
+          "quote": "لَا إِكْرَاهَ فِي الدِّينِ",
+          "url": "https://quran.com/2/256"
+        }
+      ]
+    },
+    {
+      "id": "kindness-to-peaceful-non-muslims",
+      "title": {
+        "en": "Treatment of peaceful non-Muslims",
+        "ur": "امن پسند غیر مسلموں کے ساتھ برتاؤ",
+        "ar": "معاملة غير المسلمين المسالمين",
+        "id": "Sikap terhadap non-Muslim yang hidup damai",
+        "tr": "Barış içinde yaşayan gayrimüslimlere davranış",
+        "fr": "Comportement envers les non-musulmans pacifiques"
+      },
+      "question": {
+        "en": "How should Muslims treat non-Muslims who do not fight them?",
+        "ur": "جو غیر مسلم مسلمانوں سے جنگ نہیں کرتے، ان کے ساتھ کیا برتاؤ ہونا چاہیے؟",
+        "ar": "كيف ينبغي للمسلمين معاملة غير المسلمين الذين لا يقاتلونهم؟",
+        "id": "Bagaimana Muslim seharusnya memperlakukan non-Muslim yang tidak memerangi mereka?",
+        "tr": "Müslümanlar kendileriyle savaşmayan gayrimüslimlere nasıl davranmalıdır?",
+        "fr": "Comment les musulmans doivent-ils traiter les non-musulmans qui ne les combattent pas ?"
+      },
+      "answer": {
+        "en": "The Qur’an says that Muslims are not forbidden from showing kindness and acting justly toward people who do not fight them because of religion or drive them from their homes (60:8). In the mainstream Hanafi-Deobandi understanding, peaceful people must not be wronged because of their faith. This does not mean agreeing with every belief; it establishes fairness and good conduct.",
+        "ur": "قرآن ان لوگوں کے ساتھ نیکی اور انصاف کرنے سے منع نہیں کرتا جو دین کے معاملے میں مسلمانوں سے جنگ نہیں کرتے اور انہیں گھروں سے نہیں نکالتے (60:8)۔ عام حنفی-دیوبندی فہم کے مطابق کسی پُرامن شخص کے ساتھ اس کے عقیدے کی وجہ سے ظلم نہیں ہونا چاہیے۔ اس کا مطلب ہر عقیدے سے اتفاق نہیں، بلکہ انصاف اور اچھے برتاؤ کی پابندی ہے۔",
+        "ar": "يقول القرآن إن الله لا ينهى عن البر والقسط مع الذين لا يقاتلون المسلمين بسبب الدين ولا يخرجونهم من ديارهم (60:8). ووفق الفهم الحنفي الديوبندي السائد، لا يجوز ظلم المسالمين بسبب معتقدهم. ولا يعني ذلك الموافقة على كل معتقد، بل يقرر العدل وحسن المعاملة.",
+        "id": "Al-Qur’an menyatakan bahwa Allah tidak melarang umat Islam berbuat baik dan berlaku adil kepada orang yang tidak memerangi mereka karena agama atau mengusir mereka dari rumah (60:8). Menurut pemahaman Hanafi-Deobandi arus utama, orang yang hidup damai tidak boleh dizalimi karena keyakinannya. Ini bukan berarti menyetujui semua keyakinan, melainkan menegakkan keadilan dan perilaku baik.",
+        "tr": "Kur’an, din nedeniyle Müslümanlarla savaşmayan ve onları yurtlarından çıkarmayan kimselere iyilik ve adaletle davranmayı yasaklamadığını bildirir (60:8). Yaygın Hanefi-Deobandi anlayışına göre barış içinde yaşayan insanlara inançları nedeniyle haksızlık edilmemelidir. Bu, her inancı kabul etmek değil, adaletli ve iyi davranmaktır.",
+        "fr": "Le Coran indique qu’Allah n’interdit pas la bonté et l’équité envers ceux qui ne combattent pas les musulmans en raison de leur religion et ne les chassent pas de leurs foyers (60:8). Selon la compréhension hanafite-déobandie dominante, il ne faut pas léser les personnes pacifiques en raison de leur foi. Cela n’implique pas d’approuver toutes les croyances, mais exige justice et bonne conduite."
+      },
+      "tags": ["justice", "kindness", "interfaith", "peace", "انصاف", "حسن سلوک"],
+      "sources": [
+        {
+          "type": "Qur'an",
+          "title": "The Qur'an",
+          "reference": "Surah Al-Mumtahanah 60:8",
+          "url": "https://quran.com/60/8"
+        }
+      ]
+    }
+  ]
+}

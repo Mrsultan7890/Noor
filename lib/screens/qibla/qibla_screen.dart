@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/arabic_text.dart';
 import '../../utils/user_friendly_error.dart';
+import '../../widgets/service_loading_view.dart';
 
 const _geomagneticChannel = MethodChannel('com.noor.app/geomagnetic');
 
@@ -189,7 +190,10 @@ class _QiblaScreenState extends State<QiblaScreen> {
       ),
       body: Container(
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const ServiceLoadingView(
+                serviceName: 'Qibla',
+                icon: Icons.explore_outlined,
+              )
             : _error != null
                 ? Center(
                     child: Padding(

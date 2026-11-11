@@ -13,6 +13,7 @@ import '../../services/arabic_course_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/arabic_course_localizations.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 
 Future<ArabicCourseProgress> _syncArabicProgressWithAccount({
   required BuildContext context,
@@ -200,7 +201,10 @@ class _ArabicCourseRoadScreenState extends State<ArabicCourseRoadScreen> {
         title: Text(arabicCourseText(context, 'Arabic Course')),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Arabic Course',
+              icon: Icons.translate,
+            )
           : _loadError != null
               ? _LoadErrorView(onRetry: _load)
               : _content == null || _progress == null

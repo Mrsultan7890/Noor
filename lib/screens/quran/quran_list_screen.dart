@@ -5,6 +5,7 @@ import 'quran_reader_screen.dart';
 import 'enhanced_quran_reader_screen.dart';
 import '../../widgets/arabic_text.dart';
 import '../../providers/app_language_provider.dart';
+import '../../widgets/service_loading_view.dart';
 
 class QuranListScreen extends StatefulWidget {
   const QuranListScreen({super.key});
@@ -30,7 +31,10 @@ class _QuranListScreenState extends State<QuranListScreen> {
       body: Consumer<QuranProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ServiceLoadingView(
+              serviceName: 'Quran',
+              icon: Icons.menu_book_outlined,
+            );
           }
 
           if (provider.error != null) {

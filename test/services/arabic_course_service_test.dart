@@ -17,8 +17,12 @@ void main() {
   test('loads localized lessons and quiz configuration from the manifest',
       () async {
     final requestHosts = <String>[];
+    final requestUris = <Uri>[];
     final service = ArabicCourseService(
-      client: _courseClient(requestHosts: requestHosts),
+      client: _courseClient(
+        requestHosts: requestHosts,
+        requestUris: requestUris,
+      ),
     );
 
     final content = await service.load(languageCode: 'ur');
@@ -38,6 +42,12 @@ void main() {
     expect(content.levels[1].title, 'الفاظ اور آسان جملے');
     expect(content.isOffline, isFalse);
     expect(requestHosts, everyElement('cdn.jsdelivr.net'));
+    expect(
+      requestUris.every(
+        (uri) => uri.path.contains('@${ArabicCourseService.contentRevision}/'),
+      ),
+      isTrue,
+    );
   });
 
   test('falls back to GitHub raw when jsDelivr is unavailable', () async {
@@ -262,10 +272,12 @@ void main() {
 
 MockClient _courseClient({
   List<String>? requestHosts,
+  List<Uri>? requestUris,
   bool failCdn = false,
 }) =>
     MockClient((request) async {
       requestHosts?.add(request.url.host);
+      requestUris?.add(request.url);
       if (failCdn && request.url.host == 'cdn.jsdelivr.net') {
         return http.Response('', 503);
       }

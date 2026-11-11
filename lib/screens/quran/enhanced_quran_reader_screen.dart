@@ -6,6 +6,7 @@ import '../../models/quran_model.dart';
 import '../../services/enhanced_quran_service.dart';
 import '../../models/word_by_word_model.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 
 class EnhancedQuranReaderScreen extends StatefulWidget {
   final Surah surah;
@@ -86,7 +87,16 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
   void _showWordByWordDialog(int verseNumber) async {
     showDialog(
       context: context,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
+      builder: (context) => const Dialog(
+        child: SizedBox(
+          width: 320,
+          height: 340,
+          child: ServiceLoadingView(
+            serviceName: 'Quran',
+            icon: Icons.translate,
+          ),
+        ),
+      ),
     );
 
     final verseData = await _service.getWordByWord(
@@ -147,7 +157,10 @@ class _EnhancedQuranReaderScreenState extends State<EnhancedQuranReaderScreen> {
       body: Consumer<QuranProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ServiceLoadingView(
+              serviceName: 'Quran',
+              icon: Icons.auto_stories_outlined,
+            );
           }
 
           if (provider.error != null) {

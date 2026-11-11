@@ -4,6 +4,7 @@ import '../../models/prayer_times_model.dart';
 import '../../services/prayer_times_service.dart';
 import '../../widgets/arabic_text.dart';
 import '../../utils/user_friendly_error.dart';
+import '../../widgets/service_loading_view.dart';
 
 class RamadanHomeScreen extends StatefulWidget {
   const RamadanHomeScreen({super.key});
@@ -86,7 +87,10 @@ class _RamadanHomeScreenState extends State<RamadanHomeScreen> {
         title: const Text('Ramadan Planner 🌙'),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: 'Ramadan Planner',
+              icon: Icons.nightlight_round,
+            )
           : _errorMessage != null || _prayerTimes == null
               ? Center(
                   child: Padding(

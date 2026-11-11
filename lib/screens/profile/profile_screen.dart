@@ -5,6 +5,7 @@ import '../../providers/user_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../navigation/main_navigation_screen.dart';
 import '../../services/api_service.dart';
+import '../../widgets/service_loading_view.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -97,7 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           if (userProvider.isLoading && userProvider.currentUser == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const ServiceLoadingView(
+              serviceName: 'Profile',
+              icon: Icons.person_outline,
+            );
           }
 
           final user = userProvider.currentUser;
@@ -358,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showEditDialog(BuildContext context, String currentUsername) {
     final controller = TextEditingController(text: currentUsername);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -379,7 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () async {
               final success = await Provider.of<UserProvider>(context, listen: false)
                   .updateProfile(username: controller.text);
-              
+
               if (context.mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(

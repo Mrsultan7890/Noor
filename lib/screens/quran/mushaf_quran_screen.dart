@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/quran_service.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 
 class MushafQuranScreen extends StatefulWidget {
   const MushafQuranScreen({super.key});
@@ -85,7 +86,10 @@ class _MushafQuranScreenState extends State<MushafQuranScreen> {
                 );
               }
               if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+                return const ServiceLoadingView(
+                  serviceName: 'Mushaf',
+                  icon: Icons.menu_book_outlined,
+                );
               }
 
               final ayahs = snapshot.data!;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/names_service.dart';
 import '../../widgets/arabic_text.dart';
+import '../../widgets/service_loading_view.dart';
 import '../../utils/user_friendly_error.dart';
 
 class NamesScreen extends StatefulWidget {
@@ -51,7 +52,10 @@ class _NamesScreenState extends State<NamesScreen> {
         title: const ArabicLabel('99 Names of Allah - اسماء الحسنیٰ'),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const ServiceLoadingView(
+              serviceName: '99 Names of Allah',
+              icon: Icons.auto_awesome,
+            )
           : _error != null
               ? Center(
                   child: Column(
