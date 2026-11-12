@@ -14,8 +14,9 @@ A beautiful Flutter app for Muslims to maintain their daily Islamic practices.
 5. **Dark/Light Theme** - Beautiful Islamic-themed UI
 6. **Prayer Tools** - Local prayer times and Qibla direction
 7. **Learning & Knowledge** - Hadith, Dua, Names of Allah, stories, and learning guides
-8. **Audio Quran** - Recitations with reciter selection and playback controls
+8. **Audio Quran** - Recitations with reciter selection, ayah-synced controls, and Android background playback
 9. **Kids Zone** - Memory match, prayer quiz, Names puzzle, and Wudu quiz
+10. **Book Library** - Search, download, and read Islamic books by category
 
 ## 🚀 Getting Started
 
@@ -68,6 +69,7 @@ flutter build ios --release
 - **Prayer Times** - Location-based daily timings
 - **Qibla Direction** - Direction calculated from device location
 - **Audio Quran** - Surah playback with multiple reciters
+- **Book Library** - Searchable book catalogue, volume downloads, and offline reading
 - **Islamic Learning** - Hadith, Dua, stories, and guided lessons
 - **Kids Zone** - Memory and quiz games
 - **App Settings** - Five selectable gradient themes, light appearance, Arabic text sizing, and daily/prayer reminders
@@ -106,12 +108,24 @@ on GitHub. The app fetches these public JSON files when their screens open,
 caches content for offline use, and keeps bundled content as a fallback. See
 [`data/README.md`](./data/README.md) for formats and source-review guidance.
 
+The Book Library reads [`data/books.json`](./data/books.json) from GitHub and
+also includes that catalogue in the app as an offline fallback. Add a category
+and a book entry with its description, author, language, searchable tags,
+Internet Archive identifier, and one `volumes` item per PDF. Each volume needs
+a number, title, filename, and stable `https://archive.org/download/...` URL.
+The app validates these URLs, downloads selected PDFs into its private app
+storage, and opens them with an installed PDF reader. Push catalogue changes to
+the repository's `main` branch for app users to receive them.
+
 Arabic course JSON and audio are served from jsDelivr at a pinned content
 revision, with GitHub Raw as a fallback. Lesson audio is cached on-device after
 the first play for faster repeat playback and offline use. Signed-in accounts
 sync Arabic lesson completion, points, and daily hearts through Noor's backend.
 The pinned course snapshot includes Levels 1–15 and loads through the existing
 manifest-driven course screen without requiring bundled lesson assets.
+
+Quran recitation uses an Android media playback service so playback, notification
+controls, and lock-screen media controls continue when the app is backgrounded.
 
 ### Notifications
 - Requires permission on Android/iOS

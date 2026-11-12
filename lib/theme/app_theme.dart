@@ -6,24 +6,36 @@ enum NoorTheme {
   emeraldArch,
   roseMarble,
   roseLeaves,
+  blueMosque,
+  blackStone,
 }
 
 class NoorThemePalette {
   const NoorThemePalette({
     required this.name,
     required this.description,
+    required this.icon,
     required this.gradientStart,
     required this.gradientEnd,
+    required this.lightGradientStart,
+    required this.lightGradientEnd,
+    required this.lightSurface,
     required this.accent,
     required this.secondaryAccent,
+    required this.lightSecondary,
   });
 
   final String name;
   final String description;
+  final IconData icon;
   final Color gradientStart;
   final Color gradientEnd;
+  final Color lightGradientStart;
+  final Color lightGradientEnd;
+  final Color lightSurface;
   final Color accent;
   final Color secondaryAccent;
+  final Color lightSecondary;
 
   List<Color> get gradientColors => [gradientStart, gradientEnd];
 }
@@ -33,42 +45,93 @@ class AppTheme {
     NoorTheme.sandalwood: NoorThemePalette(
       name: 'Sandalwood',
       description: 'Warm wood & golden accents',
+      icon: Icons.park,
       gradientStart: Color(0xFF2D1B14),
       gradientEnd: Color(0xFF4A2E21),
+      lightGradientStart: Color(0xFFF7F0E7),
+      lightGradientEnd: Color(0xFFEDE0D1),
+      lightSurface: Color(0xFFFFFBF5),
       accent: Color(0xFFE5C158),
       secondaryAccent: Color(0xFFF4D98B),
+      lightSecondary: Color(0xFF765619),
     ),
     NoorTheme.oliveBranch: NoorThemePalette(
       name: 'Olive Branch',
       description: 'Deep olive & soft cream',
+      icon: Icons.eco,
       gradientStart: Color(0xFF1A211B),
       gradientEnd: Color(0xFF2C352D),
+      lightGradientStart: Color(0xFFF2F3EA),
+      lightGradientEnd: Color(0xFFE5E9D9),
+      lightSurface: Color(0xFFFBFCF6),
       accent: Color(0xFFE4D8B8),
       secondaryAccent: Color(0xFFD4AF37),
+      lightSecondary: Color(0xFF685519),
     ),
     NoorTheme.emeraldArch: NoorThemePalette(
       name: 'Emerald Arch',
       description: 'Luxury green & pearl gold',
+      icon: Icons.architecture,
       gradientStart: Color(0xFF0B221B),
       gradientEnd: Color(0xFF163D30),
+      lightGradientStart: Color(0xFFEFF5F0),
+      lightGradientEnd: Color(0xFFDCEBE1),
+      lightSurface: Color(0xFFFAFCFA),
       accent: Color(0xFFE9E2D0),
       secondaryAccent: Color(0xFFD4AF37),
+      lightSecondary: Color(0xFF685519),
     ),
     NoorTheme.roseMarble: NoorThemePalette(
       name: 'Rose Marble',
       description: 'Dusky rose & quartz pink',
+      icon: Icons.diamond,
       gradientStart: Color(0xFF381F26),
       gradientEnd: Color(0xFF542E38),
+      lightGradientStart: Color(0xFFF8EEF0),
+      lightGradientEnd: Color(0xFFF0DDE1),
+      lightSurface: Color(0xFFFFF9FA),
       accent: Color(0xFFF3A6B2),
       secondaryAccent: Color(0xFFE7C1C7),
+      lightSecondary: Color(0xFF854552),
     ),
     NoorTheme.roseLeaves: NoorThemePalette(
       name: 'Rose Leaves',
       description: 'Botanical mauve & soft rose',
+      icon: Icons.local_florist,
       gradientStart: Color(0xFF2E1E24),
       gradientEnd: Color(0xFF422A33),
+      lightGradientStart: Color(0xFFF4EFF1),
+      lightGradientEnd: Color(0xFFE9DFE3),
+      lightSurface: Color(0xFFFCF9FA),
       accent: Color(0xFFD7B0BA),
       secondaryAccent: Color(0xFFB9C1A9),
+      lightSecondary: Color(0xFF70505A),
+    ),
+    NoorTheme.blueMosque: NoorThemePalette(
+      name: 'Blue Mosque',
+      description: 'Calm navy & turquoise',
+      icon: Icons.water,
+      gradientStart: Color(0xFF14263D),
+      gradientEnd: Color(0xFF1F5360),
+      lightGradientStart: Color(0xFFEDF4F7),
+      lightGradientEnd: Color(0xFFD9E9ED),
+      lightSurface: Color(0xFFF9FCFD),
+      accent: Color(0xFFB8E1DF),
+      secondaryAccent: Color(0xFFECCB82),
+      lightSecondary: Color(0xFF245F6D),
+    ),
+    NoorTheme.blackStone: NoorThemePalette(
+      name: 'Black Stone',
+      description: 'Charcoal & pale marble',
+      icon: Icons.texture,
+      gradientStart: Color(0xFF101113),
+      gradientEnd: Color(0xFF25272A),
+      lightGradientStart: Color(0xFFF8F8F7),
+      lightGradientEnd: Color(0xFFE6E7E8),
+      lightSurface: Color(0xFFFCFCFB),
+      accent: Color(0xFFF0F0EE),
+      secondaryAccent: Color(0xFFC9CBCD),
+      lightSecondary: Color(0xFF484B50),
     ),
   };
 
@@ -80,14 +143,19 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
     final accent = palette.accent;
     final primary = isDark ? palette.accent : palette.gradientEnd;
+    final secondary = isDark ? palette.secondaryAccent : palette.lightSecondary;
     final borderColor = primary.withOpacity(isDark ? 0.34 : 0.2);
     final onPrimary = isDark ? const Color(0xFF17120B) : Colors.white;
-    final secondary = isDark ? palette.secondaryAccent : palette.gradientEnd;
     final surface = isDark
         ? Color.lerp(const Color(0xFF20222A), palette.gradientEnd, 0.12)!
-        : Color.lerp(const Color(0xFFFFFCF7), palette.gradientEnd, 0.025)!;
+        : palette.lightSurface;
     final foreground =
         isDark ? const Color(0xFFF7F1E8) : const Color(0xFF211B1C);
+    final surfaceVariant = isDark
+        ? Color.lerp(surface, palette.gradientEnd, 0.32)!
+        : Color.lerp(surface, palette.lightSecondary, 0.08)!;
+    final success = isDark ? const Color(0xFF9AD6A5) : const Color(0xFF287A45);
+    final warning = isDark ? const Color(0xFFFFD180) : const Color(0xFF8A5200);
     final colorScheme =
         (isDark ? const ColorScheme.dark() : const ColorScheme.light())
             .copyWith(
@@ -96,13 +164,16 @@ class AppTheme {
       secondary: secondary,
       onSecondary: isDark ? const Color(0xFF17120B) : Colors.white,
       surface: surface,
+      surfaceVariant: surfaceVariant,
       surfaceTint: Colors.transparent,
       onSurface: foreground,
       onSurfaceVariant:
           isDark ? const Color(0xFFD0C9C0) : const Color(0xFF5F5753),
+      outline: borderColor,
+      outlineVariant: borderColor.withOpacity(0.72),
       primaryContainer: Color.lerp(surface, primary, isDark ? 0.2 : 0.12)!,
       onPrimaryContainer: foreground,
-      tertiary: isDark ? palette.secondaryAccent : palette.gradientEnd,
+      tertiary: isDark ? palette.secondaryAccent : palette.gradientStart,
       onTertiary: isDark ? const Color(0xFF17120B) : Colors.white,
       error: isDark ? const Color(0xFFFF8A80) : const Color(0xFFB3261E),
     );
@@ -117,6 +188,9 @@ class AppTheme {
       scaffoldBackgroundColor: Colors.transparent,
       colorScheme: colorScheme,
       textTheme: textTheme,
+      extensions: [
+        NoorStatusColors(success: success, warning: warning),
+      ],
       appBarTheme: AppBarTheme(
         backgroundColor:
             isDark ? Colors.transparent : surface.withOpacity(0.92),
@@ -285,10 +359,37 @@ class AppTheme {
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [
-        Color.lerp(palette.gradientStart, Colors.white, 0.92)!,
-        Color.lerp(palette.gradientEnd, Colors.white, 0.88)!,
-      ],
+      colors: [palette.lightGradientStart, palette.lightGradientEnd],
+    );
+  }
+}
+
+@immutable
+class NoorStatusColors extends ThemeExtension<NoorStatusColors> {
+  const NoorStatusColors({
+    required this.success,
+    required this.warning,
+  });
+
+  final Color success;
+  final Color warning;
+
+  @override
+  NoorStatusColors copyWith({Color? success, Color? warning}) =>
+      NoorStatusColors(
+        success: success ?? this.success,
+        warning: warning ?? this.warning,
+      );
+
+  @override
+  NoorStatusColors lerp(
+    covariant NoorStatusColors? other,
+    double t,
+  ) {
+    if (other == null) return this;
+    return NoorStatusColors(
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
     );
   }
 }

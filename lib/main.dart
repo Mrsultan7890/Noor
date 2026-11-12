@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'screens/splash_screen.dart';
 import 'providers/theme_provider.dart';
 import 'providers/app_language_provider.dart';
@@ -17,6 +18,12 @@ import 'models/schedule_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.noorislamiclearning.app.quran_audio',
+    androidNotificationChannelName: 'Quran recitation',
+    androidNotificationChannelDescription: 'Quran audio playback controls',
+    androidNotificationOngoing: true,
+  );
   final themeProvider = await ThemeProvider.load();
   final appLanguageProvider = await AppLanguageProvider.load();
 

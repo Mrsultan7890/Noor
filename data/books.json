@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "quran-tafsir",
+      "name": "Quran & Tafsir",
+      "description": "Explanations and commentary on the Quran."
+    },
+    {
+      "id": "seerah-sahabah",
+      "name": "Seerah & Companions",
+      "description": "The life of the Prophet and the lives of the Sahabah."
+    },
+    {
+      "id": "spirituality",
+      "name": "Spirituality",
+      "description": "Guidance for faith, character, and everyday Muslim life."
+    },
+    {
+      "id": "family-society",
+      "name": "Family & Society",
+      "description": "Islamic guidance on family life and social questions."
+    },
+    {
+      "id": "fiqh-education",
+      "name": "Fiqh & Islamic Education",
+      "description": "Foundational Islamic teachings, worship, and practical guidance."
+    },
+    {
+      "id": "beliefs",
+      "name": "Beliefs & Comparative Faiths",
+      "description": "Books addressing Islamic beliefs and points of religious disagreement."
+    },
+    {
+      "id": "biographies",
+      "name": "Biographies & Stories",
+      "description": "Biographical accounts and stories with moral lessons."
+    }
+  ],
+  "books": [
+    {
+      "id": "the-road-to-allah-english",
+      "title": "The Road to Allah",
+      "author": "Hazrat Hakeemul Ummat Maulana Ashraf Ali Thanwi",
+      "language": "en",
+      "categoryId": "spirituality",
+      "description": "Spiritual guidance and advice on drawing closer to Allah.",
+      "tags": ["spirituality", "self-purification", "guidance", "ashraf ali thanwi"],
+      "archiveIdentifier": "the-road-to-allah-english",
+      "archiveUrl": "https://archive.org/details/the-road-to-allah-english",
+      "coverUrl": "https://archive.org/services/img/the-road-to-allah-english",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "The Road to Allaah.pdf",
+          "downloadUrl": "https://archive.org/download/the-road-to-allah-english/The%20Road%20to%20Allaah.pdf"
+        }
+      ]
+    },
+    {
+      "id": "hayatus-sahabah-lives-of-the-sahabah-complete-english",
+      "title": "Hayatus Sahabah: Lives of the Sahabah",
+      "author": "Maulana Muhammad Yusuf Kandhlawi",
+      "language": "en",
+      "categoryId": "seerah-sahabah",
+      "description": "A three-volume collection about the lives and efforts of the Companions.",
+      "tags": ["sahabah", "companions", "seerah", "three volumes"],
+      "archiveIdentifier": "hayatus-sahabah-lives-of-the-sahabah-complete-english",
+      "archiveUrl": "https://archive.org/details/hayatus-sahabah-lives-of-the-sahabah-complete-english",
+      "coverUrl": "https://archive.org/services/img/hayatus-sahabah-lives-of-the-sahabah-complete-english",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Volume 1",
+          "fileName": "Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-1-3.pdf",
+          "downloadUrl": "https://archive.org/download/hayatus-sahabah-lives-of-the-sahabah-complete-english/Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-1-3.pdf"
+        },
+        {
+          "number": 2,
+          "title": "Volume 2",
+          "fileName": "Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-2-3.pdf",
+          "downloadUrl": "https://archive.org/download/hayatus-sahabah-lives-of-the-sahabah-complete-english/Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-2-3.pdf"
+        },
+        {
+          "number": 3,
+          "title": "Volume 3",
+          "fileName": "Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-3-3.pdf",
+          "downloadUrl": "https://archive.org/download/hayatus-sahabah-lives-of-the-sahabah-complete-english/Hayatus-Sahaba-Lives-of-the-Sahabah-Vol-3-3.pdf"
+        }
+      ]
+    },
+    {
+      "id": "maariful-quran-complete-8-volumes-english",
+      "title": "Ma'ariful Quran",
+      "author": "Mufti Muhammad Shafi Usmani",
+      "language": "en",
+      "categoryId": "quran-tafsir",
+      "description": "An eight-volume English commentary on the Holy Quran.",
+      "tags": ["quran", "tafsir", "commentary", "eight volumes", "mufti muhammad shafi"],
+      "archiveIdentifier": "maariful-quran-complete-8-volumes-english",
+      "archiveUrl": "https://archive.org/details/maariful-quran-complete-8-volumes-english",
+      "coverUrl": "https://archive.org/services/img/maariful-quran-complete-8-volumes-english",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Volume 1",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-1.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-1.pdf"
+        },
+        {
+          "number": 2,
+          "title": "Volume 2",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-2.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-2.pdf"
+        },
+        {
+          "number": 3,
+          "title": "Volume 3",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-3.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-3.pdf"
+        },
+        {
+          "number": 4,
+          "title": "Volume 4",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-4.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-4.pdf"
+        },
+        {
+          "number": 5,
+          "title": "Volume 5",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-5.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-5.pdf"
+        },
+        {
+          "number": 6,
+          "title": "Volume 6",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-6.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-6.pdf"
+        },
+        {
+          "number": 7,
+          "title": "Volume 7",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-7.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-7.pdf"
+        },
+        {
+          "number": 8,
+          "title": "Volume 8",
+          "fileName": "English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-8.pdf",
+          "downloadUrl": "https://archive.org/download/maariful-quran-complete-8-volumes-english/English-MaarifulQuran-MuftiShafiUsmaniRA-Vol-8.pdf"
+        }
+      ]
+    },
+    {
+      "id": "a-gift-to-husband-and-wife-ashraf-ali-thanvi",
+      "title": "A Gift to Husband and Wife",
+      "author": "Maulana Ashraf Ali Thanvi",
+      "language": "en",
+      "categoryId": "family-society",
+      "description": "A guide to mutual rights and responsibilities in married life.",
+      "tags": ["marriage", "family", "husband", "wife", "ashraf ali thanvi"],
+      "archiveIdentifier": "a-gift-to-husband-and-wife-ashraf-ali-thanvi",
+      "archiveUrl": "https://archive.org/details/a-gift-to-husband-and-wife-ashraf-ali-thanvi",
+      "coverUrl": "https://archive.org/services/img/a-gift-to-husband-and-wife-ashraf-ali-thanvi",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "AGiftToHusbandAndWifeByShaykhAshrafAliThanvir.a.pdf",
+          "downloadUrl": "https://archive.org/download/a-gift-to-husband-and-wife-ashraf-ali-thanvi/AGiftToHusbandAndWifeByShaykhAshrafAliThanvir.a.pdf"
+        }
+      ]
+    },
+    {
+      "id": "status-of-women-in-islam-abul-hasan-ali-nadwi",
+      "title": "Status of Women in Islam",
+      "author": "Maulana Abul Hasan Ali Nadwi",
+      "language": "en",
+      "categoryId": "family-society",
+      "description": "A discussion of women's status and rights in Islam.",
+      "tags": ["women", "family", "society", "abul hasan ali nadwi"],
+      "archiveIdentifier": "status-of-women-in-islam-abul-hasan-ali-nadwi",
+      "archiveUrl": "https://archive.org/details/status-of-women-in-islam-abul-hasan-ali-nadwi",
+      "coverUrl": "https://archive.org/services/img/status-of-women-in-islam-abul-hasan-ali-nadwi",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "Status Of Women In Islam.pdf",
+          "downloadUrl": "https://archive.org/download/status-of-women-in-islam-abul-hasan-ali-nadwi/Status%20Of%20Women%20In%20Islam.pdf"
+        }
+      ]
+    },
+    {
+      "id": "living-as-a-true-muslim",
+      "title": "Living as a True Muslim",
+      "author": "Hakim al-Ummat Maulana Ashraf Ali Thanwi",
+      "language": "en",
+      "categoryId": "spirituality",
+      "description": "Practical advice on bringing Islamic teachings into daily life.",
+      "tags": ["muslim life", "daily practice", "character", "ashraf ali thanwi"],
+      "archiveIdentifier": "living-as-a-true-muslim",
+      "archiveUrl": "https://archive.org/details/living-as-a-true-muslim",
+      "coverUrl": "https://archive.org/services/img/living-as-a-true-muslim",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "Living as a True Muslim.pdf",
+          "downloadUrl": "https://archive.org/download/living-as-a-true-muslim/Living%20as%20a%20True%20Muslim.pdf"
+        }
+      ]
+    },
+    {
+      "id": "seerat-ul-mustafa-english-abridged",
+      "title": "Seerat-ul-Mustafa (Abridged English)",
+      "author": "Maulana Muhammad Idris Kandhlawi",
+      "language": "en",
+      "categoryId": "seerah-sahabah",
+      "description": "An abridged account of the life of Prophet Muhammad ﷺ.",
+      "tags": ["seerah", "prophet muhammad", "biography", "idris kandhlawi"],
+      "archiveIdentifier": "seerat-ul-mustafa-english-abridged",
+      "archiveUrl": "https://archive.org/details/seerat-ul-mustafa-english-abridged",
+      "coverUrl": "https://archive.org/services/img/seerat-ul-mustafa-english-abridged",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "Seerat-ul-Mustafa-SAW-English-Abdridged-Version.pdf",
+          "downloadUrl": "https://archive.org/download/seerat-ul-mustafa-english-abridged/Seerat-ul-Mustafa-SAW-English-Abdridged-Version.pdf"
+        }
+      ]
+    },
+    {
+      "id": "64-talaq-based-on-wisdom-a-balanced-system-of-islam_202611",
+      "title": "Talaq Based on Wisdom: A Balanced System of Islam",
+      "author": "Maulana Zainul Islam Qasmi Allahabadi",
+      "language": "en",
+      "categoryId": "family-society",
+      "description": "A book discussing divorce in Islam and its principles.",
+      "tags": ["talaq", "divorce", "family", "islamic law"],
+      "archiveIdentifier": "64-talaq-based-on-wisdom-a-balanced-system-of-islam_202611",
+      "archiveUrl": "https://archive.org/details/64-talaq-based-on-wisdom-a-balanced-system-of-islam_202611",
+      "coverUrl": "https://archive.org/services/img/64-talaq-based-on-wisdom-a-balanced-system-of-islam_202611",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "64-TALAQ-Based-on-Wisdom-A-Balanced-System-of-Islam.pdf",
+          "downloadUrl": "https://archive.org/download/64-talaq-based-on-wisdom-a-balanced-system-of-islam_202611/64-TALAQ-Based-on-Wisdom-A-Balanced-System-of-Islam.pdf"
+        }
+      ]
+    },
+    {
+      "id": "bahishti-zewar-heavenly-ornaments-english",
+      "title": "Bahishti Zewar (Heavenly Ornaments)",
+      "author": "Maulana Ashraf Ali Thanvi",
+      "language": "en",
+      "categoryId": "fiqh-education",
+      "description": "A comprehensive guide to Islamic beliefs, worship, and everyday practice.",
+      "tags": ["fiqh", "worship", "islamic education", "ashraf ali thanvi"],
+      "archiveIdentifier": "bahishti-zewar-heavenly-ornaments-english",
+      "archiveUrl": "https://archive.org/details/bahishti-zewar-heavenly-ornaments-english",
+      "coverUrl": "https://archive.org/services/img/bahishti-zewar-heavenly-ornaments-english",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "BahishtiZewar.pdf",
+          "downloadUrl": "https://archive.org/download/bahishti-zewar-heavenly-ornaments-english/BahishtiZewar.pdf"
+        }
+      ]
+    },
+    {
+      "id": "taleem-ul-islam-english-teaching-of-islam",
+      "title": "Taleem-ul-Islam (Teaching of Islam)",
+      "author": "Mufti Kifayatullah",
+      "language": "en",
+      "categoryId": "fiqh-education",
+      "description": "An introductory text covering essential Islamic beliefs and practices.",
+      "tags": ["islamic education", "belief", "worship", "mufti kifayatullah"],
+      "archiveIdentifier": "taleem-ul-islam-english-teaching-of-islam",
+      "archiveUrl": "https://archive.org/details/taleem-ul-islam-english-teaching-of-islam",
+      "coverUrl": "https://archive.org/services/img/taleem-ul-islam-english-teaching-of-islam",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "TALEEM_UL_ISLAM_ENGLISH[Teaching-of-Islam].pdf",
+          "downloadUrl": "https://archive.org/download/taleem-ul-islam-english-teaching-of-islam/TALEEM_UL_ISLAM_ENGLISH%5BTeaching-of-Islam%5D.pdf"
+        }
+      ]
+    },
+    {
+      "id": "islam-aur-qadiyaniyat-ka-usooli-ikhtilaf-english_202611",
+      "title": "Islam and Qadiyaniyat: The Fundamental Conflicts",
+      "author": "Maulana Muhammad Idris Kandhlawi",
+      "language": "en",
+      "categoryId": "beliefs",
+      "description": "A work examining doctrinal disagreements between Islam and Qadiyaniyat.",
+      "tags": ["beliefs", "comparative religion", "qadiyaniyat", "idris kandhlawi"],
+      "archiveIdentifier": "islam-aur-qadiyaniyat-ka-usooli-ikhtilaf-english_202611",
+      "archiveUrl": "https://archive.org/details/islam-aur-qadiyaniyat-ka-usooli-ikhtilaf-english_202611",
+      "coverUrl": "https://archive.org/services/img/islam-aur-qadiyaniyat-ka-usooli-ikhtilaf-english_202611",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "Islam-Aur-Qadiyaniyat-Ka-Usooli-Ikhtilaf-English-The-Fundamental-Conflicts-Between-Islam-And-Qadiyaniyat.pdf",
+          "downloadUrl": "https://archive.org/download/islam-aur-qadiyaniyat-ka-usooli-ikhtilaf-english_202611/Islam-Aur-Qadiyaniyat-Ka-Usooli-Ikhtilaf-English-The-Fundamental-Conflicts-Between-Islam-And-Qadiyaniyat.pdf"
+        }
+      ]
+    },
+    {
+      "id": "the-stories-of-the-saints-r-a",
+      "title": "The Stories of the Saints (R.A.)",
+      "author": "Maulana Ashraf Ali Thanvi",
+      "language": "en",
+      "categoryId": "biographies",
+      "description": "Stories of notable Muslim saints and the lessons drawn from their lives.",
+      "tags": ["saints", "biography", "stories", "moral lessons"],
+      "archiveIdentifier": "the-stories-of-the-saints-r-a",
+      "archiveUrl": "https://archive.org/details/the-stories-of-the-saints-r-a",
+      "coverUrl": "https://archive.org/services/img/the-stories-of-the-saints-r-a",
+      "volumes": [
+        {
+          "number": 1,
+          "title": "Full book",
+          "fileName": "The Stories of the Saints (R'A).pdf",
+          "downloadUrl": "https://archive.org/download/the-stories-of-the-saints-r-a/The%20Stories%20of%20the%20Saints%20%28R%27A%29.pdf"
+        }
+      ]
+    }
+  ]
+}

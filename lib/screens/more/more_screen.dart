@@ -21,6 +21,7 @@ import '../auth/login_screen.dart';
 import '../stories/stories_home_screen.dart';
 import '../audio/audio_quran_screen.dart';
 import '../islamiyat/islamiyat_screen.dart';
+import '../books/book_library_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -192,6 +193,18 @@ class MoreScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           const _SectionHeader(title: 'Islamic Knowledge', icon: Icons.book),
+          _FeatureTile(
+            title: 'Book Library',
+            subtitle: 'Search, download & read Islamic books',
+            icon: Icons.local_library,
+            color: Colors.brown,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BookLibraryScreen(),
+              ),
+            ),
+          ),
           _FeatureTile(
             title: 'Islamiyat',
             subtitle: 'Questions and evidence',

@@ -374,7 +374,7 @@ class _ThemeChoice extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: palette.accent, width: 2),
                 ),
-                child: Icon(Icons.auto_awesome, color: palette.accent),
+                child: Icon(palette.icon, color: palette.accent),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -404,6 +404,22 @@ class _ThemeChoice extends StatelessWidget {
                           ],
                         ),
                         borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      height: 5,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            palette.lightGradientStart,
+                            palette.lightGradientEnd,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
                       ),
                     ),
                   ],

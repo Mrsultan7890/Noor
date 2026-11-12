@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import '../../models/prayer_times_model.dart';
 import '../../services/prayer_times_service.dart';
+import '../../theme/app_theme.dart';
 import '../../services/prayer_notification_service.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/activity_feedback.dart';
@@ -427,6 +428,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
   }
 
   Widget _buildPrayersList() {
+    final theme = Theme.of(context);
+    final success = theme.extension<NoorStatusColors>()!.success;
     final prayers = [
       {'name': 'Fajr', 'time': _prayerTimes!.fajr, 'icon': Icons.wb_twilight},
       {
@@ -457,13 +460,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color:
-                    isLogged ? Colors.green.withOpacity(0.2) : Colors.grey[200],
+                color: isLogged
+                    ? success.withOpacity(0.16)
+                    : theme.colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 prayer['icon'] as IconData,
-                color: isLogged ? Colors.green : Colors.grey[700],
+                color: isLogged ? success : theme.colorScheme.onSurfaceVariant,
               ),
             ),
             title: Text(
@@ -477,10 +481,10 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen>
             trailing: noLog
                 ? null
                 : isLogged
-                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    ? Icon(Icons.check_circle, color: success)
                     : IconButton(
                         icon: const Icon(Icons.add_circle_outline),
-                        color: const Color(0xFF2E7D32),
+                        color: theme.colorScheme.primary,
                         onPressed: () => _logPrayer(prayer['name'] as String),
                       ),
           ),

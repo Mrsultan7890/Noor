@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'utf8_json.dart';
 
 class QuranAudioService {
+  QuranAudioService({http.Client? client}) : _client = client;
+
   static const String _baseUrl = 'https://api.alquran.cloud/v1';
   static const Set<String> supportedReciters = {
     'ar.abdulbasitmurattal',
@@ -12,7 +14,12 @@ class QuranAudioService {
     'ar.minshawi',
   };
 
-  Future<List<Uri>> getSurahAudioUrls(int surahNumber, String reciter) async {
+  final http.Client? _client;
+
+  Future<List<QuranAudioAyah>> getSurahAyahs(
+    int surahNumber,
+    String reciter,
+  ) async {
     if (surahNumber < 1 || surahNumber > 114) {
       throw ArgumentError.value(surahNumber, 'surahNumber');
     }
@@ -20,8 +27,8 @@ class QuranAudioService {
       throw ArgumentError.value(reciter, 'reciter', 'Unsupported reciter.');
     }
 
-    final response = await http
-        .get(Uri.parse('$_baseUrl/surah/$surahNumber/$reciter'))
+    final uri = Uri.parse('$_baseUrl/surah/$surahNumber/$reciter');
+    final response = await (_client?.get(uri) ?? http.get(uri))
         .timeout(const Duration(seconds: 20));
     if (response.statusCode != 200) {
       throw Exception(
@@ -30,15 +37,30 @@ class QuranAudioService {
     }
 
     final payload = decodeUtf8JsonResponse(response);
+    if (payload is! Map<String, dynamic>) {
+      throw const FormatException('Recitation response is invalid.');
+    }
     final data = payload['data'];
     final ayahs = data is Map<String, dynamic> ? data['ayahs'] : null;
     if (ayahs is! List || ayahs.isEmpty) {
       throw const FormatException('Recitation response contains no ayahs.');
     }
 
-    return ayahs.map((ayah) {
+    return List.unmodifiable(ayahs.map((ayah) {
       if (ayah is! Map<String, dynamic>) {
-        throw const FormatException('Recitation response contains an invalid ayah.');
+        throw const FormatException(
+            'Recitation response contains an invalid ayah.');
+      }
+
+      final numberInSurah = ayah['numberInSurah'];
+      final text = ayah['text'];
+      if (numberInSurah is! int ||
+          numberInSurah < 1 ||
+          text is! String ||
+          text.trim().isEmpty) {
+        throw const FormatException(
+          'Recitation response is missing ayah text or number.',
+        );
       }
 
       final alternatives = ayah['audioSecondary'];
@@ -46,16 +68,34 @@ class QuranAudioService {
           ? alternatives.first
           : ayah['audio'];
       if (audioUrl is! String) {
-        throw const FormatException('Recitation response is missing an audio URL.');
+        throw const FormatException(
+            'Recitation response is missing an audio URL.');
       }
 
       final uri = Uri.tryParse(audioUrl);
       if (uri == null ||
           uri.scheme != 'https' ||
           uri.host != 'cdn.islamic.network') {
-        throw const FormatException('Recitation response has an invalid audio URL.');
+        throw const FormatException(
+            'Recitation response has an invalid audio URL.');
       }
-      return uri;
-    }).toList();
+      return QuranAudioAyah(
+        numberInSurah: numberInSurah,
+        text: text,
+        audioUrl: uri,
+      );
+    }));
   }
+}
+
+class QuranAudioAyah {
+  const QuranAudioAyah({
+    required this.numberInSurah,
+    required this.text,
+    required this.audioUrl,
+  });
+
+  final int numberInSurah;
+  final String text;
+  final Uri audioUrl;
 }

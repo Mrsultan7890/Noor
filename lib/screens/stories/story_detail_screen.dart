@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/arabic_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/story_model.dart';
+import '../../theme/app_theme.dart';
 
 class StoryDetailScreen extends StatefulWidget {
   final IslamicStory story;
@@ -31,12 +32,12 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
   Future<void> _markAsRead() async {
     if (_isRead) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('story_${widget.story.id}', true);
-    
+
     setState(() => _isRead = true);
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -50,7 +51,8 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final statusColors = Theme.of(context).extension<NoorStatusColors>()!;
+
     return Scaffold(
       appBar: AppBar(
         title: _showUrdu
@@ -73,17 +75,20 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: statusColors.success.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.green),
+                  border: Border.all(color: statusColors.success),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green),
-                    SizedBox(width: 8),
+                    Icon(Icons.check_circle, color: statusColors.success),
+                    const SizedBox(width: 8),
                     Text(
                       'Completed ✓',
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: statusColors.success,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -140,23 +145,23 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.1),
+                color: statusColors.warning.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.amber),
+                border: Border.all(color: statusColors.warning),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.lightbulb, color: Colors.amber),
-                      SizedBox(width: 8),
+                      Icon(Icons.lightbulb, color: statusColors.warning),
+                      const SizedBox(width: 8),
                       Text(
                         'Lesson',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                          color: statusColors.warning,
                         ),
                       ),
                     ],
