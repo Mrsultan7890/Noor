@@ -853,6 +853,14 @@ class _LessonItemView extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        if (showChart && lesson.grammarNote != null) ...[
+          const SizedBox(height: 12),
+          _InfoCard(
+            title: arabicCourseText(context, 'Grammar rule'),
+            accent: palette.secondaryAccent,
+            child: Text(lesson.grammarNote!),
+          ),
+        ],
         if (showChart && lesson.chart.isNotEmpty) ...[
           const SizedBox(height: 12),
           _InfoCard(

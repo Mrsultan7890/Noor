@@ -31,6 +31,7 @@ class ArabicCourseLesson {
     required this.title,
     required this.objective,
     required this.instruction,
+    this.grammarNote,
     required this.items,
     required this.quizQuestionCount,
     required this.chart,
@@ -41,6 +42,7 @@ class ArabicCourseLesson {
   final String title;
   final String objective;
   final String instruction;
+  final String? grammarNote;
   final List<ArabicCourseItem> items;
   final int quizQuestionCount;
   final Map<String, String> chart;

@@ -33,6 +33,7 @@ void main() {
     expect(content.levels.first.lessons.last.id, 'basic-lesson-17');
     expect(content.levels.first.title, 'بنیادی');
     expect(content.levels.first.lessons.first.title, 'سبق 1');
+    expect(content.levels.first.lessons.first.grammarNote, 'قاعدہ 1');
     expect(content.levels.first.lessons.first.quizQuestionCount, 2);
     expect(content.levels.first.lessons.first.chart['mark'], 'َ');
     expect(content.levels.first.lessons.first.items.first.meaning, 'معنی 0');
@@ -141,7 +142,10 @@ void main() {
   });
 
   test('keeps previously cached Basic lessons available offline', () async {
-    final lessons = List.generate(17, _lesson);
+    final lessons = List.generate(
+      17,
+      (index) => _lesson(index, includeGrammarNote: false),
+    );
     SharedPreferences.setMockInitialValues({
       'arabic_basic_course_4a461f940c740fc22f99c605c59a1713db3d0500':
           jsonEncode({
@@ -172,6 +176,7 @@ void main() {
 
     expect(content.levels, hasLength(1));
     expect(content.levels.single.lessons, hasLength(17));
+    expect(content.levels.single.lessons.first.grammarNote, isNull);
     expect(content.isOffline, isTrue);
   });
 
@@ -371,7 +376,11 @@ Map<String, dynamic> _unit(
       'lessons': lessons,
     };
 
-Map<String, dynamic> _lesson(int index, {String levelId = 'basic'}) {
+Map<String, dynamic> _lesson(
+  int index, {
+  String levelId = 'basic',
+  bool includeGrammarNote = true,
+}) {
   final order = index + 1;
   return {
     'id': '$levelId-lesson-$order',
@@ -379,6 +388,8 @@ Map<String, dynamic> _lesson(int index, {String levelId = 'basic'}) {
     'title': {'en': 'Lesson $order', 'ur': 'سبق $order'},
     'objective': {'en': 'Learn lesson $order.', 'ur': 'سبق $order سیکھیں۔'},
     'instruction': {'en': 'Read and listen.', 'ur': 'پڑھیں اور سنیں۔'},
+    if (includeGrammarNote)
+      'grammarNote': {'en': 'Rule $order', 'ur': 'قاعدہ $order'},
     'chart': {'mark': 'َ', 'letters': 'ب ت'},
     'items': [
       for (var itemIndex = 0; itemIndex < 2; itemIndex++)
