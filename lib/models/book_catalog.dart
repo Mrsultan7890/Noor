@@ -133,7 +133,12 @@ class BookItem {
     }
 
     final volumes = volumesJson
-        .map((volume) => BookVolume.fromJson(_object(volume, 'volume')))
+        .map(
+          (volume) => BookVolume.fromJson(
+            _object(volume, 'volume'),
+            archiveIdentifier: archiveIdentifier,
+          ),
+        )
         .toList(growable: false);
     final volumeNumbers = volumes.map((volume) => volume.number).toSet();
     if (volumeNumbers.length != volumes.length) {
@@ -144,9 +149,9 @@ class BookItem {
 
     final archiveUrl =
         _archiveUri(json['archiveUrl'], '/details/$archiveIdentifier');
-    final coverUrl = _archiveUri(
+    final coverUrl = _coverUri(
       json['coverUrl'],
-      '/services/img/$archiveIdentifier',
+      archiveIdentifier: archiveIdentifier,
     );
     for (final volume in volumes) {
       if (volume.downloadUrl.pathSegments.length < 3 ||
@@ -181,14 +186,19 @@ class BookVolume {
     required this.title,
     required this.fileName,
     required this.downloadUrl,
+    required this.coverUrl,
   });
 
   final int number;
   final String title;
   final String fileName;
   final Uri downloadUrl;
+  final Uri? coverUrl;
 
-  factory BookVolume.fromJson(Map<String, dynamic> json) {
+  factory BookVolume.fromJson(
+    Map<String, dynamic> json, {
+    required String archiveIdentifier,
+  }) {
     final number = json['number'];
     if (number is! int || number < 1) {
       throw const FormatException('Book volume number must be positive.');
@@ -204,6 +214,12 @@ class BookVolume {
       title: _requiredString(json['title'], 'volume.title'),
       fileName: fileName,
       downloadUrl: _archiveUri(json['downloadUrl'], null),
+      coverUrl: json['coverUrl'] == null
+          ? null
+          : _coverUri(
+              json['coverUrl'],
+              archiveIdentifier: archiveIdentifier,
+            ),
     );
   }
 }
@@ -238,4 +254,40 @@ Uri _archiveUri(Object? value, String? expectedPath) {
     );
   }
   return uri;
+}
+
+Uri _coverUri(
+  Object? value, {
+  required String archiveIdentifier,
+}) {
+  final uri = Uri.tryParse(_requiredString(value, 'cover URL'));
+  if (uri == null ||
+      uri.scheme != 'https' ||
+      uri.userInfo.isNotEmpty ||
+      uri.hasPort ||
+      uri.hasQuery ||
+      uri.hasFragment) {
+    throw const FormatException('Book cover URL is invalid.');
+  }
+
+  if (uri.host == 'archive.org' &&
+      uri.path == '/services/img/$archiveIdentifier') {
+    return uri;
+  }
+
+  final segments = uri.pathSegments;
+  if (uri.host == 'raw.githubusercontent.com' &&
+      segments.length == 6 &&
+      segments[0] == 'Mrsultan7890' &&
+      segments[1] == 'noor' &&
+      segments[2] == 'main' &&
+      segments[3] == 'data' &&
+      segments[4] == 'covers' &&
+      RegExp(r'^[a-z0-9][a-z0-9-]*\.webp$').hasMatch(segments[5])) {
+    return uri;
+  }
+
+  throw const FormatException(
+    'Book covers must use the approved Internet Archive or Noor GitHub URL.',
+  );
 }

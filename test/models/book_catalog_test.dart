@@ -26,6 +26,16 @@ void main() {
       catalog.books.every((book) => book.archiveUrl.host == 'archive.org'),
       isTrue,
     );
+    expect(
+      catalog.books.every(
+        (book) =>
+            book.coverUrl.host == 'raw.githubusercontent.com' &&
+            book.volumes.every(
+              (volume) => volume.coverUrl?.host == 'raw.githubusercontent.com',
+            ),
+      ),
+      isTrue,
+    );
   });
 
   test('searches by book title, author, description, and category', () async {
@@ -56,6 +66,36 @@ void main() {
     expect(
       () => BookCatalog.fromJson(json),
       throwsFormatException,
+    );
+  });
+
+  test('rejects book covers hosted outside the approved sources', () async {
+    final json = await _loadCatalogJson();
+    final books = (json['books'] as List)
+        .map((book) => Map<String, dynamic>.from(book as Map))
+        .toList();
+    books.first['coverUrl'] = 'https://example.com/cover.webp';
+    json['books'] = books;
+
+    expect(
+      () => BookCatalog.fromJson(json),
+      throwsFormatException,
+    );
+  });
+
+  test('continues accepting Internet Archive covers for old remote catalogs',
+      () async {
+    final json = await _loadCatalogJson();
+    final books = (json['books'] as List)
+        .map((book) => Map<String, dynamic>.from(book as Map))
+        .toList();
+    books.first['coverUrl'] =
+        'https://archive.org/services/img/the-road-to-allah-english';
+    json['books'] = books;
+
+    expect(
+      BookCatalog.fromJson(json).books.first.coverUrl.host,
+      'archive.org',
     );
   });
 }

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/arabic_course_model.dart';
@@ -52,6 +53,18 @@ Future<ArabicCourseProgress> _syncArabicProgressWithAccount({
     }
     return localProgress;
   }
+}
+
+MediaItem _arabicCourseMediaItem({
+  required ArabicCourseLesson lesson,
+  required ArabicCourseItem item,
+}) {
+  return MediaItem(
+    id: 'arabic-course-${lesson.id}-${item.id}',
+    album: lesson.title,
+    title: item.arabic,
+    artist: 'Noor Arabic Course',
+  );
 }
 
 class ArabicCourseRoadScreen extends StatefulWidget {
@@ -710,9 +723,14 @@ class _ArabicCourseLessonScreenState extends State<ArabicCourseLessonScreen> {
     try {
       final file = await widget.contentService.audioFile(item.audioPath);
       await _audioPlayer.setAudioSource(
-        AudioSource.file(file.path),
+        AudioSource.file(
+          file.path,
+          tag: _arabicCourseMediaItem(lesson: widget.lesson, item: item),
+        ),
       );
-      await _audioPlayer.play();
+      final playback = _audioPlayer.play();
+      if (mounted) setState(() => _isLoadingAudio = false);
+      await playback;
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -728,6 +746,7 @@ class _ArabicCourseLessonScreenState extends State<ArabicCourseLessonScreen> {
   }
 
   Future<void> _startQuiz() async {
+    await _audioPlayer.stop();
     final completed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => ArabicCourseQuizScreen(
@@ -735,9 +754,11 @@ class _ArabicCourseLessonScreenState extends State<ArabicCourseLessonScreen> {
           prompt: widget.quizPrompt,
           progressService: widget.progressService,
           contentService: widget.contentService,
+          audioPlayer: _audioPlayer,
         ),
       ),
     );
+    await _audioPlayer.stop();
     if (completed != null && mounted) Navigator.pop(context, completed);
   }
 
@@ -1032,6 +1053,7 @@ class ArabicCourseQuizScreen extends StatefulWidget {
     required this.prompt,
     required this.progressService,
     required this.contentService,
+    required this.audioPlayer,
     super.key,
   });
 
@@ -1039,13 +1061,13 @@ class ArabicCourseQuizScreen extends StatefulWidget {
   final String prompt;
   final ArabicCourseProgressService progressService;
   final ArabicCourseService contentService;
+  final AudioPlayer audioPlayer;
 
   @override
   State<ArabicCourseQuizScreen> createState() => _ArabicCourseQuizScreenState();
 }
 
 class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
-  final _audioPlayer = AudioPlayer();
   late List<ArabicCourseItem> _questions;
   late ArabicCourseProgress _progress;
   int _questionIndex = 0;
@@ -1054,6 +1076,7 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
   bool _checked = false;
   bool _isLoading = true;
   bool _isLoadingAudio = false;
+  bool _isPreparingQuestionAudio = true;
   bool _isChecking = false;
   bool _outOfHearts = false;
   bool _failed = false;
@@ -1061,6 +1084,7 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
   Object? _progressError;
   List<ArabicCourseItem> _options = const [];
 
+  AudioPlayer get _audioPlayer => widget.audioPlayer;
   ArabicCourseItem get _question => _questions[_questionIndex];
 
   @override
@@ -1069,7 +1093,20 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
     _questions = widget.lesson.items.toList()..shuffle();
     _questions = _questions.take(widget.lesson.quizQuestionCount).toList();
     _setOptions(_questions.first);
+    unawaited(_prepareQuestionAudio(_question));
     _loadProgress();
+  }
+
+  Future<void> _prepareQuestionAudio(ArabicCourseItem question) async {
+    try {
+      await widget.contentService.audioFile(question.audioPath);
+    } catch (error) {
+      debugPrint(
+        'Arabic quiz audio prefetch failed for ${question.audioPath}: $error',
+      );
+    }
+    if (!mounted || _question.id != question.id) return;
+    setState(() => _isPreparingQuestionAudio = false);
   }
 
   Future<void> _loadProgress() async {
@@ -1113,20 +1150,24 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
     _options = [target, ...distractors.take(3)]..shuffle();
   }
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
   Future<void> _playQuestion() async {
+    final question = _question;
     setState(() => _isLoadingAudio = true);
     try {
-      final file = await widget.contentService.audioFile(_question.audioPath);
+      final file = await widget.contentService.audioFile(question.audioPath);
+      if (!mounted) return;
       await _audioPlayer.setAudioSource(
-        AudioSource.file(file.path),
+        AudioSource.file(
+          file.path,
+          tag: _arabicCourseMediaItem(
+            lesson: widget.lesson,
+            item: question,
+          ),
+        ),
       );
-      await _audioPlayer.play();
+      final playback = _audioPlayer.play();
+      if (mounted) setState(() => _isLoadingAudio = false);
+      await playback;
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1181,8 +1222,10 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
         _questionIndex++;
         _selectedItemId = null;
         _checked = false;
+        _isPreparingQuestionAudio = true;
         _setOptions(_question);
       });
+      unawaited(_prepareQuestionAudio(_question));
       return;
     }
     final requiredCorrect = _questions.length >= 3 ? 2 : _questions.length;
@@ -1202,8 +1245,10 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
       _selectedItemId = null;
       _checked = false;
       _failed = false;
+      _isPreparingQuestionAudio = true;
       _setOptions(_questions.first);
     });
+    unawaited(_prepareQuestionAudio(_question));
   }
 
   @override
@@ -1261,8 +1306,10 @@ class _ArabicCourseQuizScreenState extends State<ArabicCourseQuizScreen> {
             child: Column(
               children: [
                 IconButton.filled(
-                  onPressed: _isLoadingAudio ? null : _playQuestion,
-                  icon: _isLoadingAudio
+                  onPressed: _isLoadingAudio || _isPreparingQuestionAudio
+                      ? null
+                      : _playQuestion,
+                  icon: _isLoadingAudio || _isPreparingQuestionAudio
                       ? const SizedBox(
                           width: 24,
                           height: 24,

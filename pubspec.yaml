@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.1+2
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -49,12 +49,12 @@ dependencies:
   # Utils
   intl: ^0.18.1
   url_launcher: ^6.2.4
-  package_info_plus: ^5.0.1
+  package_info_plus: ^6.0.0
   
   # Icons
   cupertino_icons: ^1.0.6
   just_audio_background: 0.0.1-beta.12
-  open_filex: ^5.0.0
+  pdfrx: 1.0.84
 
 dev_dependencies:
   flutter_test:

@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/book_catalog.dart';
 import '../../providers/app_language_provider.dart';
 import '../../services/book_catalog_service.dart';
 import '../../services/book_download_service.dart';
+import '../../widgets/book_cover.dart';
 import '../../widgets/service_loading_view.dart';
+import 'book_reader_screen.dart';
 
 class BookLibraryScreen extends StatefulWidget {
   const BookLibraryScreen({
@@ -302,47 +303,7 @@ class _BookCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          colors.primaryContainer,
-                          colors.secondaryContainer,
-                        ],
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.menu_book,
-                      size: 54,
-                      color: colors.primary.withOpacity(0.65),
-                    ),
-                  ),
-                  Image.network(
-                    book.coverUrl.toString(),
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: progress.expectedTotalBytes == null
-                              ? null
-                              : progress.cumulativeBytesLoaded /
-                                  progress.expectedTotalBytes!,
-                          strokeWidth: 2,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+            Expanded(child: BookCover(book: book)),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
               child: Column(
@@ -440,7 +401,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   }
 
-  Future<void> _downloadAndOpen(BookVolume volume) async {
+  Future<void> _downloadAndRead(BookVolume volume) async {
     setState(() {
       _busyVolumes.add(volume.number);
       _downloadProgress[volume.number] = null;
@@ -459,22 +420,29 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             },
           );
       if (!mounted) return;
-      setState(() => _downloadedFiles[volume.number] = file);
-      await widget.downloadService.open(file);
+      setState(() {
+        _downloadedFiles[volume.number] = file;
+        _busyVolumes.remove(volume.number);
+        _downloadProgress.remove(volume.number);
+      });
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => BookReaderScreen(
+            book: widget.book,
+            volume: volume,
+            file: file,
+          ),
+        ),
+      );
     } on DioException catch (error, stackTrace) {
       debugPrint('Could not download book volume: $error\n$stackTrace');
       if (mounted) {
         _showMessage(context.tr('The book could not be downloaded.'));
       }
     } on FileSystemException catch (error, stackTrace) {
-      debugPrint('Could not open the downloaded book: $error\n$stackTrace');
+      debugPrint('Could not access the downloaded book: $error\n$stackTrace');
       if (mounted) {
-        _showMessage(context.tr('No PDF reader could open the book.'));
-      }
-    } on PlatformException catch (error, stackTrace) {
-      debugPrint('Could not open the downloaded book: $error\n$stackTrace');
-      if (mounted) {
-        _showMessage(context.tr('No PDF reader could open the book.'));
+        _showMessage(context.tr('Could not access downloaded book.'));
       }
     } on FormatException catch (error, stackTrace) {
       debugPrint('Downloaded book failed PDF validation: $error\n$stackTrace');
@@ -521,20 +489,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               child: SizedBox(
                 width: 190,
                 height: 240,
-                child: Image.network(
-                  widget.book.coverUrl.toString(),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer,
-                    ),
-                    child: Icon(
-                      Icons.menu_book,
-                      size: 72,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
+                child: BookCover(book: widget.book),
               ),
             ),
           ),
@@ -604,9 +559,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   children: [
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        child: Text('${volume.number}'),
-                      ),
+                      leading: volume.coverUrl == null
+                          ? CircleAvatar(child: Text('${volume.number}'))
+                          : SizedBox(
+                              width: 42,
+                              height: 58,
+                              child: BookCover(
+                                book: widget.book,
+                                coverUrl: volume.coverUrl,
+                              ),
+                            ),
                       title: Text(volume.title),
                       subtitle: Text(
                         _downloadedFiles.containsKey(volume.number)
@@ -640,7 +602,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         onPressed: _checkingDownloads ||
                                 _busyVolumes.contains(volume.number)
                             ? null
-                            : () => _downloadAndOpen(volume),
+                            : () => _downloadAndRead(volume),
                         icon: Icon(
                           _downloadedFiles.containsKey(volume.number)
                               ? Icons.menu_book

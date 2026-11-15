@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/book_catalog.dart';
@@ -55,18 +54,6 @@ class BookDownloadService {
       );
     }
     return destination;
-  }
-
-  Future<void> open(File file) async {
-    final result = await OpenFilex.open(file.path);
-    if (result.type != ResultType.done) {
-      throw FileSystemException(
-        result.message.isEmpty
-            ? 'No PDF reader could open the book.'
-            : result.message,
-        file.path,
-      );
-    }
   }
 
   Future<File> _fileFor(BookItem book, BookVolume volume) async {
